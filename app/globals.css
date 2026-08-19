@@ -16,8 +16,8 @@ button { font: inherit; }
 .eyebrow span { display: inline-block; margin-right: 4px; color: #eaa36e; animation: logo-sparkle 3.4s ease-in-out infinite; }
 h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-family: var(--font-display), var(--font-body), sans-serif; font-size: clamp(2.65rem, 9vw, 4.4rem); font-weight: 620; letter-spacing: -.055em; line-height: .88; text-shadow: 0 2px 0 rgb(255 255 255 / 70%); }
 .logo-i { position: relative; display: inline-block; }
-.logo-i::after { content: ""; position: absolute; z-index: 2; top: -.22em; left: 57%; width: .22em; height: .32em; background: linear-gradient(145deg, #9ae8de, #36aaa9); border: 1px solid #298d92; border-radius: 78% 35% 74% 38%; box-shadow: inset 2px 2px 4px rgb(238 255 251 / 48%), 0 3px 8px rgb(55 170 168 / 24%); rotate: 28deg; transform-origin: 50% 80%; animation: logo-leaf-sway 4s ease-in-out infinite; }
-.logo-i:first-of-type::after { rotate: -18deg; animation-delay: -1.4s; }
+.logo-i::after { --leaf-angle: 22deg; content: ""; position: absolute; z-index: 2; top: 8px; left: 50%; width: 14px; height: 22px; translate: -42% -100%; background: linear-gradient(145deg, #aaf0e6, #36aaa9); border: 1px solid #298d92; border-radius: 78% 35% 74% 38%; box-shadow: inset 2px 2px 4px rgb(238 255 251 / 52%), 0 3px 8px rgb(55 170 168 / 24%); transform-origin: 50% 88%; animation: logo-leaf-sway 2.15s ease-in-out infinite; }
+.logo-i:first-of-type::after { --leaf-angle: -16deg; animation-delay: -1.05s; }
 .bond { width: min(180px, 38vw); display: grid; gap: 7px; color: #76515a; font-size: .72rem; font-weight: 900; letter-spacing: .035em; text-transform: uppercase; }
 .bond-track { height: 11px; padding: 2px; overflow: hidden; background: rgb(232 209 193 / 80%); border: 1px solid rgb(105 69 72 / 7%); border-radius: 99px; }
 .bond-fill { height: 100%; background: linear-gradient(90deg, #ff9c7e, var(--coral)); border-radius: inherit; transition: width 320ms ease; }
@@ -162,7 +162,7 @@ h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-fam
 @keyframes sleep-wisp { 0% { opacity: 0; translate: 0 8px; scale: .7; } 25% { opacity: .8; } 100% { opacity: 0; translate: 12px -38px; scale: 1.2; } }
 @keyframes star-twinkle { from { opacity: .3; scale: .8; } to { opacity: 1; scale: 1.35; } }
 @keyframes logo-sparkle { 0%, 100% { opacity: .55; rotate: 0deg; scale: .9; } 50% { opacity: 1; rotate: 18deg; scale: 1.15; } }
-@keyframes logo-leaf-sway { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-2px); } }
+@keyframes logo-leaf-sway { 0%, 100% { transform: translateY(0) rotate(var(--leaf-angle)); } 38% { transform: translateY(-4px) rotate(calc(var(--leaf-angle) - 7deg)); } 68% { transform: translateY(-1px) rotate(calc(var(--leaf-angle) + 6deg)); } }
 
 @media (max-width: 520px) {
   .game-shell { padding: 18px 12px 12px; }
