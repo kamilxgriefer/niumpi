@@ -371,7 +371,7 @@ export function NiumpiScene() {
       <header className="game-header">
         <div>
           <p className="eyebrow"><span aria-hidden="true">✦</span> Your little companion</p>
-          <h1>Niumpi<span className="logo-leaf" aria-hidden="true" /></h1>
+          <h1>N<span className="logo-i">ı</span>ump<span className="logo-i">ı</span></h1>
         </div>
         <div className="header-actions">
           <button
@@ -409,7 +409,10 @@ export function NiumpiScene() {
         <div className="needs-panel" aria-label="Niumpi's needs">
           {(Object.entries(memory.needs) as [Need, number][]).map(([need, value]) => (
             <div className={`need need-${need}`} key={need}>
-              <span>{need === "fullness" ? "Fullness" : need[0].toUpperCase() + need.slice(1)}</span>
+              <span className="need-label">
+                <span className="need-icon" aria-hidden="true">{need === "fullness" ? "●" : need === "energy" ? "✦" : "♥"}</span>
+                {need === "fullness" ? "Fullness" : need[0].toUpperCase() + need.slice(1)}
+              </span>
               <div className="need-track"><span style={{ width: `${value}%` }} /></div>
             </div>
           ))}
@@ -427,11 +430,12 @@ export function NiumpiScene() {
         />
 
         <div className="memory-note" aria-live="polite">
-          <span>{totalInteractions} shared moments</span>
-          <span>{totalInteractions ? `Favorite: ${gestureLabels[favorite[0]]}` : "Still learning about you"}</span>
+          <span><b aria-hidden="true">✦</b>{totalInteractions} shared moments</span>
+          <span><b aria-hidden="true">♡</b>{totalInteractions ? `Favorite: ${gestureLabels[favorite[0]]}` : "Still learning about you"}</span>
         </div>
         <p className="hint">Tap, hold, pet, or touch the leaf</p>
         <div className="food-tray" aria-label="Food tray">
+          <p className="tray-label">Snack bar <span>Drag a treat to Niumpi</span></p>
           {(Object.entries(foods) as [FoodId, (typeof foods)[FoodId]][]).map(([food, details]) => (
             <button
               className="food-button"
@@ -451,10 +455,10 @@ export function NiumpiScene() {
         </div>
         <div className="room-controls" aria-label="Room controls">
           <button type="button" onClick={toggleLamp} aria-pressed={memory.lampOn}>
-            {memory.lampOn ? "Turn lamp off" : "Turn lamp on"}
+            <span aria-hidden="true">◐</span>{memory.lampOn ? "Lamp off" : "Lamp on"}
           </button>
           <button type="button" onClick={memory.sleeping ? wakeUp : startSleep}>
-            {memory.sleeping ? "Wake gently" : "Tuck in"}
+            <span aria-hidden="true">☾</span>{memory.sleeping ? "Wake gently" : "Tuck in"}
           </button>
         </div>
         {draggingFood && (

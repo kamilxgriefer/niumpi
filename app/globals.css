@@ -15,7 +15,9 @@ button { font: inherit; }
 .eyebrow { margin: 0 0 3px; color: #a66369; font-size: .7rem; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
 .eyebrow span { display: inline-block; margin-right: 4px; color: #eaa36e; animation: logo-sparkle 3.4s ease-in-out infinite; }
 h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-family: var(--font-display), var(--font-body), sans-serif; font-size: clamp(2.65rem, 9vw, 4.4rem); font-weight: 620; letter-spacing: -.055em; line-height: .88; text-shadow: 0 2px 0 rgb(255 255 255 / 70%); }
-.logo-leaf { position: absolute; top: -3px; right: -20px; width: 17px; height: 25px; background: linear-gradient(145deg, #8ce2d7, #37aaa9); border: 1px solid #298d92; border-radius: 78% 35% 74% 38%; box-shadow: inset 3px 3px 5px rgb(238 255 251 / 48%), 0 3px 9px rgb(55 170 168 / 20%); rotate: 24deg; }
+.logo-i { position: relative; display: inline-block; }
+.logo-i::after { content: ""; position: absolute; z-index: 2; top: -.22em; left: 57%; width: .22em; height: .32em; background: linear-gradient(145deg, #9ae8de, #36aaa9); border: 1px solid #298d92; border-radius: 78% 35% 74% 38%; box-shadow: inset 2px 2px 4px rgb(238 255 251 / 48%), 0 3px 8px rgb(55 170 168 / 24%); rotate: 28deg; transform-origin: 50% 80%; animation: logo-leaf-sway 4s ease-in-out infinite; }
+.logo-i:first-of-type::after { rotate: -18deg; animation-delay: -1.4s; }
 .bond { width: min(180px, 38vw); display: grid; gap: 7px; color: #76515a; font-size: .72rem; font-weight: 900; letter-spacing: .035em; text-transform: uppercase; }
 .bond-track { height: 11px; padding: 2px; overflow: hidden; background: rgb(232 209 193 / 80%); border: 1px solid rgb(105 69 72 / 7%); border-radius: 99px; }
 .bond-fill { height: 100%; background: linear-gradient(90deg, #ff9c7e, var(--coral)); border-radius: inherit; transition: width 320ms ease; }
@@ -37,9 +39,12 @@ h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-fam
 .is-sleeping .sleep-nest { opacity: 1; transform: rotate(-3deg) scale(1.08); }
 .pet-room::after { content: ""; position: absolute; z-index: 0; left: 50%; bottom: 15%; width: 280px; height: 44px; translate: -50% 0; background: rgb(105 67 61 / 13%); border-radius: 50%; filter: blur(11px); transition: width 600ms ease, opacity 600ms ease; }
 .speech { position: absolute; z-index: 8; top: 72px; left: 32px; max-width: min(270px, calc(100% - 64px)); min-height: 44px; margin: 0; padding: 11px 18px; color: #633847; background: rgb(255 255 255 / 92%); border: 1px solid rgb(93 55 57 / 8%); border-radius: 20px 20px 20px 5px; box-shadow: 0 9px 26px rgb(75 43 47 / 12%); font-family: var(--font-display), var(--font-body), sans-serif; font-size: .94rem; font-weight: 580; letter-spacing: .005em; backdrop-filter: blur(8px); }
-.needs-panel { position: absolute; z-index: 8; top: 30px; right: 28px; width: 150px; display: grid; gap: 7px; padding: 11px 13px; background: rgb(255 255 255 / 76%); border: 1px solid rgb(93 55 57 / 9%); border-radius: 16px; box-shadow: 0 7px 22px rgb(75 43 47 / 8%); backdrop-filter: blur(8px); }
-.need { display: grid; grid-template-columns: 52px 1fr; align-items: center; gap: 8px; color: #76515a; font-size: .62rem; font-weight: 900; letter-spacing: .015em; }
-.need-track { height: 6px; overflow: hidden; background: #eadfd0; border-radius: 99px; }
+.needs-panel { position: absolute; z-index: 8; top: 24px; right: 24px; width: 172px; display: grid; gap: 9px; padding: 13px 14px; background: rgb(255 255 255 / 68%); border: 1px solid rgb(255 255 255 / 62%); border-radius: 22px; box-shadow: 0 12px 34px rgb(57 40 54 / 11%); backdrop-filter: blur(18px) saturate(1.3); }
+.need { display: grid; grid-template-columns: 73px 1fr; align-items: center; gap: 8px; color: #76515a; font-size: .61rem; font-weight: 900; letter-spacing: .015em; }
+.need-label { display: flex; align-items: center; gap: 6px; }
+.need-icon { width: 18px; height: 18px; display: grid; place-items: center; color: white; background: #d97899; border-radius: 7px; font-size: .55rem; box-shadow: 0 3px 8px rgb(94 49 68 / 12%); }
+.need-energy .need-icon { background: #e9b348; }.need-joy .need-icon { background: #4ebbb4; }
+.need-track { height: 7px; overflow: hidden; background: rgb(234 223 208 / 82%); border-radius: 99px; }
 .need-track span { display: block; height: 100%; border-radius: inherit; transition: width 420ms ease; }
 .need-fullness .need-track span { background: #d57d9c; }
 .need-energy .need-track span { background: #e7b64f; }
@@ -111,12 +116,16 @@ h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-fam
 .behavior-asleep .sleep-wisp { animation: sleep-wisp 2.8s ease-out infinite; }
 .behavior-asleep .sleep-wisp-two { animation-delay: 1.25s; }
 
-.memory-note { z-index: 4; width: min(370px, 90%); margin: 18px 0 0; display: flex; justify-content: space-between; gap: 16px; color: #76515a; font-size: .73rem; font-weight: 800; }
+.memory-note { z-index: 4; width: min(410px, 94%); margin: 18px 0 0; display: flex; justify-content: space-between; gap: 10px; padding: 9px 12px; color: #76515a; background: rgb(255 255 255 / 42%); border: 1px solid rgb(255 255 255 / 38%); border-radius: 15px; font-size: .69rem; font-weight: 850; backdrop-filter: blur(10px); }
+.memory-note span { display: flex; align-items: center; gap: 6px; }
+.memory-note b { color: #e28289; font-size: .8rem; }
 .memory-note span:last-child { text-align: right; }
 .hint { z-index: 4; margin: 11px 0 0; padding: 6px 12px; color: #87636a; background: rgb(255 252 242 / 45%); border-radius: 99px; font-size: .78rem; font-weight: 750; text-align: center; }
-.food-tray { position: relative; z-index: 9; margin-top: 14px; display: flex; align-items: stretch; gap: 9px; padding: 8px; background: rgb(255 250 237 / 76%); border: 1px solid rgb(93 55 57 / 10%); border-radius: 20px; box-shadow: 0 9px 25px rgb(82 48 45 / 10%); }
-.food-button { width: 92px; min-height: 67px; padding: 7px 5px 6px; display: grid; place-items: center; gap: 3px; color: #69464f; background: rgb(255 255 255 / 62%); border: 1px solid transparent; border-radius: 14px; cursor: grab; touch-action: none; font-size: .63rem; font-weight: 900; letter-spacing: .01em; user-select: none; transition: transform 180ms ease, background 180ms ease, border-color 180ms ease; }
-.food-button:hover { background: white; border-color: rgb(93 55 57 / 10%); transform: translateY(-2px); }
+.food-tray { position: relative; z-index: 9; width: min(420px, 96%); margin-top: 11px; display: flex; flex-wrap: wrap; align-items: stretch; justify-content: center; gap: 8px; padding: 11px; background: rgb(255 250 241 / 66%); border: 1px solid rgb(255 255 255 / 58%); border-radius: 25px; box-shadow: 0 14px 38px rgb(64 42 51 / 12%); backdrop-filter: blur(18px) saturate(1.25); }
+.tray-label { width: 100%; margin: 0 4px 2px; display: flex; align-items: center; justify-content: space-between; color: #65424c; font-family: var(--font-display), sans-serif; font-size: .78rem; font-weight: 600; }
+.tray-label span { color: #9b7a7f; font-family: var(--font-body), sans-serif; font-size: .57rem; font-weight: 850; letter-spacing: .035em; text-transform: uppercase; }
+.food-button { flex: 1; width: auto; min-width: 82px; min-height: 72px; padding: 8px 6px 7px; display: grid; place-items: center; gap: 3px; color: #69464f; background: rgb(255 255 255 / 62%); border: 1px solid rgb(255 255 255 / 62%); border-radius: 18px; cursor: grab; touch-action: none; font-size: .61rem; font-weight: 900; letter-spacing: .01em; box-shadow: 0 5px 14px rgb(73 46 57 / 5%); user-select: none; transition: transform 180ms ease, background 180ms ease, border-color 180ms ease, box-shadow 180ms ease; }
+.food-button:hover { background: white; border-color: rgb(78 187 180 / 22%); transform: translateY(-3px) rotate(-1deg); box-shadow: 0 10px 20px rgb(73 46 57 / 10%); }
 .food-button:active { cursor: grabbing; }
 .food-button:disabled { opacity: .4; cursor: not-allowed; transform: none; }
 .food-button:focus-visible { outline: 4px solid rgb(36 201 197 / 28%); outline-offset: 2px; }
@@ -126,11 +135,15 @@ h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-fam
 .food-cloudpuff { width: 38px; height: 25px; margin-top: 7px; background: linear-gradient(#fffaf0, #eadcc8); border: 2px solid #cbb99f; border-radius: 48% 52% 42% 48%; box-shadow: -10px -5px 0 -2px #f7eddd, 10px -7px 0 -2px #fff9ee, 0 5px 8px rgb(103 81 63 / 12%); }
 .food-dewdrop { width: 27px; height: 36px; margin-top: -2px; background: radial-gradient(circle at 38% 28%, white 0 7%, transparent 9%), linear-gradient(145deg, #a9eee6, #4bb8c3 64%, #337e9d); border: 2px solid #367e91; border-radius: 72% 38% 70% 40%; rotate: 42deg; box-shadow: inset -5px -6px 9px rgb(29 85 112 / 14%), 0 5px 9px rgb(50 120 137 / 16%); }
 .food-follower { --food-x: 0px; --food-y: 0px; position: fixed; z-index: 100; left: var(--food-x); top: var(--food-y); margin: 0; translate: -50% -50%; scale: 1.25; pointer-events: none; filter: drop-shadow(0 7px 5px rgb(66 41 49 / 20%)); }
-.room-controls { position: relative; z-index: 9; display: flex; gap: 8px; margin-top: 10px; }
-.room-controls button { min-height: 38px; padding: 8px 14px; color: #62434e; background: rgb(255 255 255 / 78%); border: 1px solid rgb(93 55 57 / 12%); border-radius: 999px; box-shadow: 0 5px 14px rgb(64 42 51 / 9%); cursor: pointer; font-size: .72rem; font-weight: 780; }
-.room-controls button:hover { background: white; transform: translateY(-1px); }
+.room-controls { position: relative; z-index: 9; display: flex; gap: 8px; margin-top: 10px; padding: 5px; background: rgb(255 255 255 / 30%); border: 1px solid rgb(255 255 255 / 34%); border-radius: 999px; backdrop-filter: blur(12px); }
+.room-controls button { min-height: 40px; padding: 8px 15px; display: flex; align-items: center; gap: 7px; color: #62434e; background: rgb(255 255 255 / 76%); border: 1px solid rgb(255 255 255 / 58%); border-radius: 999px; box-shadow: 0 5px 14px rgb(64 42 51 / 8%); cursor: pointer; font-size: .69rem; font-weight: 900; transition: transform 180ms ease, background 180ms ease; }
+.room-controls button span { color: #51aaa7; font-size: .95rem; }
+.room-controls button:hover { background: white; transform: translateY(-2px); }
 .room-controls button:focus-visible { outline: 4px solid rgb(36 201 197 / 30%); outline-offset: 2px; }
-.room-night .memory-note, .room-night .hint { color: #eee7f4; text-shadow: 0 1px 4px rgb(17 17 37 / 45%); }
+.room-night .memory-note, .room-night .hint { color: #fff; background: rgb(35 39 69 / 35%); border-color: rgb(255 255 255 / 13%); text-shadow: 0 1px 4px rgb(17 17 37 / 45%); }
+.room-night .needs-panel, .room-night .food-tray, .room-night .room-controls { background: rgb(36 40 68 / 55%); border-color: rgb(255 255 255 / 12%); }
+.room-night .need, .room-night .tray-label { color: #fff4f6; }.room-night .tray-label span { color: #c9c5da; }
+.room-night .food-button, .room-night .room-controls button { color: #4e3342; }
 
 @keyframes rig-breathe { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.018, .982) translateY(2px); } 55% { transform: scale(1.025, .975); } }
 @keyframes rig-idle { 0%, 100% { transform: translate(0, 0) rotate(0) scale(1); } 24% { transform: translate(-3px, -3px) rotate(-.8deg) scale(1.018, .982); } 52% { transform: translate(2px, 1px) rotate(.5deg) scale(.99, 1.012); } 76% { transform: translate(0, -5px) rotate(.8deg) scale(1.012, .988); } }
@@ -149,6 +162,7 @@ h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-fam
 @keyframes sleep-wisp { 0% { opacity: 0; translate: 0 8px; scale: .7; } 25% { opacity: .8; } 100% { opacity: 0; translate: 12px -38px; scale: 1.2; } }
 @keyframes star-twinkle { from { opacity: .3; scale: .8; } to { opacity: 1; scale: 1.35; } }
 @keyframes logo-sparkle { 0%, 100% { opacity: .55; rotate: 0deg; scale: .9; } 50% { opacity: 1; rotate: 18deg; scale: 1.15; } }
+@keyframes logo-leaf-sway { 0%, 100% { transform: rotate(-3deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-2px); } }
 
 @media (max-width: 520px) {
   .game-shell { padding: 18px 12px 12px; }
@@ -157,9 +171,12 @@ h1 { position: relative; width: fit-content; margin: 0; color: #642f42; font-fam
   .header-actions { align-items: end; flex-direction: column-reverse; gap: 8px; }
   .pet-room { min-height: 72dvh; border-radius: 28px; }
   .speech { top: 74px; left: 20px; max-width: calc(100% - 40px); }
-  .needs-panel { top: 14px; right: 14px; width: 142px; }
+  .needs-panel { top: 14px; right: 14px; width: 158px; padding: 10px; }
+  .need { grid-template-columns: 68px 1fr; }
   .rig-root { width: min(350px, 83vw); }
-  .food-button { width: min(27vw, 88px); }
+  .food-tray { width: 98%; }
+  .food-button { min-width: 0; }
+  .tray-label span { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
