@@ -370,8 +370,8 @@ export function NiumpiScene() {
     <main className="game-shell">
       <header className="game-header">
         <div>
-          <p className="eyebrow">First encounter</p>
-          <h1>Niumpi</h1>
+          <p className="eyebrow"><span aria-hidden="true">✦</span> Your little companion</p>
+          <h1>Niumpi<span className="logo-leaf" aria-hidden="true" /></h1>
         </div>
         <div className="header-actions">
           <button
