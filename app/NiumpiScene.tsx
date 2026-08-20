@@ -365,6 +365,13 @@ export function NiumpiScene() {
     (sum, count) => sum + count,
     0,
   );
+  const totalMeals = Object.values(memory.foods).reduce((sum, count) => sum + count, 0);
+  const carePoints = totalInteractions + totalMeals * 2;
+  const growthStage: 1 | 2 | 3 | 4 = carePoints >= 60 ? 4 : carePoints >= 30 ? 3 : carePoints >= 10 ? 2 : 1;
+  const stageFloor = growthStage === 1 ? 0 : growthStage === 2 ? 10 : growthStage === 3 ? 30 : 60;
+  const nextStageAt = growthStage === 1 ? 10 : growthStage === 2 ? 30 : growthStage === 3 ? 60 : 60;
+  const growthProgress = growthStage === 4 ? 100 : ((carePoints - stageFloor) / (nextStageAt - stageFloor)) * 100;
+  const growthNames = ["", "Tiny seed", "Brave sprout", "Little explorer", "True companion"];
 
   return (
     <main className="game-shell">
@@ -420,6 +427,7 @@ export function NiumpiScene() {
 
         <RiggedNiumpi
           behavior={behavior}
+          growthStage={growthStage}
           isPressed={isPressed}
           position={position}
           look={look}
@@ -432,6 +440,14 @@ export function NiumpiScene() {
         <div className="memory-note" aria-live="polite">
           <span><b aria-hidden="true">✦</b>{totalInteractions} shared moments</span>
           <span><b aria-hidden="true">♡</b>{totalInteractions ? `Favorite: ${gestureLabels[favorite[0]]}` : "Still learning about you"}</span>
+        </div>
+        <div className="growth-card" aria-label={`Growth stage ${growthStage}: ${growthNames[growthStage]}`}>
+          <div className="growth-copy">
+            <span>Stage {growthStage}</span>
+            <strong>{growthNames[growthStage]}</strong>
+          </div>
+          <div className="growth-track" aria-hidden="true"><span style={{ width: `${growthProgress}%` }} /></div>
+          <span className="growth-next">{growthStage === 4 ? "Fully grown together" : `${nextStageAt - carePoints} care moments to grow`}</span>
         </div>
         <p className="hint">Tap, hold, pet, or touch the leaf</p>
         <div className="food-tray" aria-label="Food tray">

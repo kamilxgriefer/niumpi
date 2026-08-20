@@ -8,6 +8,7 @@ export type NiumpiBehavior = "idle" | "wander" | "float" | "spin" | "curious" | 
 
 type Props = {
   behavior: NiumpiBehavior;
+  growthStage: 1 | 2 | 3 | 4;
   isPressed: boolean;
   position: { x: number; y: number };
   look: { x: number; y: number };
@@ -19,6 +20,7 @@ type Props = {
 
 export function RiggedNiumpi({
   behavior,
+  growthStage,
   isPressed,
   position,
   look,
@@ -84,10 +86,14 @@ export function RiggedNiumpi({
   return (
     <div
       ref={root}
-      className={`rig-root behavior-${behavior} ${isPressed ? "is-pressed" : ""} ${isBlinking ? "is-blinking" : ""}`}
+      className={`rig-root growth-stage-${growthStage} behavior-${behavior} ${isPressed ? "is-pressed" : ""} ${isBlinking ? "is-blinking" : ""}`}
       data-behavior={behavior}
     >
       <button className="rig-leaf" type="button" aria-label="Touch Niumpi's leaf" onClick={onLeafTouch} />
+      <span className="rig-leaf-extra rig-leaf-two" aria-hidden="true" />
+      <span className="rig-leaf-extra rig-leaf-three" aria-hidden="true" />
+      <span className="rig-leaf-extra rig-leaf-four" aria-hidden="true" />
+      <span className="rig-leaf-extra rig-leaf-five" aria-hidden="true" />
       <span className="soul-spark soul-spark-one" aria-hidden="true" />
       <span className="soul-spark soul-spark-two" aria-hidden="true" />
       <span className="sleep-wisp sleep-wisp-one" aria-hidden="true">z</span>
@@ -105,6 +111,8 @@ export function RiggedNiumpi({
       >
         <span className="rig-foot rig-foot-left" aria-hidden="true" />
         <span className="rig-foot rig-foot-right" aria-hidden="true" />
+        <span className="rig-arm rig-arm-left" aria-hidden="true" />
+        <span className="rig-arm rig-arm-right" aria-hidden="true" />
         <span className="rig-visual" aria-hidden="true">
           <Image
             className="rig-body"

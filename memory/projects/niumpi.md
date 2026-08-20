@@ -102,6 +102,8 @@ Dopiero po potwierdzeniu atrakcyjności rdzenia dodać karmienie, sen, pokój, e
 - Sen jest dobrowolny i bezpieczny: opcja „Tuck in”, spokojna animacja, własny dźwięk oraz łagodne budzenie dotykiem lub przyciskiem.
 - Podczas snu energia regeneruje się w aktywnej grze i po powrocie do niej; radość nie spada, a głód rośnie wolniej.
 - Lampka jest osobnym, zapamiętywanym elementem pokoju i może pozostać włączona podczas snu.
+- Pierwszy system rozwoju relacji: gesty i karmienie tworzą punkty opieki, które prowadzą przez cztery etapy wzrostu.
+- Wygląd rozwija się zgodnie z kanonem: 1, 2, 3 i 5 listków oraz stopniowo wyrastające dwie rączki.
 
 ## Ochrona zakresu
 
