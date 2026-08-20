@@ -5,10 +5,12 @@ import { useEffect, useRef, useState } from "react";
 import type { PointerEvent } from "react";
 
 export type NiumpiBehavior = "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep";
+export type CareStyle = "growing" | "playful" | "restful" | "explorer" | "affection" | "chaotic";
 
 type Props = {
   behavior: NiumpiBehavior;
   growthStage: 1 | 2 | 3 | 4;
+  careStyle: CareStyle;
   isPressed: boolean;
   position: { x: number; y: number };
   look: { x: number; y: number };
@@ -21,6 +23,7 @@ type Props = {
 export function RiggedNiumpi({
   behavior,
   growthStage,
+  careStyle,
   isPressed,
   position,
   look,
@@ -86,7 +89,7 @@ export function RiggedNiumpi({
   return (
     <div
       ref={root}
-      className={`rig-root growth-stage-${growthStage} behavior-${behavior} ${isPressed ? "is-pressed" : ""} ${isBlinking ? "is-blinking" : ""}`}
+      className={`rig-root growth-stage-${growthStage} care-style-${careStyle} behavior-${behavior} ${isPressed ? "is-pressed" : ""} ${isBlinking ? "is-blinking" : ""}`}
       data-behavior={behavior}
     >
       <button className="rig-leaf" type="button" aria-label="Touch Niumpi's leaf" onClick={onLeafTouch} />

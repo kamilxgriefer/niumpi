@@ -104,6 +104,7 @@ Dopiero po potwierdzeniu atrakcyjności rdzenia dodać karmienie, sen, pokój, e
 - Lampka jest osobnym, zapamiętywanym elementem pokoju i może pozostać włączona podczas snu.
 - Pierwszy system rozwoju relacji: gesty i karmienie tworzą punkty opieki, które prowadzą przez cztery etapy wzrostu.
 - Wygląd rozwija się zgodnie z kanonem: 1, 2, 3 i 5 listków oraz stopniowo wyrastające dwie rączki.
+- Niumpi rozpoznaje dominujący styl relacji: zabawowy, senny, odkrywczy, czuły albo „wild-hearted”; styl zmienia ruch, blask, kształt i wzory listków.
 
 ## Ochrona zakresu
 

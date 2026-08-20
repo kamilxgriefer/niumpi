@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 import { playNiumpiSound } from "./niumpiSounds";
 import { RiggedNiumpi } from "./RiggedNiumpi";
-import type { NiumpiBehavior } from "./RiggedNiumpi";
+import type { CareStyle, NiumpiBehavior } from "./RiggedNiumpi";
 
 type Gesture = "tap" | "pet" | "hold" | "leaf";
 type Need = "fullness" | "energy" | "joy";
@@ -20,6 +20,7 @@ type PetMemory = {
   sleeping: boolean;
   sleepStartedAt: string;
   lampOn: boolean;
+  sleepSessions: number;
 };
 
 const STORAGE_KEY = "niumpi-memory-v2";
@@ -33,6 +34,7 @@ const DEFAULT_MEMORY: PetMemory = {
   sleeping: false,
   sleepStartedAt: "",
   lampOn: false,
+  sleepSessions: 0,
 };
 
 const foods: Record<FoodId, { name: string; effects: Partial<Record<Need, number>> }> = {
@@ -88,6 +90,7 @@ function readMemory(): PetMemory {
       sleeping,
       sleepStartedAt: parsed.sleepStartedAt ?? "",
       lampOn: parsed.lampOn ?? false,
+      sleepSessions: parsed.sleepSessions ?? 0,
     };
   } catch {
     return { ...DEFAULT_MEMORY, lastUpdated: new Date().toISOString() };
@@ -194,7 +197,13 @@ export function NiumpiScene() {
 
   function startSleep() {
     const now = new Date().toISOString();
-    setMemory((current) => ({ ...current, sleeping: true, sleepStartedAt: now, lastUpdated: now }));
+    setMemory((current) => ({
+      ...current,
+      sleeping: true,
+      sleepStartedAt: now,
+      sleepSessions: current.sleepSessions + 1,
+      lastUpdated: now,
+    }));
     setBehavior("asleep");
     setPosition({ x: -64, y: 34 });
     setLook({ x: 0, y: 0 });
@@ -366,7 +375,30 @@ export function NiumpiScene() {
     0,
   );
   const totalMeals = Object.values(memory.foods).reduce((sum, count) => sum + count, 0);
-  const carePoints = totalInteractions + totalMeals * 2;
+  const carePoints = totalInteractions + totalMeals * 2 + memory.sleepSessions * 2;
+  const careScores = {
+    playful: memory.interactions.tap,
+    restful: memory.sleepSessions * 2,
+    explorer: memory.interactions.leaf,
+    affection: memory.interactions.pet + memory.interactions.hold,
+  };
+  const scoreValues = Object.values(careScores);
+  const activeStyles = scoreValues.filter((score) => score > 0).length;
+  const highestCareScore = Math.max(...scoreValues);
+  const lowestActiveScore = Math.min(...scoreValues.filter((score) => score > 0));
+  const careStyle: CareStyle = carePoints < 5 || highestCareScore === 0
+    ? "growing"
+    : activeStyles >= 3 && highestCareScore - lowestActiveScore <= 2
+      ? "chaotic"
+      : (Object.entries(careScores).sort((a, b) => b[1] - a[1])[0][0] as CareStyle);
+  const careStyleDetails: Record<CareStyle, { name: string; note: string; symbol: string }> = {
+    growing: { name: "Still discovering", note: "Your care will shape the leaves", symbol: "◌" },
+    playful: { name: "Playful bond", note: "The leaves bounce with your energy", symbol: "✦" },
+    restful: { name: "Dreamy bond", note: "The leaves glow softly after rest", symbol: "☾" },
+    explorer: { name: "Curious bond", note: "Patterns grow from discovery", symbol: "⌁" },
+    affection: { name: "Tender bond", note: "The leaves lean toward a heart", symbol: "♡" },
+    chaotic: { name: "Wild-hearted bond", note: "Every leaf grows its own way", symbol: "≈" },
+  };
   const growthStage: 1 | 2 | 3 | 4 = carePoints >= 60 ? 4 : carePoints >= 30 ? 3 : carePoints >= 10 ? 2 : 1;
   const stageFloor = growthStage === 1 ? 0 : growthStage === 2 ? 10 : growthStage === 3 ? 30 : 60;
   const nextStageAt = growthStage === 1 ? 10 : growthStage === 2 ? 30 : growthStage === 3 ? 60 : 60;
@@ -428,6 +460,7 @@ export function NiumpiScene() {
         <RiggedNiumpi
           behavior={behavior}
           growthStage={growthStage}
+          careStyle={careStyle}
           isPressed={isPressed}
           position={position}
           look={look}
@@ -448,6 +481,10 @@ export function NiumpiScene() {
           </div>
           <div className="growth-track" aria-hidden="true"><span style={{ width: `${growthProgress}%` }} /></div>
           <span className="growth-next">{growthStage === 4 ? "Fully grown together" : `${nextStageAt - carePoints} care moments to grow`}</span>
+        </div>
+        <div className={`care-signature care-signature-${careStyle}`} aria-live="polite">
+          <span className="care-symbol" aria-hidden="true">{careStyleDetails[careStyle].symbol}</span>
+          <span><strong>{careStyleDetails[careStyle].name}</strong>{careStyleDetails[careStyle].note}</span>
         </div>
         <p className="hint">Tap, hold, pet, or touch the leaf</p>
         <div className="food-tray" aria-label="Food tray">
