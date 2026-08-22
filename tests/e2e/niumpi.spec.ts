@@ -3,14 +3,11 @@ import { expect, test, type Page } from "@playwright/test";
 const STORAGE_KEYS = ["niumpi-memory-v1", "niumpi-memory-v2"];
 
 async function openFreshGame(page: Page) {
-  await page.addInitScript((keys) => {
-    try {
-      for (const key of keys) window.localStorage.removeItem(key);
-    } catch {
-      // The script may also execute for an opaque initial document.
-    }
-  }, STORAGE_KEYS);
   await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.evaluate((keys) => {
+    for (const key of keys) window.localStorage.removeItem(key);
+  }, STORAGE_KEYS);
+  await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Pet Niumpi" })).toBeVisible();
 }
 
