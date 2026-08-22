@@ -33,10 +33,10 @@ test("loads the core care interface without browser errors", async ({ page }) =>
   expect(browserErrors).toEqual([]);
 });
 
-test("petting Niumpi updates and persists the shared memory", async ({ page }) => {
+test("a companion interaction updates and persists the shared memory", async ({ page }) => {
   await openFreshGame(page);
 
-  await page.getByRole("button", { name: "Pet Niumpi" }).click();
+  await page.getByRole("button", { name: "Touch Niumpi's leaf" }).click();
   await expect(page.locator(".memory-note")).toContainText("1 shared moments");
 
   await expect
@@ -44,7 +44,7 @@ test("petting Niumpi updates and persists the shared memory", async ({ page }) =
       page.evaluate(() => {
         const raw = window.localStorage.getItem("niumpi-memory-v2");
         if (!raw) return 0;
-        return JSON.parse(raw).interactions?.tap ?? 0;
+        return JSON.parse(raw).interactions?.leaf ?? 0;
       }),
     )
     .toBe(1);
