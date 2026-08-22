@@ -1,11 +1,16 @@
-type SoundKind = "tap" | "pet" | "hold" | "leaf" | "eat" | "sleep" | "wake";
+type SoundKind = "tap" | "pet" | "hold" | "leaf" | "eat" | "sleep" | "wake" | "blip" | "chime";
 
 let audioContext: AudioContext | null = null;
 
-function context() {
-  audioContext ??= new AudioContext();
-  if (audioContext.state === "suspended") void audioContext.resume();
-  return audioContext;
+/** Audio is a bonus, never a requirement: a blocked context must not break play. */
+function safeContext() {
+  try {
+    audioContext ??= new AudioContext();
+    if (audioContext.state === "suspended") void audioContext.resume();
+    return audioContext;
+  } catch {
+    return null;
+  }
 }
 
 function voice(
@@ -74,8 +79,19 @@ function wakeSound(audio: AudioContext, now: number) {
   voice(audio, now + 0.38, 0.4, 523, 698, 0.035, "triangle");
 }
 
+function blipSound(audio: AudioContext, now: number) {
+  voice(audio, now, 0.09, 620, 760, 0.035, "sine");
+}
+
+function chimeSound(audio: AudioContext, now: number) {
+  voice(audio, now, 0.32, 523, 587, 0.05, "sine");
+  voice(audio, now + 0.11, 0.34, 659, 784, 0.045, "sine");
+  voice(audio, now + 0.24, 0.46, 880, 1046, 0.03, "triangle");
+}
+
 export function playNiumpiSound(kind: SoundKind) {
-  const audio = context();
+  const audio = safeContext();
+  if (!audio) return;
   const now = audio.currentTime + 0.01;
   if (kind === "tap") tapSound(audio, now);
   if (kind === "pet") petSound(audio, now);
@@ -84,4 +100,6 @@ export function playNiumpiSound(kind: SoundKind) {
   if (kind === "eat") eatSound(audio, now);
   if (kind === "sleep") sleepSound(audio, now);
   if (kind === "wake") wakeSound(audio, now);
+  if (kind === "blip") blipSound(audio, now);
+  if (kind === "chime") chimeSound(audio, now);
 }

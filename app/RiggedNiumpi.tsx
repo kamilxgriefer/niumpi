@@ -11,6 +11,7 @@ type Props = {
   behavior: NiumpiBehavior;
   growthStage: 1 | 2 | 3 | 4;
   careStyle: CareStyle;
+  petName: string;
   isPressed: boolean;
   position: { x: number; y: number };
   look: { x: number; y: number };
@@ -24,6 +25,7 @@ export function RiggedNiumpi({
   behavior,
   growthStage,
   careStyle,
+  petName,
   isPressed,
   position,
   look,
@@ -92,7 +94,7 @@ export function RiggedNiumpi({
       className={`rig-root growth-stage-${growthStage} care-style-${careStyle} behavior-${behavior} ${isPressed ? "is-pressed" : ""} ${isBlinking ? "is-blinking" : ""}`}
       data-behavior={behavior}
     >
-      <button className="rig-leaf" type="button" aria-label="Touch Niumpi's leaf" onClick={onLeafTouch} />
+      <button className="rig-leaf" type="button" aria-label={`Touch ${petName}'s leaf`} onClick={onLeafTouch} />
       <span className="rig-leaf-extra rig-leaf-two" aria-hidden="true" />
       <span className="rig-leaf-extra rig-leaf-three" aria-hidden="true" />
       <span className="rig-leaf-extra rig-leaf-four" aria-hidden="true" />
@@ -105,7 +107,7 @@ export function RiggedNiumpi({
       <button
         className="rig-hitbox"
         type="button"
-        aria-label="Pet Niumpi"
+        aria-label={`Pet ${petName}`}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}

@@ -105,6 +105,11 @@ Dopiero po potwierdzeniu atrakcyjności rdzenia dodać karmienie, sen, pokój, e
 - Pierwszy system rozwoju relacji: gesty i karmienie tworzą punkty opieki, które prowadzą przez cztery etapy wzrostu.
 - Wygląd rozwija się zgodnie z kanonem: 1, 2, 3 i 5 listków oraz stopniowo wyrastające dwie rączki.
 - Niumpi rozpoznaje dominujący styl relacji: zabawowy, senny, odkrywczy, czuły albo „wild-hearted”; styl zmienia ruch, blask, kształt i wzory listków.
+- Onboarding „first meeting”: imię, hasło nastroju i charakter (`Energetic`, `Chill`, `Curious`) wybierane w trzech krokach; wracający gracz dostaje łagodniejszą wersję powitania.
+- Charakter zmienia wagi spontanicznych zachowań, ale nigdy nie nadpisuje sygnałów potrzeb.
+- Karta „My Buddy”: imię, hasło, status relacji, dzień ostatniej opieki i ulubiony gest; profil edytowalny bez utraty postępu.
+- Warstwa mikro-informacji zwrotnej: toasty przy kamieniach milowych, unoszące się iskierki przy każdym geście i puls paska więzi.
+- Klucz zapisu `niumpi-memory-v3` z automatyczną migracją z `v2` i `v1`.
 
 ## Ochrona zakresu
 

@@ -1,16 +1,35 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, PointerEvent } from "react";
+import { BuddyCard } from "./BuddyCard";
+import { Onboarding } from "./Onboarding";
 import { playNiumpiSound } from "./niumpiSounds";
 import { RiggedNiumpi } from "./RiggedNiumpi";
 import type { CareStyle, NiumpiBehavior } from "./RiggedNiumpi";
+import {
+  DEFAULT_IDENTITY,
+  isFirstCareToday,
+  lastCareLabel,
+  relationshipFor,
+  startOfDay,
+  sanitizeName,
+  sanitizeTagline,
+  vibeBehaviors,
+  vibeOrder,
+  vibes,
+} from "./identity";
+import type { PetIdentity, Relationship } from "./identity";
 
 type Gesture = "tap" | "pet" | "hold" | "leaf";
 type Need = "fullness" | "energy" | "joy";
 type FoodId = "moonberry" | "cloudpuff" | "dewdrop";
 type DayPeriod = "day" | "evening" | "night";
+type SoundCue = Parameters<typeof playNiumpiSound>[0];
+type Toast = { id: number; text: string; icon: string };
+type Spark = { id: number; symbol: string; offset: number; delay: number };
 type PetMemory = {
+  identity: PetIdentity;
   bond: number;
   interactions: Record<Gesture, number>;
   needs: Record<Need, number>;
@@ -23,8 +42,10 @@ type PetMemory = {
   sleepSessions: number;
 };
 
-const STORAGE_KEY = "niumpi-memory-v2";
+const STORAGE_KEY = "niumpi-memory-v3";
+const LEGACY_STORAGE_KEYS = ["niumpi-memory-v2", "niumpi-memory-v1"];
 const DEFAULT_MEMORY: PetMemory = {
+  identity: DEFAULT_IDENTITY,
   bond: 32,
   interactions: { tap: 0, pet: 0, hold: 0, leaf: 0 },
   needs: { fullness: 72, energy: 80, joy: 75 },
@@ -50,6 +71,12 @@ const gestureLabels: Record<Gesture, string> = {
   hold: "cuddling",
   leaf: "leaf touches",
 };
+const gestureSparks: Record<Gesture, string> = {
+  tap: "✦",
+  pet: "♡",
+  hold: "♡",
+  leaf: "✧",
+};
 
 const spontaneousBehaviors: NiumpiBehavior[] = [
   "wander", "wander", "float", "float", "spin", "curious", "curious", "happy", "sleepy",
@@ -63,9 +90,51 @@ const behaviorMessages: Partial<Record<NiumpiBehavior, string>> = {
   sleepy: "Just resting my eyes…",
 };
 
+const careStyleDetails: Record<CareStyle, { name: string; note: string; symbol: string }> = {
+  growing: { name: "Still discovering", note: "Your care will shape the leaves", symbol: "◌" },
+  playful: { name: "Playful bond", note: "The leaves bounce with your energy", symbol: "✦" },
+  restful: { name: "Dreamy bond", note: "The leaves glow softly after rest", symbol: "☾" },
+  explorer: { name: "Curious bond", note: "Patterns grow from discovery", symbol: "⌁" },
+  affection: { name: "Tender bond", note: "The leaves lean toward a heart", symbol: "♡" },
+  chaotic: { name: "Wild-hearted bond", note: "Every leaf grows its own way", symbol: "≈" },
+};
+const growthNames = ["", "Tiny seed", "Brave sprout", "Little explorer", "True companion"];
+const TOAST_LIFE = 2600;
+const SPARK_LIFE = 1500;
+
+/** Pointer capture keeps a gesture alive off-target; losing it must not stop the gesture. */
+function capturePointer(event: PointerEvent<HTMLButtonElement>) {
+  try {
+    event.currentTarget.setPointerCapture(event.pointerId);
+  } catch {
+    // Some browsers reject capture mid-gesture — the gesture still works without it.
+  }
+}
+
+function readIdentity(saved: Partial<PetIdentity> | undefined): PetIdentity {
+  if (!saved) return DEFAULT_IDENTITY;
+  const name = sanitizeName(saved.name ?? "").trim();
+  const tagline = sanitizeTagline(saved.tagline ?? "").trim();
+  return {
+    name: name || DEFAULT_IDENTITY.name,
+    tagline: tagline || DEFAULT_IDENTITY.tagline,
+    vibe: saved.vibe && vibeOrder.includes(saved.vibe) ? saved.vibe : DEFAULT_IDENTITY.vibe,
+    bornAt: saved.bornAt ?? "",
+    onboarded: saved.onboarded ?? false,
+  };
+}
+
+function readStoredMemory(): string | null {
+  for (const key of [STORAGE_KEY, ...LEGACY_STORAGE_KEYS]) {
+    const saved = window.localStorage.getItem(key);
+    if (saved) return saved;
+  }
+  return null;
+}
+
 function readMemory(): PetMemory {
   try {
-    const saved = window.localStorage.getItem(STORAGE_KEY) ?? window.localStorage.getItem("niumpi-memory-v1");
+    const saved = readStoredMemory();
     if (!saved) return { ...DEFAULT_MEMORY, lastUpdated: new Date().toISOString() };
     const parsed = JSON.parse(saved) as Partial<PetMemory>;
     const lastUpdated = parsed.lastUpdated || parsed.lastVisit;
@@ -75,6 +144,7 @@ function readMemory(): PetMemory {
     const savedNeeds = { ...DEFAULT_MEMORY.needs, ...parsed.needs };
     const sleeping = parsed.sleeping ?? false;
     return {
+      identity: readIdentity(parsed.identity),
       bond: Math.max(0, Math.min(100, parsed.bond ?? DEFAULT_MEMORY.bond)),
       interactions: { ...DEFAULT_MEMORY.interactions, ...parsed.interactions },
       needs: {
@@ -108,8 +178,17 @@ export function NiumpiScene() {
   const [look, setLook] = useState({ x: 0, y: 0 });
   const [draggingFood, setDraggingFood] = useState<{ food: FoodId; x: number; y: number } | null>(null);
   const [dayPeriod, setDayPeriod] = useState<DayPeriod>("day");
+  const [todayStamp, setTodayStamp] = useState(0);
+  const [isEditingIdentity, setIsEditingIdentity] = useState(false);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const [sparks, setSparks] = useState<Spark[]>([]);
+  const [bondPulse, setBondPulse] = useState(false);
   const roomRef = useRef<HTMLElement>(null);
   const draggingFoodRef = useRef<FoodId | null>(null);
+  const feedbackId = useRef(0);
+  const bondPulseTimer = useRef<number | undefined>(undefined);
+  const feedbackTimers = useRef<number[]>([]);
+  const milestone = useRef<{ stage: number; style: CareStyle; bond: Relationship["key"] } | null>(null);
   const pointer = useRef<{
     startedAt: number;
     lastX: number;
@@ -117,13 +196,82 @@ export function NiumpiScene() {
     distance: number;
   } | null>(null);
 
+  const identity = memory.identity;
+
+  const playCue = useCallback(
+    (cue: SoundCue) => {
+      if (soundEnabled) playNiumpiSound(cue);
+    },
+    [soundEnabled],
+  );
+
+  /** Fire-and-forget cleanup that survives unmount and never grows the timer list. */
+  const scheduleCleanup = useCallback((run: () => void, delay: number) => {
+    const timer = window.setTimeout(() => {
+      feedbackTimers.current = feedbackTimers.current.filter((pending) => pending !== timer);
+      run();
+    }, delay);
+    feedbackTimers.current.push(timer);
+  }, []);
+
+  const pushToast = useCallback(
+    (text: string, icon: string) => {
+      feedbackId.current += 1;
+      const id = feedbackId.current;
+      setToasts((current) => [...current, { id, text, icon }].slice(-3));
+      scheduleCleanup(() => setToasts((current) => current.filter((toast) => toast.id !== id)), TOAST_LIFE);
+    },
+    [scheduleCleanup],
+  );
+
+  const burstSparks = useCallback(
+    (symbol: string) => {
+      const created = [0, 1, 2].map((index) => {
+        feedbackId.current += 1;
+        return {
+          id: feedbackId.current,
+          symbol,
+          offset: Math.round(Math.random() * 84 - 42),
+          delay: index * 110,
+        };
+      });
+      setSparks((current) => [...current, ...created].slice(-12));
+      const born = new Set(created.map((spark) => spark.id));
+      scheduleCleanup(() => setSparks((current) => current.filter((spark) => !born.has(spark.id))), SPARK_LIFE);
+    },
+    [scheduleCleanup],
+  );
+
+  const pulseBond = useCallback(() => {
+    setBondPulse(true);
+    window.clearTimeout(bondPulseTimer.current);
+    bondPulseTimer.current = window.setTimeout(() => setBondPulse(false), 760);
+  }, []);
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(bondPulseTimer.current);
+      feedbackTimers.current.forEach((timer) => window.clearTimeout(timer));
+      feedbackTimers.current = [];
+    },
+    [],
+  );
+
   useEffect(() => {
     const loadMemory = window.setTimeout(() => {
       const saved = readMemory();
       setMemory(saved);
       setBehavior(saved.sleeping ? "asleep" : "idle");
       if (saved.sleeping) setPosition({ x: -64, y: 34 });
-      setMessage(saved.sleeping ? "Zzz…" : saved.lastVisit ? "Nium! You came back!" : "Touch me");
+      setMessage(
+        saved.sleeping
+          ? "Zzz…"
+          : saved.identity.onboarded
+            ? saved.lastVisit
+              ? `Nium! You came back!`
+              : vibes[saved.identity.vibe].greeting
+            : "…nium?",
+      );
       setIsLoaded(true);
     }, 0);
     return () => window.clearTimeout(loadMemory);
@@ -131,8 +279,10 @@ export function NiumpiScene() {
 
   useEffect(() => {
     function updateDayPeriod() {
-      const hour = new Date().getHours();
+      const now = new Date();
+      const hour = now.getHours();
       setDayPeriod(hour >= 7 && hour < 17 ? "day" : hour >= 17 && hour < 21 ? "evening" : "night");
+      setTodayStamp(startOfDay(now.getTime()));
     }
     const updateClock = window.setTimeout(updateDayPeriod, 0);
     const clock = window.setInterval(updateDayPeriod, 60_000);
@@ -179,7 +329,10 @@ export function NiumpiScene() {
       let available = spontaneousBehaviors;
       if (memory.needs.energy < 38) available = ["sleepy", "sleepy", "curious", "wander"];
       else if (memory.needs.fullness < 38) available = ["curious", "curious", "sleepy", "wander"];
-      else if (memory.needs.joy > 78) available = [...available, "happy", "happy", "spin"];
+      else {
+        available = [...available, ...vibeBehaviors[identity.vibe]];
+        if (memory.needs.joy > 78) available = [...available, "happy", "happy", "spin"];
+      }
       const next = available[Math.floor(Math.random() * available.length)];
       setBehavior(next);
       if (next === "wander") {
@@ -193,7 +346,7 @@ export function NiumpiScene() {
     }, 900 + Math.random() * 1500);
 
     return () => window.clearTimeout(beginBehavior);
-  }, [behavior, isPressed, memory.needs.energy, memory.needs.fullness, memory.needs.joy, memory.sleeping]);
+  }, [behavior, identity.vibe, isPressed, memory.needs.energy, memory.needs.fullness, memory.needs.joy, memory.sleeping]);
 
   function startSleep() {
     const now = new Date().toISOString();
@@ -208,7 +361,7 @@ export function NiumpiScene() {
     setPosition({ x: -64, y: 34 });
     setLook({ x: 0, y: 0 });
     setMessage("Nium… good night.");
-    if (soundEnabled) playNiumpiSound("sleep");
+    playCue("sleep");
   }
 
   function wakeUp() {
@@ -221,7 +374,7 @@ export function NiumpiScene() {
     setBehavior("happy");
     setPosition({ x: 0, y: 0 });
     setMessage("Good morning—nium!");
-    if (soundEnabled) playNiumpiSound("wake");
+    playCue("wake");
   }
 
   function toggleLamp() {
@@ -232,7 +385,25 @@ export function NiumpiScene() {
     }));
   }
 
+  function saveIdentity(next: PetIdentity) {
+    const isFirstMeeting = !identity.onboarded;
+    setMemory((current) => ({
+      ...current,
+      identity: next,
+      lastUpdated: new Date().toISOString(),
+    }));
+    setIsEditingIdentity(false);
+    setBehavior("happy");
+    setMessage(isFirstMeeting ? vibes[next.vibe].greeting : `Still me — just ${next.name}!`);
+    pushToast(isFirstMeeting ? `Say hello to ${next.name}` : "Profile saved", vibes[next.vibe].symbol);
+    burstSparks("✦");
+  }
+
   function remember(gesture: Gesture, bondGain: number) {
+    const now = new Date();
+    if (isFirstCareToday(memory.lastVisit, now.getTime())) {
+      pushToast(`First moment with ${identity.name} today`, "☀");
+    }
     setMemory((current) => ({
       ...current,
       bond: Math.min(100, current.bond + bondGain),
@@ -241,9 +412,11 @@ export function NiumpiScene() {
         [gesture]: current.interactions[gesture] + 1,
       },
       needs: { ...current.needs, joy: Math.min(100, current.needs.joy + (gesture === "pet" ? 5 : 2)) },
-      lastVisit: new Date().toISOString(),
-      lastUpdated: new Date().toISOString(),
+      lastVisit: now.toISOString(),
+      lastUpdated: now.toISOString(),
     }));
+    burstSparks(gestureSparks[gesture]);
+    pulseBond();
   }
 
   function beginTouch(event: PointerEvent<HTMLButtonElement>) {
@@ -251,7 +424,7 @@ export function NiumpiScene() {
       wakeUp();
       return;
     }
-    event.currentTarget.setPointerCapture(event.pointerId);
+    capturePointer(event);
     pointer.current = {
       startedAt: performance.now(),
       lastX: event.clientX,
@@ -283,15 +456,15 @@ export function NiumpiScene() {
     if (distance > 28) {
       remember("pet", 8);
       setMessage("I love when you pet me!");
-      if (soundEnabled) playNiumpiSound("pet");
+      playCue("pet");
     } else if (duration >= 650) {
       remember("hold", 7);
       setMessage("Can we stay like this?");
-      if (soundEnabled) playNiumpiSound("hold");
+      playCue("hold");
     } else {
       remember("tap", 4);
       setMessage(tapReactions[Math.floor(Math.random() * tapReactions.length)]);
-      if (soundEnabled) playNiumpiSound("tap");
+      playCue("tap");
     }
     pointer.current = null;
   }
@@ -303,7 +476,7 @@ export function NiumpiScene() {
     }
     remember("leaf", 5);
     setMessage("Ting! My leaf can feel you!");
-    if (soundEnabled) playNiumpiSound("leaf");
+    playCue("leaf");
   }
 
   function followPointer(event: PointerEvent<HTMLElement>) {
@@ -316,7 +489,7 @@ export function NiumpiScene() {
   }
 
   function beginFoodDrag(event: PointerEvent<HTMLButtonElement>, food: FoodId) {
-    event.currentTarget.setPointerCapture(event.pointerId);
+    capturePointer(event);
     draggingFoodRef.current = food;
     setDraggingFood({ food, x: event.clientX, y: event.clientY });
     setBehavior("curious");
@@ -365,7 +538,8 @@ export function NiumpiScene() {
     setBehavior("happy");
     setLook({ x: 0, y: 0 });
     setMessage(`Nium! ${meal.name} is delicious!`);
-    if (soundEnabled) playNiumpiSound("eat");
+    burstSparks("✧");
+    playCue("eat");
   }
 
   const favorite = (Object.entries(memory.interactions) as [Gesture, number][])
@@ -391,19 +565,29 @@ export function NiumpiScene() {
     : activeStyles >= 3 && highestCareScore - lowestActiveScore <= 2
       ? "chaotic"
       : (Object.entries(careScores).sort((a, b) => b[1] - a[1])[0][0] as CareStyle);
-  const careStyleDetails: Record<CareStyle, { name: string; note: string; symbol: string }> = {
-    growing: { name: "Still discovering", note: "Your care will shape the leaves", symbol: "◌" },
-    playful: { name: "Playful bond", note: "The leaves bounce with your energy", symbol: "✦" },
-    restful: { name: "Dreamy bond", note: "The leaves glow softly after rest", symbol: "☾" },
-    explorer: { name: "Curious bond", note: "Patterns grow from discovery", symbol: "⌁" },
-    affection: { name: "Tender bond", note: "The leaves lean toward a heart", symbol: "♡" },
-    chaotic: { name: "Wild-hearted bond", note: "Every leaf grows its own way", symbol: "≈" },
-  };
   const growthStage: 1 | 2 | 3 | 4 = carePoints >= 60 ? 4 : carePoints >= 30 ? 3 : carePoints >= 10 ? 2 : 1;
   const stageFloor = growthStage === 1 ? 0 : growthStage === 2 ? 10 : growthStage === 3 ? 30 : 60;
   const nextStageAt = growthStage === 1 ? 10 : growthStage === 2 ? 30 : growthStage === 3 ? 60 : 60;
   const growthProgress = growthStage === 4 ? 100 : ((carePoints - stageFloor) / (nextStageAt - stageFloor)) * 100;
-  const growthNames = ["", "Tiny seed", "Brave sprout", "Little explorer", "True companion"];
+  const relationship = relationshipFor(memory.bond, totalInteractions);
+  const showOnboarding = isLoaded && (!identity.onboarded || isEditingIdentity);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    const previous = milestone.current;
+    milestone.current = { stage: growthStage, style: careStyle, bond: relationship.key };
+    if (!previous) return;
+    if (growthStage > previous.stage) {
+      pushToast(`${identity.name} grew — ${growthNames[growthStage]}`, "✦");
+      playCue("chime");
+    } else if (relationship.key !== previous.bond) {
+      pushToast(relationship.name, relationship.symbol);
+      playCue("chime");
+    } else if (careStyle !== previous.style) {
+      pushToast(careStyleDetails[careStyle].name, careStyleDetails[careStyle].symbol);
+      playCue("chime");
+    }
+  }, [careStyle, growthStage, identity.name, isLoaded, playCue, pushToast, relationship]);
 
   return (
     <main className="game-shell">
@@ -421,7 +605,10 @@ export function NiumpiScene() {
           >
             Sound {soundEnabled ? "on" : "off"}
           </button>
-          <div className="bond" aria-label={`Bond ${memory.bond} percent`}>
+          <div
+            className={`bond ${bondPulse ? "is-gaining" : ""}`}
+            aria-label={`Bond ${Math.round(memory.bond)} percent`}
+          >
             <span>Bond</span>
             <div className="bond-track">
               <div className="bond-fill" style={{ width: `${memory.bond}%` }} />
@@ -433,7 +620,7 @@ export function NiumpiScene() {
       <section
         ref={roomRef}
         className={`pet-room room-${dayPeriod} ${memory.lampOn ? "lamp-on" : ""} ${memory.sleeping ? "is-sleeping" : ""}`}
-        aria-label="Niumpi's room"
+        aria-label={`${identity.name}'s room`}
         onPointerMove={followPointer}
       >
         <div className="room-window" aria-hidden="true">
@@ -445,7 +632,7 @@ export function NiumpiScene() {
         <div className="sleep-nest" aria-hidden="true" />
         <p className="speech" aria-live="polite">{message}</p>
 
-        <div className="needs-panel" aria-label="Niumpi's needs">
+        <div className="needs-panel" aria-label={`${identity.name}'s needs`}>
           {(Object.entries(memory.needs) as [Need, number][]).map(([need, value]) => (
             <div className={`need need-${need}`} key={need}>
               <span className="need-label">
@@ -461,6 +648,7 @@ export function NiumpiScene() {
           behavior={behavior}
           growthStage={growthStage}
           careStyle={careStyle}
+          petName={identity.name}
           isPressed={isPressed}
           position={position}
           look={look}
@@ -470,10 +658,34 @@ export function NiumpiScene() {
           onPointerUp={endTouch}
         />
 
-        <div className="memory-note" aria-live="polite">
-          <span><b aria-hidden="true">✦</b>{totalInteractions} shared moments</span>
-          <span><b aria-hidden="true">♡</b>{totalInteractions ? `Favorite: ${gestureLabels[favorite[0]]}` : "Still learning about you"}</span>
+        <div
+          className="spark-layer"
+          style={{ "--pet-x": `${position.x}px` } as CSSProperties}
+          aria-hidden="true"
+        >
+          {sparks.map((spark) => (
+            <span
+              className="love-spark"
+              key={spark.id}
+              style={{ "--spark-x": `${spark.offset}px`, "--spark-delay": `${spark.delay}ms` } as CSSProperties}
+            >
+              {spark.symbol}
+            </span>
+          ))}
         </div>
+
+        <BuddyCard
+          identity={identity}
+          relationship={relationship}
+          lastCare={lastCareLabel(memory.lastVisit, todayStamp)}
+          sharedMoments={totalInteractions}
+          favorite={totalInteractions ? gestureLabels[favorite[0]] : null}
+          onEdit={() => {
+            playCue("blip");
+            setIsEditingIdentity(true);
+          }}
+        />
+
         <div className="growth-card" aria-label={`Growth stage ${growthStage}: ${growthNames[growthStage]}`}>
           <div className="growth-copy">
             <span>Stage {growthStage}</span>
@@ -488,14 +700,14 @@ export function NiumpiScene() {
         </div>
         <p className="hint">Tap, hold, pet, or touch the leaf</p>
         <div className="food-tray" aria-label="Food tray">
-          <p className="tray-label">Snack bar <span>Drag a treat to Niumpi</span></p>
+          <p className="tray-label">Snack bar <span>Drag a treat to {identity.name}</span></p>
           {(Object.entries(foods) as [FoodId, (typeof foods)[FoodId]][]).map(([food, details]) => (
             <button
               className="food-button"
               type="button"
               key={food}
               disabled={memory.sleeping}
-              aria-label={`Drag ${details.name} to Niumpi`}
+              aria-label={`Drag ${details.name} to ${identity.name}`}
               onPointerDown={(event) => beginFoodDrag(event, food)}
               onPointerMove={moveFoodDrag}
               onPointerUp={endFoodDrag}
@@ -522,6 +734,26 @@ export function NiumpiScene() {
           />
         )}
       </section>
+
+      <div className="toast-stack" aria-live="polite">
+        {toasts.map((toast) => (
+          <p className="toast" key={toast.id}>
+            <span className="toast-icon" aria-hidden="true">{toast.icon}</span>
+            {toast.text}
+          </p>
+        ))}
+      </div>
+
+      {showOnboarding && (
+        <Onboarding
+          mode={identity.onboarded ? "edit" : "create"}
+          returning={totalInteractions + totalMeals > 0}
+          identity={identity}
+          onSave={saveIdentity}
+          onCancel={() => setIsEditingIdentity(false)}
+          onCue={(kind) => playCue(kind === "done" ? "chime" : "blip")}
+        />
+      )}
     </main>
   );
 }
