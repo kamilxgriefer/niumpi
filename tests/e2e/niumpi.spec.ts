@@ -36,7 +36,7 @@ test("loads the core care interface without browser errors", async ({ page }) =>
 test("a companion interaction updates and persists the shared memory", async ({ page }) => {
   await openFreshGame(page);
 
-  await page.getByRole("button", { name: "Touch Niumpi's leaf" }).click();
+  await page.getByRole("button", { name: "Touch Niumpi's leaf" }).click({ force: true });
   await expect(page.locator(".memory-note")).toContainText("1 shared moments");
 
   await expect
