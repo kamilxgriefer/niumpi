@@ -12,7 +12,7 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit && npm run test:e2e",
-    "test:unit": "npm run build && node --test tests/*.test.mjs tests/*.test.mts",
+    "test:unit": "npm run build && node --experimental-strip-types --test tests/*.test.mjs tests/*.test.mts",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
