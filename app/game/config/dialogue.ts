@@ -1,0 +1,107 @@
+/**
+ * Sixty-plus lines with conditions attached. The reaction engine scores every
+ * line and keeps a short history so the same one cannot repeat immediately.
+ */
+import type { DayPart, MoodId, RouteId, WeatherId } from "../types.ts";
+
+export type DialogueLine = {
+  id: string;
+  text: string;
+  mood?: MoodId[];
+  dayPart?: DayPart[];
+  weather?: WeatherId[];
+  route?: RouteId[];
+  trait?: string;
+  /** Stat gates, checked as "value below" / "value above". */
+  below?: Partial<Record<"fullness" | "energy" | "joy" | "bond", number>>;
+  above?: Partial<Record<"fullness" | "energy" | "joy" | "bond", number>>;
+  /** Uses the player's stored Memory Seed answer for this question. */
+  seed?: string;
+  weight?: number;
+};
+
+export const dialogue: DialogueLine[] = [
+  { id: "greet-1", text: "You're here! I was waiting for you!", mood: ["excited", "happy"], weight: 3 },
+  { id: "greet-2", text: "Nium! I knew you'd come back.", mood: ["happy"], weight: 2 },
+  { id: "greet-3", text: "Oh — hello. I was just thinking about you.", mood: ["curious"] },
+  { id: "rain-1", text: "The rain sounds cozy today.", weather: ["rainy"], weight: 3 },
+  { id: "rain-2", text: "Every drop lands in a slightly different place.", weather: ["rainy"] },
+  { id: "rain-3", text: "You said you love rainy days. Look!", weather: ["rainy"], seed: "weather", weight: 4 },
+  { id: "storm-1", text: "The window is shaking a little. I like it.", weather: ["storm"] },
+  { id: "storm-2", text: "Big weather! Should we watch it together?", weather: ["storm"], weight: 2 },
+  { id: "sun-1", text: "The floor is warm right there.", weather: ["sunny"], dayPart: ["day"] },
+  { id: "sun-2", text: "I found the exact best patch of light.", weather: ["sunny"] },
+  { id: "cloud-1", text: "Do you think clouds have dreams?", weather: ["cloudy"], weight: 2 },
+  { id: "cloud-2", text: "That one looks like a very slow fish.", weather: ["cloudy"] },
+  { id: "star-1", text: "Something is falling out of the sky. Quietly.", weather: ["starfall"], weight: 3 },
+  { id: "star-2", text: "I counted eleven. Then I lost count.", weather: ["starfall"] },
+  { id: "hungry-1", text: "I could use a little snack.", below: { fullness: 40 }, weight: 3 },
+  { id: "hungry-2", text: "My tummy is making a small opinion.", below: { fullness: 30 }, weight: 3 },
+  { id: "hungry-3", text: "Is it snack o'clock? It might be snack o'clock.", below: { fullness: 50 } },
+  { id: "tired-1", text: "My eyes keep closing on their own.", below: { energy: 35 }, weight: 3 },
+  { id: "tired-2", text: "Maybe a very short rest. A tiny one.", below: { energy: 45 } },
+  { id: "sad-1", text: "Could you stay a moment longer?", below: { joy: 35 }, weight: 3 },
+  { id: "sad-2", text: "I'm okay. I'd just like some company.", below: { joy: 40 } },
+  { id: "happy-1", text: "Today is a very good day, I think.", above: { joy: 80 }, weight: 2 },
+  { id: "happy-2", text: "I remembered that I like you. Again!", above: { joy: 75 } },
+  { id: "happy-3", text: "Everything is exactly the right size right now.", above: { joy: 85 } },
+  { id: "morning-1", text: "The light came back! It always does.", dayPart: ["morning"], weight: 2 },
+  { id: "morning-2", text: "I have plans today. I forgot them. New plans!", dayPart: ["morning"] },
+  { id: "day-1", text: "Something is glowing near the window.", dayPart: ["day"] },
+  { id: "day-2", text: "The whole room smells like afternoon.", dayPart: ["day"] },
+  { id: "sunset-1", text: "The sky is doing that colour again.", dayPart: ["sunset"], weight: 2 },
+  { id: "sunset-2", text: "This is my favourite part of the day.", dayPart: ["sunset"] },
+  { id: "night-1", text: "Everything is quieter now. Even me.", dayPart: ["night"], weight: 2 },
+  { id: "night-2", text: "The stars are out. Should we look?", dayPart: ["night"], weight: 2 },
+  { id: "night-3", text: "You stay up late too. I noticed.", dayPart: ["night"], seed: "time" },
+  { id: "curious-1", text: "Hmm… what are you doing?", mood: ["curious"], weight: 2 },
+  { id: "curious-2", text: "Wait. What was that sound?", mood: ["curious"] },
+  { id: "curious-3", text: "If I stand here, can I see further?", mood: ["curious"] },
+  { id: "excited-1", text: "Wheee — nium!", mood: ["excited"], weight: 2 },
+  { id: "excited-2", text: "Again! Again! One more!", mood: ["excited"] },
+  { id: "dream-1", text: "I went somewhere last night. It had doors.", mood: ["dreaming"], weight: 2 },
+  { id: "dream-2", text: "In the dream I was slightly taller.", mood: ["dreaming"] },
+  { id: "upset-1", text: "I'm not upset. I'm just… smaller today.", mood: ["upset"] },
+  { id: "bond-1", text: "You always come back. I like that about you.", above: { bond: 60 }, weight: 2 },
+  { id: "bond-2", text: "I made this feeling for you. It doesn't have a name.", above: { bond: 80 }, weight: 2 },
+  { id: "bond-3", text: "Best friends do this, right? This exact thing?", above: { bond: 70 } },
+  { id: "moonveil-1", text: "The moon knows my name now.", route: ["moonveil"], weight: 2 },
+  { id: "moonveil-2", text: "Quiet is a kind of music.", route: ["moonveil"] },
+  { id: "bloomheart-1", text: "Something is flowering. I think it's me.", route: ["bloomheart"], weight: 2 },
+  { id: "bloomheart-2", text: "I saved the best petal for you.", route: ["bloomheart"] },
+  { id: "sparkleap-1", text: "I could win. I could definitely win.", route: ["sparkleap"], weight: 2 },
+  { id: "sparkleap-2", text: "Race you to the rug!", route: ["sparkleap"] },
+  { id: "mistwander-1", text: "There's a door under the mushroom. I checked.", route: ["mistwander"], weight: 2 },
+  { id: "mistwander-2", text: "The map is wrong. That's the interesting part.", route: ["mistwander"] },
+  { id: "prismatic-1", text: "I can hold every colour at once now.", route: ["prismatic"], weight: 3 },
+  { id: "trait-storm", text: "Rain again! Our kind of weather.", trait: "storm-lover", weight: 3 },
+  { id: "trait-foodie", text: "I have ranked all the snacks. It took a while.", trait: "foodie", weight: 2 },
+  { id: "trait-music", text: "Listen — I made up a song. It's mostly one note.", trait: "music-fan", weight: 2 },
+  { id: "trait-night", text: "Nights are better. No arguments.", trait: "night-owl", weight: 2 },
+  { id: "trait-collector", text: "Don't move anything. I know where it all is.", trait: "collector" },
+  { id: "trait-garden", text: "I watered them. Twice. Possibly three times.", trait: "garden-helper" },
+  { id: "trait-star", text: "One more star than yesterday. I'm sure of it.", trait: "star-gazer", weight: 2 },
+  { id: "idle-1", text: "What if the floor is optional?", weight: 1 },
+  { id: "idle-2", text: "I've been practising standing very still.", weight: 1 },
+  { id: "idle-3", text: "Do you ever think about doors?", weight: 1 },
+  { id: "idle-4", text: "I am approximately this happy.", weight: 1 },
+  { id: "idle-5", text: "Nium nium.", weight: 1 },
+  { id: "idle-6", text: "That shelf has a secret. Probably.", weight: 1 },
+  { id: "idle-7", text: "I'd like to hear about your day.", weight: 1 },
+];
+
+/** Short reactions attached to a specific gesture, picked by mood. */
+export const gestureLines: Record<string, string[]> = {
+  pet: ["I love when you pet me!", "Right there. Exactly there.", "Niuuum…", "This is the correct amount of nice."],
+  hug: ["Can we stay like this?", "You're warm.", "Squeezing back!", "This counts as a whole conversation."],
+  tickle: ["Nium — hey!", "That's cheating!", "Hee — stop! Don't stop!", "My sides have opinions."],
+  brush: ["Very tidy. Very serious.", "I look extremely professional now.", "Careful of the leaf!"],
+  leaf: ["Ting! My leaf can feel you!", "The leaf says hello.", "It hums when you do that."],
+  dance: ["Watch this bit!", "One two — nium!", "I invented this move.", "Faster? Faster."],
+  comfort: ["Okay. Okay. I'm okay.", "Thank you for staying.", "That helped. A lot."],
+  sing: ["Nium… niuuum…", "Was that in tune? Be honest.", "Sing the low part!"],
+  toy: ["This is my favourite. Today.", "It squeaks if you believe hard enough.", "Mine now!"],
+  wake: ["Mmh…? Oh! Hello!", "Five more — no, I'm up.", "Good morning — nium!"],
+};
+
+export const seedRecallIntro = "Niumpi remembers that";

@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { NiumpiScene } from "./NiumpiScene";
+import { GameProvider } from "./ui/GameProvider";
+import { GameShell } from "./ui/GameShell";
+import { copy } from "./game/config/copy";
 
 export const metadata: Metadata = {
-  title: "Niumpi — pierwszy kontakt",
-  description: "The first playable prototype of the Niumpi virtual pet.",
+  title: `${copy.brand.name} — ${copy.brand.tagline}`,
+  description: copy.brand.promise,
 };
 
 export default function Home() {
-  return <NiumpiScene />;
+  return (
+    <GameProvider>
+      <GameShell />
+    </GameProvider>
+  );
 }
