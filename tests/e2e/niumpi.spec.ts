@@ -9,6 +9,9 @@ async function openFreshGame(page: Page) {
   }, STORAGE_KEYS);
   await page.reload({ waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Pet Niumpi" })).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => window.localStorage.getItem("niumpi-memory-v2") !== null))
+    .toBe(true);
 }
 
 test("loads the core care interface without browser errors", async ({ page }) => {
