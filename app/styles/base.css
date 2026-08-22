@@ -30,7 +30,9 @@ img { max-width: 100%; }
 }
 
 /* ---------------------------------------------------- cosmic background --- */
-.cosmic { position: fixed; z-index: 0; inset: 0; overflow: hidden; pointer-events: none; }
+/* Behind everything. As a positioned element at z-index 0 it painted OVER all
+   static in-flow scene content, which hid most of the interface. */
+.cosmic { position: fixed; z-index: -1; inset: 0; overflow: hidden; pointer-events: none; }
 .cosmic-base {
   position: absolute; inset: 0;
   background:
@@ -61,13 +63,26 @@ img { max-width: 100%; }
 .shell {
   position: relative; z-index: 1;
   display: grid;
-  grid-template-columns: var(--rail-w) minmax(0, 1fr);
-  gap: var(--shell-pad);
+  grid-template-columns: var(--rail-w) minmax(0, var(--content-max));
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "rail topbar" "rail main";
+  justify-content: center;
+  align-content: start;
+  gap: 0 var(--shell-pad);
   min-height: 100dvh;
   padding: var(--shell-pad);
 }
-.shell.is-onboarding { grid-template-columns: minmax(0, 1fr); }
-.shell-body { min-width: 0; }
+.shell.is-onboarding {
+  grid-template-columns: minmax(0, var(--content-max));
+  grid-template-areas: "topbar" "main";
+}
+.shell-topbar {
+  grid-area: topbar;
+  display: flex; align-items: center; justify-content: flex-end;
+  min-height: var(--topbar-h);
+  min-width: 0;
+}
+.shell-body { grid-area: main; position: relative; z-index: 1; min-width: 0; }
 .scene-host { display: block; min-width: 0; }
 
 .boot, .scene-loading {
@@ -85,8 +100,12 @@ img { max-width: 100%; }
 
 /* ------------------------------------------------------------ side rail --- */
 .rail {
+  grid-area: rail;
   position: sticky; top: var(--shell-pad);
   align-self: start;
+  max-height: calc(100dvh - var(--shell-pad) * 2);
+  overflow-y: auto; overscroll-behavior: contain;
+  scrollbar-width: none;
   padding: var(--s-4) var(--s-2);
   background: var(--glass);
   border: 1px solid var(--glass-line);
@@ -94,6 +113,7 @@ img { max-width: 100%; }
   box-shadow: var(--shadow-md), var(--inner-top);
   backdrop-filter: blur(18px);
 }
+.rail::-webkit-scrollbar { display: none; }
 .rail-list { display: grid; gap: var(--s-2); }
 .rail-tab {
   display: grid; justify-items: center; gap: 5px;
@@ -126,10 +146,15 @@ img { max-width: 100%; }
 .bottom-nav { display: none; }
 
 /* ------------------------------------------------------------- status ----- */
-.shell-status {
-  position: fixed; z-index: 60; left: 50%; bottom: calc(12px + env(safe-area-inset-bottom));
-  display: flex; gap: var(--s-2); translate: -50% 0; pointer-events: none;
+.shell-overlay {
+  position: fixed; z-index: 60; left: 50%; bottom: calc(14px + env(safe-area-inset-bottom));
+  display: grid; justify-items: center; gap: var(--s-2);
+  width: min(560px, calc(100vw - 32px));
+  translate: -50% 0;
+  pointer-events: none;
 }
+.shell-overlay > * { pointer-events: auto; }
+.shell-status { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--s-2); }
 .status-pill {
   padding: 6px 14px;
   color: var(--text-muted);
@@ -143,8 +168,7 @@ img { max-width: 100%; }
 .status-pill.is-offline { color: var(--gold); }
 
 .settings-button {
-  position: fixed; z-index: 55; top: var(--shell-pad); right: var(--shell-pad);
-  display: grid; place-items: center;
+  display: grid; place-items: center; flex: none;
   width: var(--tap); height: var(--tap);
   color: var(--text-muted);
   background: var(--glass); border: 1px solid var(--glass-line);
