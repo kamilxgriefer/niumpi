@@ -231,7 +231,10 @@
 
 /* Keyboard body zones sit invisible until focused. */
 .rig-zones { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
-.rig-zone { position: absolute; width: 30%; height: 24%; background: transparent; border: 0; border-radius: 40%; pointer-events: auto; opacity: 0; }
+/* Keyboard-only alternatives to the pointer gestures. They must never take
+   pointer events: doing so would swallow taps, drags and holds aimed at the
+   creature itself. Keyboard focus and Enter still work without them. */
+.rig-zone { position: absolute; width: 30%; height: 24%; background: transparent; border: 0; border-radius: 40%; pointer-events: none; opacity: 0; }
 .rig-zone:focus-visible { opacity: 1; background: rgb(73 212 208 / 18%); }
 .rig-zone-head { top: 26%; left: 35%; }
 .rig-zone-belly { top: 56%; left: 35%; }

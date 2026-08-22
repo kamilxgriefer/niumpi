@@ -105,3 +105,15 @@ test("recolour layers are masked to the body so a route cannot bleed outside it"
     assert.match(rig, new RegExp(`\\.body-${route}\\s+\\.layer-tint`), `missing tint layer for ${route}`);
   }
 });
+
+test("the keyboard body zones never intercept pointer gestures", async () => {
+  const rig = await css("rig.css");
+  // These invisible buttons exist only as keyboard alternatives. If they take
+  // pointer events they sit on top of the creature and swallow taps, drags and
+  // holds aimed at it.
+  assert.match(rig, /\.rig-zones \{[^}]*pointer-events: none/);
+  assert.match(rig, /\.rig-zone \{[^}]*pointer-events: none/);
+  assert.doesNotMatch(rig, /\.rig-zone \{[^}]*pointer-events: auto/);
+  // They must still be reachable and visible when focused.
+  assert.match(rig, /\.rig-zone:focus-visible \{/);
+});
