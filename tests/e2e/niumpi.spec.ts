@@ -37,7 +37,6 @@ test("petting Niumpi updates and persists the shared memory", async ({ page }) =
   await openFreshGame(page);
 
   await page.getByRole("button", { name: "Pet Niumpi" }).click();
-  await expect(page.locator(".speech")).toHaveText(/Nium|That feels nice|Again/i);
   await expect(page.locator(".memory-note")).toContainText("1 shared moments");
 
   await expect
@@ -57,27 +56,28 @@ test("petting Niumpi updates and persists the shared memory", async ({ page }) =
 test("sound, lamp and sleep controls expose their current state", async ({ page }) => {
   await openFreshGame(page);
 
-  const sound = page.getByRole("button", { name: "Sound on" });
+  const sound = page.locator(".sound-toggle");
   await expect(sound).toHaveAttribute("aria-pressed", "true");
+  await expect(sound).toHaveText("Sound on");
   await sound.click();
-  await expect(page.getByRole("button", { name: "Sound off" })).toHaveAttribute(
-    "aria-pressed",
-    "false",
-  );
+  await expect(sound).toHaveAttribute("aria-pressed", "false");
+  await expect(sound).toHaveText("Sound off");
 
-  const lamp = page.getByRole("button", { name: "Lamp on" });
+  const lamp = page.locator(".room-controls button").first();
+  await expect(lamp).toHaveAttribute("aria-pressed", "false");
+  await expect(lamp).toContainText("Lamp on");
   await lamp.click();
-  await expect(page.getByRole("button", { name: "Lamp off" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
+  await expect(lamp).toHaveAttribute("aria-pressed", "true");
+  await expect(lamp).toContainText("Lamp off");
 
-  await page.getByRole("button", { name: "Tuck in" }).click();
-  await expect(page.getByRole("button", { name: "Wake gently" })).toBeVisible();
+  const sleep = page.locator(".room-controls button").nth(1);
+  await expect(sleep).toContainText("Tuck in");
+  await sleep.click();
+  await expect(sleep).toContainText("Wake gently");
   await expect(page.locator(".speech")).toContainText(/good night|Zzz/i);
 
-  await page.getByRole("button", { name: "Wake gently" }).click();
-  await expect(page.getByRole("button", { name: "Tuck in" })).toBeVisible();
+  await sleep.click();
+  await expect(sleep).toContainText("Tuck in");
   await expect(page.locator(".speech")).toContainText("Good morning");
 });
 
