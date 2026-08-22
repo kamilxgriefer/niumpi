@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { PointerEvent } from "react";
+import type { MouseEvent, PointerEvent } from "react";
 
 export type NiumpiBehavior = "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep";
 export type CareStyle = "growing" | "playful" | "restful" | "explorer" | "affection" | "chaotic";
@@ -13,9 +13,11 @@ type Props = {
   careStyle: CareStyle;
   petName: string;
   isPressed: boolean;
+  isTarget: boolean;
   position: { x: number; y: number };
   look: { x: number; y: number };
   onLeafTouch: () => void;
+  onActivate: (event: MouseEvent<HTMLButtonElement>) => void;
   onPointerDown: (event: PointerEvent<HTMLButtonElement>) => void;
   onPointerMove: (event: PointerEvent<HTMLButtonElement>) => void;
   onPointerUp: () => void;
@@ -27,9 +29,11 @@ export function RiggedNiumpi({
   careStyle,
   petName,
   isPressed,
+  isTarget,
   position,
   look,
   onLeafTouch,
+  onActivate,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -91,7 +95,7 @@ export function RiggedNiumpi({
   return (
     <div
       ref={root}
-      className={`rig-root growth-stage-${growthStage} care-style-${careStyle} behavior-${behavior} ${isPressed ? "is-pressed" : ""} ${isBlinking ? "is-blinking" : ""}`}
+      className={`rig-root growth-stage-${growthStage} care-style-${careStyle} behavior-${behavior} ${isPressed ? "is-pressed" : ""} ${isTarget ? "is-target" : ""} ${isBlinking ? "is-blinking" : ""}`}
       data-behavior={behavior}
     >
       <button className="rig-leaf" type="button" aria-label={`Touch ${petName}'s leaf`} onClick={onLeafTouch} />
@@ -112,6 +116,7 @@ export function RiggedNiumpi({
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
+        onClick={onActivate}
         onContextMenu={(event) => event.preventDefault()}
       >
         <span className="rig-foot rig-foot-left" aria-hidden="true" />

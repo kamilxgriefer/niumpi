@@ -113,17 +113,19 @@ export function settleIdentity(draft: PetIdentity, now: string): PetIdentity {
 
 export type Relationship = {
   key: "new" | "warming" | "friends" | "close" | "inseparable";
+  /** Shown next to the bond meter as "Level N". */
+  level: 1 | 2 | 3 | 4 | 5;
   name: string;
   note: string;
   symbol: string;
 };
 
 const relationshipStages: Relationship[] = [
-  { key: "new", name: "Just met", note: "Say hello with a gentle tap", symbol: "◌" },
-  { key: "warming", name: "Warming up", note: "{name} is starting to trust you", symbol: "･" },
-  { key: "friends", name: "Good friends", note: "You two have a rhythm now", symbol: "✧" },
-  { key: "close", name: "Close buddies", note: "{name} lights up when you arrive", symbol: "♡" },
-  { key: "inseparable", name: "Inseparable", note: "Two hearts, one silly little sound", symbol: "❥" },
+  { key: "new", level: 1, name: "Just met", note: "Say hello with a gentle tap", symbol: "◌" },
+  { key: "warming", level: 2, name: "Warming up", note: "{name} is starting to trust you", symbol: "･" },
+  { key: "friends", level: 3, name: "Good friends", note: "You two have a rhythm now", symbol: "✧" },
+  { key: "close", level: 4, name: "Close buddies", note: "{name} lights up when you arrive", symbol: "♡" },
+  { key: "inseparable", level: 5, name: "Inseparable", note: "Two hearts, one silly little sound", symbol: "❥" },
 ];
 
 export function relationshipFor(bond: number, sharedMoments: number): Relationship {

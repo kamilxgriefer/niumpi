@@ -1,32 +1,48 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { CSSProperties, PointerEvent } from "react";
+import type { CSSProperties, MouseEvent, PointerEvent } from "react";
+import { ActionBar } from "./ActionBar";
 import { BuddyCard } from "./BuddyCard";
+import { GameHeader } from "./GameHeader";
+import { GrowthCard } from "./GrowthCard";
 import { Onboarding } from "./Onboarding";
+import { PersonalityBanner } from "./PersonalityBanner";
+import { RoomWindow } from "./RoomWindow";
+import { SnackBar } from "./SnackBar";
+import { SpeechBubble } from "./SpeechBubble";
+import { StatsCard } from "./StatsCard";
+import { Toasts } from "./Toasts";
+import type { Toast } from "./Toasts";
 import { playNiumpiSound } from "./niumpiSounds";
 import { RiggedNiumpi } from "./RiggedNiumpi";
 import type { CareStyle, NiumpiBehavior } from "./RiggedNiumpi";
+import {
+  careStyleDetails,
+  dayPeriodFor,
+  foods,
+  gestureLabels,
+  gestureSparks,
+  growthNames,
+  growthProgressFor,
+  growthStageFor,
+} from "./gameConfig";
+import type { DayPeriod, FoodId, Gesture, Need } from "./gameConfig";
 import {
   DEFAULT_IDENTITY,
   isFirstCareToday,
   lastCareLabel,
   relationshipFor,
-  startOfDay,
   sanitizeName,
   sanitizeTagline,
+  startOfDay,
   vibeBehaviors,
   vibeOrder,
   vibes,
 } from "./identity";
 import type { PetIdentity, Relationship } from "./identity";
 
-type Gesture = "tap" | "pet" | "hold" | "leaf";
-type Need = "fullness" | "energy" | "joy";
-type FoodId = "moonberry" | "cloudpuff" | "dewdrop";
-type DayPeriod = "day" | "evening" | "night";
 type SoundCue = Parameters<typeof playNiumpiSound>[0];
-type Toast = { id: number; text: string; icon: string };
 type Spark = { id: number; symbol: string; offset: number; delay: number };
 type PetMemory = {
   identity: PetIdentity;
@@ -44,6 +60,10 @@ type PetMemory = {
 
 const STORAGE_KEY = "niumpi-memory-v3";
 const LEGACY_STORAGE_KEYS = ["niumpi-memory-v2", "niumpi-memory-v1"];
+const TOAST_LIFE = 2600;
+const SPARK_LIFE = 1500;
+const DRAG_SLOP = 10;
+
 const DEFAULT_MEMORY: PetMemory = {
   identity: DEFAULT_IDENTITY,
   bond: 32,
@@ -58,25 +78,7 @@ const DEFAULT_MEMORY: PetMemory = {
   sleepSessions: 0,
 };
 
-const foods: Record<FoodId, { name: string; effects: Partial<Record<Need, number>> }> = {
-  moonberry: { name: "Moonberry", effects: { fullness: 22, joy: 6 } },
-  cloudpuff: { name: "Cloud puff", effects: { fullness: 14, energy: 10, joy: 4 } },
-  dewdrop: { name: "Dewdrop", effects: { fullness: 8, energy: 16 } },
-};
-
 const tapReactions = ["Nium!", "Nium nium!", "That feels nice!", "Again!"];
-const gestureLabels: Record<Gesture, string> = {
-  tap: "tapping",
-  pet: "petting",
-  hold: "cuddling",
-  leaf: "leaf touches",
-};
-const gestureSparks: Record<Gesture, string> = {
-  tap: "✦",
-  pet: "♡",
-  hold: "♡",
-  leaf: "✧",
-};
 
 const spontaneousBehaviors: NiumpiBehavior[] = [
   "wander", "wander", "float", "float", "spin", "curious", "curious", "happy", "sleepy",
@@ -89,18 +91,6 @@ const behaviorMessages: Partial<Record<NiumpiBehavior, string>> = {
   happy: "I just remembered that I like you!",
   sleepy: "Just resting my eyes…",
 };
-
-const careStyleDetails: Record<CareStyle, { name: string; note: string; symbol: string }> = {
-  growing: { name: "Still discovering", note: "Your care will shape the leaves", symbol: "◌" },
-  playful: { name: "Playful bond", note: "The leaves bounce with your energy", symbol: "✦" },
-  restful: { name: "Dreamy bond", note: "The leaves glow softly after rest", symbol: "☾" },
-  explorer: { name: "Curious bond", note: "Patterns grow from discovery", symbol: "⌁" },
-  affection: { name: "Tender bond", note: "The leaves lean toward a heart", symbol: "♡" },
-  chaotic: { name: "Wild-hearted bond", note: "Every leaf grows its own way", symbol: "≈" },
-};
-const growthNames = ["", "Tiny seed", "Brave sprout", "Little explorer", "True companion"];
-const TOAST_LIFE = 2600;
-const SPARK_LIFE = 1500;
 
 /** Pointer capture keeps a gesture alive off-target; losing it must not stop the gesture. */
 function capturePointer(event: PointerEvent<HTMLButtonElement>) {
@@ -177,6 +167,7 @@ export function NiumpiScene() {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [look, setLook] = useState({ x: 0, y: 0 });
   const [draggingFood, setDraggingFood] = useState<{ food: FoodId; x: number; y: number } | null>(null);
+  const [armedFood, setArmedFood] = useState<FoodId | null>(null);
   const [dayPeriod, setDayPeriod] = useState<DayPeriod>("day");
   const [todayStamp, setTodayStamp] = useState(0);
   const [isEditingIdentity, setIsEditingIdentity] = useState(false);
@@ -185,6 +176,8 @@ export function NiumpiScene() {
   const [bondPulse, setBondPulse] = useState(false);
   const roomRef = useRef<HTMLElement>(null);
   const draggingFoodRef = useRef<FoodId | null>(null);
+  const foodPointer = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  const skipFoodClick = useRef(false);
   const feedbackId = useRef(0);
   const bondPulseTimer = useRef<number | undefined>(undefined);
   const feedbackTimers = useRef<number[]>([]);
@@ -268,7 +261,7 @@ export function NiumpiScene() {
           ? "Zzz…"
           : saved.identity.onboarded
             ? saved.lastVisit
-              ? `Nium! You came back!`
+              ? "Nium! You came back!"
               : vibes[saved.identity.vibe].greeting
             : "…nium?",
       );
@@ -280,8 +273,7 @@ export function NiumpiScene() {
   useEffect(() => {
     function updateDayPeriod() {
       const now = new Date();
-      const hour = now.getHours();
-      setDayPeriod(hour >= 7 && hour < 17 ? "day" : hour >= 17 && hour < 21 ? "evening" : "night");
+      setDayPeriod(dayPeriodFor(now.getHours()));
       setTodayStamp(startOfDay(now.getTime()));
     }
     const updateClock = window.setTimeout(updateDayPeriod, 0);
@@ -360,6 +352,7 @@ export function NiumpiScene() {
     setBehavior("asleep");
     setPosition({ x: -64, y: 34 });
     setLook({ x: 0, y: 0 });
+    setArmedFood(null);
     setMessage("Nium… good night.");
     playCue("sleep");
   }
@@ -383,6 +376,7 @@ export function NiumpiScene() {
       lampOn: !current.lampOn,
       lastUpdated: new Date().toISOString(),
     }));
+    playCue("blip");
   }
 
   function saveIdentity(next: PetIdentity) {
@@ -419,9 +413,33 @@ export function NiumpiScene() {
     pulseBond();
   }
 
+  function feed(food: FoodId) {
+    const meal = foods[food];
+    setMemory((current) => ({
+      ...current,
+      needs: {
+        fullness: Math.min(100, current.needs.fullness + (meal.effects.fullness ?? 0)),
+        energy: Math.min(100, current.needs.energy + (meal.effects.energy ?? 0)),
+        joy: Math.min(100, current.needs.joy + (meal.effects.joy ?? 0)),
+      },
+      foods: { ...current.foods, [food]: current.foods[food] + 1 },
+      lastUpdated: new Date().toISOString(),
+    }));
+    setArmedFood(null);
+    setBehavior("happy");
+    setLook({ x: 0, y: 0 });
+    setMessage(`Nium! ${meal.name} is delicious!`);
+    burstSparks("✧");
+    playCue("eat");
+  }
+
   function beginTouch(event: PointerEvent<HTMLButtonElement>) {
     if (memory.sleeping) {
       wakeUp();
+      return;
+    }
+    if (armedFood) {
+      feed(armedFood);
       return;
     }
     capturePointer(event);
@@ -469,9 +487,29 @@ export function NiumpiScene() {
     pointer.current = null;
   }
 
+  /** Keyboard activation of the pet: Enter and Space report no pointer detail. */
+  function activatePet(event: MouseEvent<HTMLButtonElement>) {
+    if (event.detail !== 0) return;
+    if (memory.sleeping) {
+      wakeUp();
+      return;
+    }
+    if (armedFood) {
+      feed(armedFood);
+      return;
+    }
+    remember("tap", 4);
+    setMessage(tapReactions[Math.floor(Math.random() * tapReactions.length)]);
+    playCue("tap");
+  }
+
   function touchLeaf() {
     if (memory.sleeping) {
       wakeUp();
+      return;
+    }
+    if (armedFood) {
+      feed(armedFood);
       return;
     }
     remember("leaf", 5);
@@ -489,16 +527,24 @@ export function NiumpiScene() {
   }
 
   function beginFoodDrag(event: PointerEvent<HTMLButtonElement>, food: FoodId) {
+    if (memory.sleeping) return;
     capturePointer(event);
     draggingFoodRef.current = food;
+    foodPointer.current = { x: event.clientX, y: event.clientY, moved: false };
     setDraggingFood({ food, x: event.clientX, y: event.clientY });
     setBehavior("curious");
     setMessage(`Is that a ${foods[food].name.toLowerCase()}?`);
   }
 
   function moveFoodDrag(event: PointerEvent<HTMLButtonElement>) {
-    if (!draggingFoodRef.current) return;
-    setDraggingFood({ food: draggingFoodRef.current, x: event.clientX, y: event.clientY });
+    const food = draggingFoodRef.current;
+    if (!food || !foodPointer.current) return;
+    const travelled = Math.hypot(
+      event.clientX - foodPointer.current.x,
+      event.clientY - foodPointer.current.y,
+    );
+    if (travelled > DRAG_SLOP) foodPointer.current.moved = true;
+    setDraggingFood({ food, x: event.clientX, y: event.clientY });
     if (roomRef.current) {
       const room = roomRef.current.getBoundingClientRect();
       setLook({
@@ -510,36 +556,48 @@ export function NiumpiScene() {
 
   function endFoodDrag(event: PointerEvent<HTMLButtonElement>) {
     const food = draggingFoodRef.current;
+    const moved = foodPointer.current?.moved ?? false;
     draggingFoodRef.current = null;
+    foodPointer.current = null;
     setDraggingFood(null);
+    if (!food) return;
+
     const rig = roomRef.current?.querySelector(".rig-root")?.getBoundingClientRect();
     const wasFed = Boolean(
-      food && rig && event.clientX >= rig.left && event.clientX <= rig.right && event.clientY >= rig.top && event.clientY <= rig.bottom,
+      rig && event.clientX >= rig.left && event.clientX <= rig.right && event.clientY >= rig.top && event.clientY <= rig.bottom,
     );
 
-    if (!food || !wasFed) {
-      setMessage("Almost! Bring it closer to me.");
-      setBehavior("idle");
-      setLook({ x: 0, y: 0 });
+    if (wasFed) {
+      skipFoodClick.current = true;
+      feed(food);
       return;
     }
 
-    const meal = foods[food];
-    setMemory((current) => ({
-      ...current,
-      needs: {
-        fullness: Math.min(100, current.needs.fullness + (meal.effects.fullness ?? 0)),
-        energy: Math.min(100, current.needs.energy + (meal.effects.energy ?? 0)),
-        joy: Math.min(100, current.needs.joy + (meal.effects.joy ?? 0)),
-      },
-      foods: { ...current.foods, [food]: current.foods[food] + 1 },
-      lastUpdated: new Date().toISOString(),
-    }));
-    setBehavior("happy");
+    setBehavior("idle");
     setLook({ x: 0, y: 0 });
-    setMessage(`Nium! ${meal.name} is delicious!`);
-    burstSparks("✧");
-    playCue("eat");
+    if (moved) {
+      skipFoodClick.current = true;
+      setMessage("Almost! Bring it closer to me.");
+    }
+    // A treat that never moved is a tap — the click handler picks it up.
+  }
+
+  /** Tap or keyboard: arm a treat so it can be given by touching Niumpi. */
+  function selectFood(food: FoodId) {
+    if (skipFoodClick.current) {
+      skipFoodClick.current = false;
+      return;
+    }
+    if (memory.sleeping) return;
+    const next = armedFood === food ? null : food;
+    setArmedFood(next);
+    setBehavior("curious");
+    setMessage(
+      next
+        ? `Tap me to share the ${foods[next].name.toLowerCase()}!`
+        : "Nium? Changed your mind?",
+    );
+    playCue("blip");
   }
 
   const favorite = (Object.entries(memory.interactions) as [Gesture, number][])
@@ -565,10 +623,8 @@ export function NiumpiScene() {
     : activeStyles >= 3 && highestCareScore - lowestActiveScore <= 2
       ? "chaotic"
       : (Object.entries(careScores).sort((a, b) => b[1] - a[1])[0][0] as CareStyle);
-  const growthStage: 1 | 2 | 3 | 4 = carePoints >= 60 ? 4 : carePoints >= 30 ? 3 : carePoints >= 10 ? 2 : 1;
-  const stageFloor = growthStage === 1 ? 0 : growthStage === 2 ? 10 : growthStage === 3 ? 30 : 60;
-  const nextStageAt = growthStage === 1 ? 10 : growthStage === 2 ? 30 : growthStage === 3 ? 60 : 60;
-  const growthProgress = growthStage === 4 ? 100 : ((carePoints - stageFloor) / (nextStageAt - stageFloor)) * 100;
+  const growthStage = growthStageFor(carePoints);
+  const growth = growthProgressFor(carePoints, growthStage);
   const relationship = relationshipFor(memory.bond, totalInteractions);
   const showOnboarding = isLoaded && (!identity.onboarded || isEditingIdentity);
 
@@ -590,89 +646,68 @@ export function NiumpiScene() {
   }, [careStyle, growthStage, identity.name, isLoaded, playCue, pushToast, relationship]);
 
   return (
-    <main className="game-shell">
-      <header className="game-header">
-        <div>
-          <p className="eyebrow"><span aria-hidden="true">✦</span> Your little companion</p>
-          <h1>N<span className="logo-i">ı</span>ump<span className="logo-i">ı</span></h1>
-        </div>
-        <div className="header-actions">
-          <button
-            className="sound-toggle"
-            type="button"
-            aria-pressed={soundEnabled}
-            onClick={() => setSoundEnabled((enabled) => !enabled)}
-          >
-            Sound {soundEnabled ? "on" : "off"}
-          </button>
-          <div
-            className={`bond ${bondPulse ? "is-gaining" : ""}`}
-            aria-label={`Bond ${Math.round(memory.bond)} percent`}
-          >
-            <span>Bond</span>
-            <div className="bond-track">
-              <div className="bond-fill" style={{ width: `${memory.bond}%` }} />
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <section
-        ref={roomRef}
-        className={`pet-room room-${dayPeriod} ${memory.lampOn ? "lamp-on" : ""} ${memory.sleeping ? "is-sleeping" : ""}`}
-        aria-label={`${identity.name}'s room`}
-        onPointerMove={followPointer}
-      >
-        <div className="room-window" aria-hidden="true">
-          <span className="sky-orb" />
-          <span className="room-star star-one" />
-          <span className="room-star star-two" />
-          <span className="room-star star-three" />
-        </div>
-        <div className="sleep-nest" aria-hidden="true" />
-        <p className="speech" aria-live="polite">{message}</p>
-
-        <div className="needs-panel" aria-label={`${identity.name}'s needs`}>
-          {(Object.entries(memory.needs) as [Need, number][]).map(([need, value]) => (
-            <div className={`need need-${need}`} key={need}>
-              <span className="need-label">
-                <span className="need-icon" aria-hidden="true">{need === "fullness" ? "●" : need === "energy" ? "✦" : "♥"}</span>
-                {need === "fullness" ? "Fullness" : need[0].toUpperCase() + need.slice(1)}
-              </span>
-              <div className="need-track"><span style={{ width: `${value}%` }} /></div>
-            </div>
-          ))}
-        </div>
-
-        <RiggedNiumpi
-          behavior={behavior}
-          growthStage={growthStage}
-          careStyle={careStyle}
-          petName={identity.name}
-          isPressed={isPressed}
-          position={position}
-          look={look}
-          onLeafTouch={touchLeaf}
-          onPointerDown={beginTouch}
-          onPointerMove={moveTouch}
-          onPointerUp={endTouch}
+    <main className="page">
+      <div className="app-frame">
+        <GameHeader
+          soundEnabled={soundEnabled}
+          onToggleSound={() => setSoundEnabled((enabled) => !enabled)}
+          bond={memory.bond}
+          bondLevel={relationship.level}
+          bondName={relationship.name}
+          bondPulse={bondPulse}
         />
 
-        <div
-          className="spark-layer"
-          style={{ "--pet-x": `${position.x}px` } as CSSProperties}
-          aria-hidden="true"
+        <section
+          ref={roomRef}
+          className={`stage stage-${dayPeriod} ${memory.lampOn ? "lamp-on" : ""} ${memory.sleeping ? "is-sleeping" : ""}`}
+          aria-label={`${identity.name}'s room`}
+          onPointerMove={followPointer}
         >
-          {sparks.map((spark) => (
-            <span
-              className="love-spark"
-              key={spark.id}
-              style={{ "--spark-x": `${spark.offset}px`, "--spark-delay": `${spark.delay}ms` } as CSSProperties}
-            >
-              {spark.symbol}
-            </span>
-          ))}
-        </div>
+          <RoomWindow dayPeriod={dayPeriod} />
+
+          <div className="stage-grid">
+            <div className="stage-left">
+              <SpeechBubble message={message} />
+            </div>
+
+            <div className="stage-center">
+              <div className="pet-stage">
+                <span className="sleep-nest" aria-hidden="true" />
+                <span className="pet-shadow" aria-hidden="true" />
+                <RiggedNiumpi
+                  behavior={behavior}
+                  growthStage={growthStage}
+                  careStyle={careStyle}
+                  petName={identity.name}
+                  isPressed={isPressed}
+                  isTarget={Boolean(armedFood || draggingFood)}
+                  position={position}
+                  look={look}
+                  onLeafTouch={touchLeaf}
+                  onActivate={activatePet}
+                  onPointerDown={beginTouch}
+                  onPointerMove={moveTouch}
+                  onPointerUp={endTouch}
+                />
+                <div className="spark-layer" style={{ "--pet-x": `${position.x}px` } as CSSProperties} aria-hidden="true">
+                  {sparks.map((spark) => (
+                    <span
+                      className="love-spark"
+                      key={spark.id}
+                      style={{ "--spark-x": `${spark.offset}px`, "--spark-delay": `${spark.delay}ms` } as CSSProperties}
+                    >
+                      {spark.symbol}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="stage-right">
+              <StatsCard needs={memory.needs} petName={identity.name} />
+            </div>
+          </div>
+        </section>
 
         <BuddyCard
           identity={identity}
@@ -686,63 +721,50 @@ export function NiumpiScene() {
           }}
         />
 
-        <div className="growth-card" aria-label={`Growth stage ${growthStage}: ${growthNames[growthStage]}`}>
-          <div className="growth-copy">
-            <span>Stage {growthStage}</span>
-            <strong>{growthNames[growthStage]}</strong>
-          </div>
-          <div className="growth-track" aria-hidden="true"><span style={{ width: `${growthProgress}%` }} /></div>
-          <span className="growth-next">{growthStage === 4 ? "Fully grown together" : `${nextStageAt - carePoints} care moments to grow`}</span>
-        </div>
-        <div className={`care-signature care-signature-${careStyle}`} aria-live="polite">
-          <span className="care-symbol" aria-hidden="true">{careStyleDetails[careStyle].symbol}</span>
-          <span><strong>{careStyleDetails[careStyle].name}</strong>{careStyleDetails[careStyle].note}</span>
-        </div>
-        <p className="hint">Tap, hold, pet, or touch the leaf</p>
-        <div className="food-tray" aria-label="Food tray">
-          <p className="tray-label">Snack bar <span>Drag a treat to {identity.name}</span></p>
-          {(Object.entries(foods) as [FoodId, (typeof foods)[FoodId]][]).map(([food, details]) => (
-            <button
-              className="food-button"
-              type="button"
-              key={food}
-              disabled={memory.sleeping}
-              aria-label={`Drag ${details.name} to ${identity.name}`}
-              onPointerDown={(event) => beginFoodDrag(event, food)}
-              onPointerMove={moveFoodDrag}
-              onPointerUp={endFoodDrag}
-              onPointerCancel={endFoodDrag}
-            >
-              <span className={`food-icon food-${food}`} aria-hidden="true" />
-              <span>{details.name}</span>
-            </button>
-          ))}
-        </div>
-        <div className="room-controls" aria-label="Room controls">
-          <button type="button" onClick={toggleLamp} aria-pressed={memory.lampOn}>
-            <span aria-hidden="true">◐</span>{memory.lampOn ? "Lamp off" : "Lamp on"}
-          </button>
-          <button type="button" onClick={memory.sleeping ? wakeUp : startSleep}>
-            <span aria-hidden="true">☾</span>{memory.sleeping ? "Wake gently" : "Tuck in"}
-          </button>
-        </div>
-        {draggingFood && (
-          <span
-            className={`food-follower food-icon food-${draggingFood.food}`}
-            style={{ "--food-x": `${draggingFood.x}px`, "--food-y": `${draggingFood.y}px` } as CSSProperties}
-            aria-hidden="true"
-          />
-        )}
-      </section>
+        <GrowthCard
+          stage={growthStage}
+          stageName={growthNames[growthStage]}
+          percent={growth.percent}
+          remaining={growth.remaining}
+        />
 
-      <div className="toast-stack" aria-live="polite">
-        {toasts.map((toast) => (
-          <p className="toast" key={toast.id}>
-            <span className="toast-icon" aria-hidden="true">{toast.icon}</span>
-            {toast.text}
-          </p>
-        ))}
+        <PersonalityBanner
+          careStyle={careStyle}
+          title={careStyleDetails[careStyle].name}
+          note={careStyleDetails[careStyle].note}
+        />
+
+        <p className="interaction-hint">Tap, hold, pet, or touch the leaf</p>
+
+        <SnackBar
+          petName={identity.name}
+          counts={memory.foods}
+          disabled={memory.sleeping}
+          selected={armedFood}
+          dragging={draggingFood?.food ?? null}
+          onDragStart={beginFoodDrag}
+          onDragMove={moveFoodDrag}
+          onDragEnd={endFoodDrag}
+          onActivate={selectFood}
+        />
+
+        <ActionBar
+          lampOn={memory.lampOn}
+          sleeping={memory.sleeping}
+          onToggleLamp={toggleLamp}
+          onToggleSleep={memory.sleeping ? wakeUp : startSleep}
+        />
       </div>
+
+      {draggingFood && (
+        <span
+          className={`food-follower snack-icon food-${draggingFood.food}`}
+          style={{ "--food-x": `${draggingFood.x}px`, "--food-y": `${draggingFood.y}px` } as CSSProperties}
+          aria-hidden="true"
+        />
+      )}
+
+      <Toasts toasts={toasts} />
 
       {showOnboarding && (
         <Onboarding

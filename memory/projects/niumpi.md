@@ -110,6 +110,12 @@ Dopiero po potwierdzeniu atrakcyjności rdzenia dodać karmienie, sen, pokój, e
 - Karta „My Buddy”: imię, hasło, status relacji, dzień ostatniej opieki i ulubiony gest; profil edytowalny bez utraty postępu.
 - Warstwa mikro-informacji zwrotnej: toasty przy kamieniach milowych, unoszące się iskierki przy każdym geście i puls paska więzi.
 - Klucz zapisu `niumpi-memory-v3` z automatyczną migracją z `v2` i `v1`.
+- Redesign interfejsu: jeden panel aplikacji na pastelowym gradiencie, sekcje ułożone w ciągłą kompozycję, bez odcięcia góra/dół.
+- System tokenów w `:root` (kolory, odstępy, promienie, cienie, typografia, czasy) zamiast rozsypanych wartości.
+- Ekran podzielony na komponenty: `GameHeader`, `SpeechBubble`, `StatsCard`, `RoomWindow`, `BuddyCard`, `GrowthCard`, `PersonalityBanner`, `SnackBar`, `ActionBar`, `Toasts`; wspólne stałe w `gameConfig.ts`.
+- Karmienie ma alternatywę dotykową i klawiaturową: wybór przysmaku, potem dotknięcie Niumpiego. Przeciąganie działa jak wcześniej.
+- Postać skaluje się przez `container-type: size`, więc listki i animacja unoszenia zachowują proporcje na każdym ekranie.
+- Pora dnia zmienia wyłącznie scenę i okno; reszta interfejsu zostaje jasna.
 
 ## Ochrona zakresu
 
