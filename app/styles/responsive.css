@@ -1,0 +1,146 @@
+/* ============================================================
+   Breakpoints, mobile navigation and reduced motion
+   ============================================================ */
+
+/* ---------------------------------------------------- laptop < 1280px ---- */
+@media (max-width: 1279px) {
+  :root { --rail-w: 92px; }
+  .home-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); }
+  .home-right { grid-column: 1 / -1; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+}
+
+/* ---------------------------------------------------- tablet < 1024px ---- */
+@media (max-width: 1023px) {
+  :root { --rail-w: 74px; }
+  .rail-label { display: none; }
+  .rail-tab { min-height: 54px; }
+  .home-grid { grid-template-columns: minmax(0, 1fr); }
+  .home-centre { order: -1; }
+  .home-left, .home-right { grid-template-columns: repeat(auto-fit, minmax(258px, 1fr)); }
+  .kitchen { grid-template-columns: minmax(0, 1fr); }
+  .cook-chef { justify-self: center; }
+  .hero-stats { position: static; width: 100%; }
+  .companion-stats { position: static; width: 100%; margin-top: var(--s-3); }
+  /* With the stats in flow, an absolutely-placed badge would sit on top of
+     them — so the mood leaf joins the flow too. */
+  .companion-stage { align-content: start; gap: var(--s-3); }
+  .mood-badge { position: static; justify-self: start; }
+}
+
+/* ----------------------------------------------------- phone < 768px ----- */
+@media (max-width: 767px) {
+  :root { --shell-pad: 12px; }
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  }
+  .rail { display: none; }
+
+  .bottom-nav {
+    position: fixed; z-index: 70; inset: auto 0 0;
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px;
+    padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+    background: rgb(24 11 52 / 94%);
+    border-top: 1px solid var(--glass-line);
+    backdrop-filter: blur(18px);
+  }
+  .bottom-tab {
+    display: grid; justify-items: center; gap: 3px;
+    min-height: var(--tap); padding: 6px 2px;
+    color: var(--text-faint);
+    background: transparent; border: 0; border-radius: var(--r-md);
+    transition: color var(--dur) var(--ease), background var(--dur) var(--ease);
+  }
+  .bottom-icon { position: relative; }
+  .bottom-label { font-size: .6rem; font-weight: 800; }
+  .bottom-tab.is-active { color: white; background: linear-gradient(150deg, rgb(255 95 168 / 30%), rgb(134 87 255 / 30%)); }
+  .bottom-tab.is-active .art { --art-1: var(--hot-pink); --art-2: var(--peach); }
+  .bottom-tab.is-locked { opacity: .4; }
+
+  .settings-button { top: auto; bottom: calc(88px + env(safe-area-inset-bottom)); right: 12px; }
+  .shell-status { bottom: calc(92px + env(safe-area-inset-bottom)); }
+  .dev-panel { bottom: calc(92px + env(safe-area-inset-bottom)); }
+
+  .scene-head h1 { font-size: var(--t-xl); }
+  .hero-panel { padding: var(--s-3); border-radius: var(--r-xl); }
+  .companion-stage { min-height: 300px; padding: var(--s-4) var(--s-2) var(--s-5); }
+  .rig-root { width: clamp(170px, 52vw, 250px); }
+  .speech-bubble { max-width: 62%; top: 4%; left: 3%; padding: 9px 12px; }
+  .mood-badge { bottom: 8px; left: 8px; padding: 6px 12px 6px 8px; }
+
+  /* The snack bar scrolls sideways instead of squeezing the cards. */
+  .snack-list {
+    display: flex; gap: var(--s-2);
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    margin: 0 calc(var(--s-3) * -1); padding: 0 var(--s-3) 4px;
+    scrollbar-width: none;
+  }
+  .snack-list::-webkit-scrollbar { display: none; }
+  .snack-slot { flex: 0 0 116px; scroll-snap-align: start; }
+
+  .action-bar { grid-template-columns: 1fr 1fr; }
+  .action-button { min-height: 54px; padding: 12px 14px; font-size: var(--t-md); }
+  .seed-options { grid-template-columns: 1fr; }
+  .memory-album { grid-template-columns: minmax(0, 1fr); }
+  .route-grid { grid-template-columns: minmax(0, 1fr); }
+  .path-forks { grid-template-columns: minmax(0, 1fr); }
+
+  /* Modals become full-height sheets. */
+  .modal-veil { align-items: flex-end; padding: 0; }
+  .modal-card {
+    width: 100%; max-height: 92dvh;
+    padding: var(--s-4) var(--s-4) calc(var(--s-5) + env(safe-area-inset-bottom));
+    border-radius: var(--r-2xl) var(--r-2xl) 0 0;
+  }
+  .modal-card.is-wide { width: 100%; }
+
+  .toast-stack { top: 8px; width: calc(100% - 24px); }
+  .toast { justify-content: center; white-space: normal; text-align: center; }
+}
+
+/* --------------------------------------------------- touch target sizes -- */
+/* Tablet width and below, and anywhere a finger is the pointer, every
+   control clears the 44px minimum. */
+@media (max-width: 1023px), (pointer: coarse) {
+  .tab,
+  .sound-toggle,
+  .snack-cook,
+  .panel-open,
+  .theme-chip,
+  .seed-answer,
+  .trait-chip,
+  .mission-claim,
+  .shop-buy,
+  .snack-feed,
+  .emoji-button { min-height: var(--tap); }
+
+  .icon-button { width: var(--tap); height: var(--tap); }
+
+  /* The mood leaf is a small shape; its hit area is widened around it. */
+  .rig-leaf { position: absolute; }
+  .rig-leaf::after {
+    content: ""; position: absolute; inset: -10px -14px; border-radius: var(--r-pill);
+  }
+  .rig-zone { min-width: var(--tap); min-height: var(--tap); }
+}
+
+@media (max-width: 380px) {
+  .action-bar { grid-template-columns: minmax(0, 1fr); }
+  .mix-pads { gap: var(--s-2); }
+  .bottom-label { font-size: .55rem; }
+}
+
+/* --------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .cosmic-glow, .cosmic-star { animation: none !important; }
+}
+
+/* Nothing may ever push the page sideways. */
+.shell, .scene, .scene-host, .panel { max-width: 100%; }
+img, svg, canvas { max-width: 100%; }

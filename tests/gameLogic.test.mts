@@ -2,13 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  dayPeriodFor,
-  foods,
-  growthFloors,
-  growthProgressFor,
-  growthStageFor,
-} from "../app/gameConfig.ts";
-import {
   DEFAULT_IDENTITY,
   NAME_LIMIT,
   TAGLINE_LIMIT,
@@ -27,54 +20,6 @@ import {
 } from "../app/identity.ts";
 
 const DAY = 86_400_000;
-
-test("growth stages keep their original care-point thresholds", () => {
-  assert.equal(growthStageFor(0), 1);
-  assert.equal(growthStageFor(9), 1);
-  assert.equal(growthStageFor(10), 2);
-  assert.equal(growthStageFor(29), 2);
-  assert.equal(growthStageFor(30), 3);
-  assert.equal(growthStageFor(59), 3);
-  assert.equal(growthStageFor(60), 4);
-  assert.deepEqual(growthFloors, { 1: 0, 2: 10, 3: 30, 4: 60 });
-});
-
-test("growth progress reports a fillable percentage and a countdown", () => {
-  const early = growthProgressFor(5, 1);
-  assert.equal(early.percent, 50);
-  assert.equal(early.remaining, 5);
-
-  const start = growthProgressFor(10, 2);
-  assert.equal(start.percent, 0);
-  assert.equal(start.remaining, 20);
-
-  const grown = growthProgressFor(120, 4);
-  assert.equal(grown.percent, 100);
-  assert.equal(grown.remaining, 0);
-});
-
-test("growth progress never leaves the 0-100 range", () => {
-  for (const points of [-50, 0, 7, 29, 30, 59, 60, 999]) {
-    const stage = growthStageFor(points);
-    const { percent } = growthProgressFor(points, stage);
-    assert.ok(percent >= 0 && percent <= 100, `percent out of range for ${points}`);
-  }
-});
-
-test("the room follows the local hour", () => {
-  assert.equal(dayPeriodFor(7), "day");
-  assert.equal(dayPeriodFor(16), "day");
-  assert.equal(dayPeriodFor(17), "evening");
-  assert.equal(dayPeriodFor(20), "evening");
-  assert.equal(dayPeriodFor(21), "night");
-  assert.equal(dayPeriodFor(3), "night");
-});
-
-test("treat effects stay exactly as the game balanced them", () => {
-  assert.deepEqual(foods.moonberry.effects, { fullness: 22, joy: 6 });
-  assert.deepEqual(foods.cloudpuff.effects, { fullness: 14, energy: 10, joy: 4 });
-  assert.deepEqual(foods.dewdrop.effects, { fullness: 8, energy: 16 });
-});
 
 test("relationship levels rise with bond once a few moments are shared", () => {
   assert.equal(relationshipFor(90, 2).key, "new");

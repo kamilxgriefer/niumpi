@@ -1,4 +1,6 @@
-import type { NiumpiBehavior } from "./RiggedNiumpi";
+/** The spontaneous moods a vibe can nudge. Mirrors the animation controller's
+ *  idle-tier states, kept here so this module has no component dependency. */
+export type NiumpiBehavior = "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep";
 
 export type PetVibe = "energetic" | "chill" | "curious";
 
