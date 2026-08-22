@@ -1,0 +1,134 @@
+/* ============================================================
+   Minigames — shared frame, Phaser host, DOM games
+   ============================================================ */
+.game-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.game-tile {
+  display: grid; justify-items: center; gap: 5px;
+  width: 100%; min-height: 176px; padding: var(--s-4);
+  color: var(--text); text-align: center;
+  background: linear-gradient(165deg, rgb(67 33 116 / 74%), rgb(33 16 68 / 84%));
+  border: 1px solid var(--glass-line); border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.game-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg), var(--glow-violet); }
+.game-art .art { --art-1: var(--turquoise); --art-2: var(--gold); --art-3: white; }
+.tile-dewdrop-dash .game-art .art { --art-1: var(--turquoise); --art-2: var(--soft-blue); }
+.tile-moonberry-mix .game-art .art { --art-1: var(--mood-violet); --art-2: var(--hot-pink); }
+.tile-cloud-stack .game-art .art { --art-1: var(--cream); --art-2: var(--soft-blue); }
+.tile-leafbeat .game-art .art { --art-1: var(--green); --art-2: var(--gold); }
+.tile-hide-squeak .game-art .art { --art-1: var(--coral); --art-2: var(--plum-text); }
+.tile-dream-path .game-art .art { --art-1: var(--mood-violet); --art-2: var(--gold); }
+.game-tile strong { font-family: var(--font-head); font-size: var(--t-md); font-weight: 620; }
+.game-tile small { color: var(--text-faint); font-size: var(--t-xs); font-weight: 620; }
+.game-meta { color: var(--gold); font-size: var(--t-2xs); font-weight: 800; }
+.game-talent { color: var(--turquoise); font-size: var(--t-2xs); font-weight: 700; text-transform: capitalize; }
+
+.talent-list { display: grid; gap: var(--s-2); }
+.talent-list li { display: flex; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.talent-name { color: var(--text-muted); font-size: var(--t-sm); font-weight: 750; text-transform: capitalize; }
+.talent-pips { display: flex; gap: 4px; }
+.talent-pips i { width: 12px; height: 12px; background: rgb(255 255 255 / 14%); border-radius: 50%; }
+.talent-pips i.is-on { background: linear-gradient(140deg, var(--gold), var(--hot-pink)); box-shadow: 0 0 8px rgb(255 200 87 / 60%); }
+
+/* ------------------------------------------------------------- the frame -- */
+.minigame {
+  display: grid; gap: var(--s-3);
+  padding: var(--s-4);
+  background: linear-gradient(168deg, rgb(46 23 94 / 82%), rgb(20 9 46 / 92%));
+  border: 1px solid var(--glass-line); border-radius: var(--r-2xl);
+  box-shadow: var(--shadow-lg);
+}
+.minigame-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--s-3); }
+.minigame-title { display: flex; align-items: center; gap: var(--s-2); }
+.minigame-title div { display: grid; }
+.minigame-title strong { font-family: var(--font-head); font-size: var(--t-lg); font-weight: 620; }
+.minigame-title small { color: var(--text-faint); font-size: var(--t-xs); }
+.minigame-title .art { --art-1: var(--turquoise); --art-2: var(--gold); }
+.minigame-score { display: grid; justify-items: end; }
+.score-now { display: block; color: var(--gold); font-family: var(--font-head); font-size: var(--t-2xl); font-weight: 640; line-height: 1; font-variant-numeric: tabular-nums; }
+.minigame-score small { color: var(--text-faint); font-size: var(--t-2xs); font-weight: 700; }
+.minigame-timer { position: relative; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: var(--s-3); }
+.combo-flag { position: absolute; top: -4px; right: 0; padding: 4px 11px; color: #0C0522; background: var(--gold); border-radius: var(--r-pill); font-size: var(--t-2xs); font-weight: 900; }
+
+.minigame-field {
+  position: relative; display: grid;
+  min-height: clamp(320px, 46vh, 500px);
+  overflow: hidden;
+  background: radial-gradient(120% 90% at 50% 0%, rgb(67 33 116 / 60%), rgb(16 7 43 / 80%));
+  border: 1px solid var(--glass-line-soft); border-radius: var(--r-xl);
+}
+/* Pinned to the field so a canvas sized from its parent can never feed back
+   into layout and grow the page on every frame. */
+.minigame-play { position: absolute; inset: 0; display: grid; }
+.minigame-intro, .minigame-done { position: relative; display: grid; justify-items: center; align-content: center; gap: var(--s-3); padding: var(--s-5); text-align: center; }
+.minigame-intro .art, .minigame-done .art { --art-1: var(--turquoise); --art-2: var(--gold); --art-3: white; }
+.intro-how { color: var(--text-muted); font-size: var(--t-sm); font-weight: 650; max-width: 46ch; }
+.intro-keys { color: var(--text-faint); font-size: var(--t-xs); font-weight: 700; }
+.difficulty-row { display: flex; flex-wrap: wrap; gap: var(--s-2); justify-content: center; }
+.minigame-done h3 { font-family: var(--font-head); font-size: var(--t-xl); font-weight: 620; }
+.minigame-done p { color: var(--text-muted); font-size: var(--t-sm); font-weight: 650; }
+.done-actions { display: flex; flex-wrap: wrap; gap: var(--s-2); justify-content: center; }
+
+/* --------------------------------------------------------- phaser host --- */
+.phaser-host { position: absolute; inset: 0; display: grid; place-items: center; overflow: hidden; touch-action: none; }
+.phaser-host canvas { display: block; border-radius: var(--r-lg); }
+.phaser-status { color: var(--text-faint); font-size: var(--t-sm); font-weight: 700; }
+.phaser-status.is-error { color: var(--coral); }
+
+/* ------------------------------------------------------------ DOM games -- */
+.mix-field, .hide-field, .path-field { display: grid; justify-items: center; align-content: center; gap: var(--s-4); padding: var(--s-5); }
+.mix-status, .hide-status, .path-depth { color: var(--text-muted); font-size: var(--t-md); font-weight: 750; }
+.mix-pads { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-3); }
+.mix-pad {
+  display: grid; place-items: center;
+  width: clamp(84px, 20vw, 118px); aspect-ratio: 1;
+  background: rgb(255 255 255 / 8%);
+  border: 2px solid var(--glass-line); border-radius: var(--r-xl);
+  transition: transform 120ms var(--ease), background 120ms var(--ease), box-shadow 120ms var(--ease);
+}
+.mix-pad .art { --art-1: var(--turquoise); --art-2: var(--gold); --art-3: white; }
+.mix-pad.pad-0 .art { --art-1: #9B7BE8; }
+.mix-pad.pad-1 .art { --art-1: #E7EEFF; }
+.mix-pad.pad-2 .art { --art-1: #49D4D0; }
+.mix-pad.pad-3 .art { --art-1: #FFC857; }
+.mix-pad.is-lit { transform: scale(1.08); background: rgb(255 255 255 / 24%); box-shadow: 0 0 30px rgb(255 255 255 / 40%); }
+.mix-pad:disabled { cursor: default; }
+.mix-hint, .path-hint { color: var(--text-faint); font-size: var(--t-xs); font-weight: 650; }
+
+.hide-spots { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: var(--s-3); width: 100%; }
+.hide-spot {
+  display: grid; justify-items: center; gap: 5px;
+  width: 100%; min-height: 118px; padding: var(--s-3);
+  color: var(--text-muted); text-align: center;
+  background: rgb(255 255 255 / 6%);
+  border: 2px solid var(--glass-line-soft); border-radius: var(--r-lg);
+  font-size: var(--t-xs); font-weight: 750;
+  transition: transform var(--dur) var(--ease), border-color var(--dur) var(--ease), background var(--dur) var(--ease);
+}
+.hide-spot:hover { transform: translateY(-3px); }
+.hide-spot .art { --art-1: var(--coral); --art-2: var(--turquoise); --art-3: white; }
+.hide-spot small { font-size: var(--t-2xs); font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+/* Warmth is border + text, never colour on its own. */
+.hide-spot.warmth-0 { border-color: rgb(102 167 255 / 55%); color: var(--soft-blue); }
+.hide-spot.warmth-1 { border-color: rgb(73 212 208 / 55%); color: var(--turquoise); }
+.hide-spot.warmth-2 { border-color: rgb(100 215 165 / 60%); color: var(--green); }
+.hide-spot.warmth-3 { border-color: rgb(255 200 87 / 70%); color: var(--gold); }
+.hide-spot.warmth-4 { border-color: rgb(255 111 115 / 80%); color: var(--coral); }
+.hide-spot.is-found { border-color: var(--gold); background: rgb(255 200 87 / 20%); box-shadow: 0 0 30px rgb(255 200 87 / 34%); }
+
+.path-forks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-4); width: min(560px, 100%); }
+.path-choice {
+  display: grid; justify-items: center; gap: var(--s-2);
+  min-height: 158px; padding: var(--s-4);
+  color: var(--text);
+  background: linear-gradient(168deg, rgb(91 62 158 / 72%), rgb(33 16 68 / 82%));
+  border: 1px solid var(--glass-line); border-radius: var(--r-xl);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.path-choice:hover { transform: translateY(-4px); box-shadow: var(--glow-violet); }
+.path-choice .art { --art-1: var(--mood-violet); --art-2: var(--gold); --art-3: white; }
+.path-choice strong { font-size: var(--t-sm); font-weight: 750; text-align: center; }
+.path-trail { display: grid; gap: 5px; width: min(560px, 100%); }
+.path-trail li { display: flex; align-items: center; gap: 8px; color: var(--text-faint); font-size: var(--t-xs); font-style: italic; font-weight: 620; }
+.path-trail .art { --art-1: var(--turquoise); flex: none; }

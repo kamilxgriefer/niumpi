@@ -1,0 +1,98 @@
+/* ============================================================
+   Design tokens — Cosmic Cozy
+   Outer shell is deep space; inner scenes are warm pastel rooms.
+   ============================================================ */
+:root {
+  color-scheme: dark;
+
+  /* --- cosmic palette --- */
+  --cosmic: #10072B;
+  --panel-deep: #211044;
+  --panel-surface: #2E175E;
+  --purple-surface: #432174;
+  --violet: #8657FF;
+  --pink: #EA55C8;
+  --hot-pink: #FF5FA8;
+  --peach: #FFD8D4;
+  --cream: #FFF4EC;
+  --turquoise: #49D4D0;
+  --soft-blue: #66A7FF;
+  --gold: #FFC857;
+  --green: #64D7A5;
+  --coral: #FF6F73;
+  --plum-text: #4B275B;
+
+  /* --- text --- */
+  --text: #FFFFFF;
+  --text-muted: rgb(255 255 255 / 72%);
+  --text-faint: rgb(255 255 255 / 52%);
+  --ink: var(--plum-text);
+  --ink-soft: #6B4478;
+  --ink-muted: #8B6694;
+
+  /* --- surfaces --- */
+  --glass: rgb(46 23 94 / 62%);
+  --glass-strong: rgb(46 23 94 / 84%);
+  --glass-line: rgb(255 255 255 / 18%);
+  --glass-line-soft: rgb(255 255 255 / 10%);
+  --pastel: linear-gradient(168deg, #FFF6EF 0%, #FFE9E4 52%, #F7E4FA 100%);
+  --pastel-line: rgb(120 84 130 / 14%);
+
+  /* --- mood colours (Mood Leaf + stat accents) --- */
+  --mood-turquoise: #49D4D0;
+  --mood-green: #64D7A5;
+  --mood-yellow: #FFC857;
+  --mood-orange: #FF9A4D;
+  --mood-blue: #66A7FF;
+  --mood-pink: #FF5FA8;
+  --mood-violet: #A98BFF;
+  --mood-prism: #E7DDFF;
+
+  /* --- elevation: diffuse violet, never heavy black --- */
+  --shadow-sm: 0 4px 14px rgb(16 7 43 / 32%);
+  --shadow-md: 0 14px 34px rgb(16 7 43 / 40%);
+  --shadow-lg: 0 30px 70px rgb(16 7 43 / 52%);
+  --glow-violet: 0 0 34px rgb(134 87 255 / 34%);
+  --glow-pink: 0 0 30px rgb(255 95 168 / 40%);
+  --inner-top: inset 0 1px 0 rgb(255 255 255 / 16%);
+
+  /* --- radii --- */
+  --r-xs: 10px;
+  --r-sm: 14px;
+  --r-md: 18px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-2xl: 34px;
+  --r-pill: 999px;
+
+  /* --- spacing --- */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px;
+  --s-5: 20px; --s-6: 24px; --s-7: 32px; --s-8: 44px;
+
+  /* --- type --- */
+  --t-2xs: .66rem;
+  --t-xs: .74rem;
+  --t-sm: .84rem;
+  --t-md: .95rem;
+  --t-lg: 1.08rem;
+  --t-xl: 1.35rem;
+  --t-2xl: 1.8rem;
+  /* Fallbacks live inside var() so a missing font variable degrades to a
+     rounded system face instead of collapsing the whole family to invalid. */
+  --font-head: var(--font-display, "Fredoka"), var(--font-body, "Nunito"), ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --font-text: var(--font-body, "Nunito"), ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+
+  /* --- motion --- */
+  --ease: cubic-bezier(.22, .9, .3, 1);
+  --dur-fast: 150ms;
+  --dur: 240ms;
+  --dur-slow: 420ms;
+
+  /* --- layout --- */
+  --rail-w: 104px;
+  --shell-pad: clamp(14px, 2vw, 26px);
+  --tap: 44px;
+}
+
+/* Art symbols pick up their three colours from whatever contains them. */
+.art { --art-1: currentColor; --art-2: currentColor; --art-3: var(--cream); flex: none; }

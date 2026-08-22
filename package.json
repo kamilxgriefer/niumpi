@@ -12,13 +12,15 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
     "test": "npm run test:unit && npm run test:e2e",
-    "test:unit": "node --test tests/*.test.mjs",
+    "test:unit": "npm run build && node --experimental-strip-types --test tests/*.test.mjs tests/*.test.mts",
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
     "ci": "npm run lint && npm run typecheck && npm run test:unit && npm run build"
   },
   "dependencies": {
+    "motion": "^13.1.1",
+    "phaser": "^4.2.1",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },
