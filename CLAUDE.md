@@ -32,3 +32,12 @@
 
 Najpierw dopracowujemy przyjemność przebywania z Niumpim. Nie rozbudowujemy systemów, dopóki dotykanie i obserwowanie stworzenia nie daje frajdy.
 
+## Git workflow i chroniony `main`
+
+- Nigdy nie wypychaj zmian bezpośrednio do `main`.
+- Pracuj na małej, tematycznej gałęzi i otwieraj pull request do `main`.
+- Scalaj dopiero po pomyślnym zakończeniu kontroli `Lint, types, tests and build`, `Playwright (Chromium)` oraz `Analyze JavaScript and TypeScript`.
+- Używaj wyłącznie squash merge, aby historia `main` pozostawała liniowa i czytelna.
+- To repozytorium rozwija jedna osoba, dlatego ruleset nie wymaga formalnej aprobaty drugiej osoby; nierozwiązane wątki przeglądu nadal blokują scalenie.
+- Nie omijaj wymaganych kontroli, nie używaj force push i nie usuwaj gałęzi `main`.
+- Kanoniczny, importowalny ruleset znajduje się w `.github/rulesets/main-protection.json`. Faktycznym źródłem egzekwowania pozostają ustawienia GitHub, gdzie ruleset musi mieć status **Active**.
