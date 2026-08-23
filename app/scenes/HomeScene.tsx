@@ -6,8 +6,8 @@ import { SnackBar } from "../ui/SnackBar";
 import { Art } from "../ui/Art";
 import { BondMeter, StatRow } from "../ui/parts";
 import {
-  ActivityTiles, DiscoveryBanner, EvolutionPreview, GrowthCard, MemorySeedCard,
-  MissionsCard, PersonalityPanel, RoomPreview, SharedMomentsCard, TodayVibe,
+  ActivityTiles, EvolutionPreview, MemorySeedCard, MissionsCard,
+  PersonalityPanel, PetStatusStrip, RoomPreview,
 } from "../ui/homeCards";
 import { useGame } from "../ui/GameProvider";
 import { copy } from "../game/config/copy";
@@ -62,11 +62,6 @@ export function HomeScene() {
               </CompanionStage>
             </div>
 
-            <SharedMomentsCard />
-            <GrowthCard />
-            <DiscoveryBanner />
-            <TodayVibe />
-
             <SnackBar armed={armed} onArm={setArmed} hitTest={hitTest} onCook={() => goTo("cooking")} />
 
             <div className="action-bar">
@@ -88,6 +83,8 @@ export function HomeScene() {
                 {asleep ? copy.home.wakeUp : copy.home.tuckIn}
               </button>
             </div>
+
+            <PetStatusStrip />
           </section>
 
           <ActivityTiles />

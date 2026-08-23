@@ -1013,3 +1013,83 @@
   background: radial-gradient(circle, rgb(255 206 140 / 32%), transparent 66%);
   pointer-events: none;
 }
+
+/* --------------------------------------------------------- status strip ----
+ *
+ * Replaces four stacked full-width cards that sat between the creature and its
+ * controls. Same information, read as a group rather than as four competing
+ * announcements, and placed after the care loop instead of interrupting it.
+ */
+
+.status-strip {
+  display: grid;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  background: rgb(255 255 255 / 46%);
+  border: 1px solid rgb(255 255 255 / 62%);
+  border-radius: var(--r-xl);
+}
+
+.status-vibe { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2); }
+.status-vibe-label {
+  color: var(--ink-soft);
+  font-size: var(--t-xs); font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+}
+.status-vibe-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Four tiles that fit a phone two-up and a desktop four-up, without a
+   breakpoint doing the deciding. */
+.status-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--s-2);
+}
+
+.status-tile {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-height: 44px;
+  padding: var(--s-3);
+  text-align: left;
+  background: rgb(255 255 255 / 82%);
+  border: 1px solid rgb(120 84 130 / 12%);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms var(--ease);
+}
+.status-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: rgb(255 255 255 / 94%); }
+.status-tile:focus-visible { outline: 3px solid var(--focus, #7de3dc); outline-offset: 3px; }
+
+.status-icon { display: flex; margin-bottom: 2px; }
+.status-kicker {
+  color: var(--ink-soft);
+  font-size: var(--t-xs); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.status-title {
+  color: var(--ink);
+  font-family: var(--font-head); font-size: var(--t-md); font-weight: 620;
+  line-height: 1.25;
+}
+.status-note { color: var(--ink-soft); font-size: var(--t-xs); line-height: 1.35; }
+
+.status-meter {
+  display: block; height: 6px; margin: 5px 0 3px;
+  background: rgb(120 84 130 / 14%); border-radius: 999px; overflow: hidden;
+}
+.status-meter i {
+  display: block; height: 100%;
+  background: linear-gradient(90deg, var(--coral, #f8703f), var(--pink, #ff90bd));
+  border-radius: 999px;
+  transition: width 700ms var(--ease);
+}
+
+/* The growth tile is the one that answers "what is happening to my pet", so it
+   carries slightly more weight than the three beside it. */
+.status-tile.tile-growth {
+  background: linear-gradient(155deg, rgb(255 255 255 / 94%), rgb(255 240 246 / 88%));
+  border-color: rgb(255 144 189 / 30%);
+}
