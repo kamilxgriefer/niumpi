@@ -90,6 +90,11 @@
 
   /* --- layout --- */
   --rail-w: 104px;
+  /* Caps the composition so it stays centered instead of stretching on wide
+     displays, and reserves a strip for global controls. */
+  --content-max: 1180px;
+  --topbar-h: 44px;
+  --bottom-nav-h: 64px;
   --shell-pad: clamp(14px, 2vw, 26px);
   --tap: 44px;
 }

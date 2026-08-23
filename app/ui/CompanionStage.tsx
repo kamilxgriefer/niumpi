@@ -191,7 +191,7 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
 
       <MoodLeafBadge mood={mood} onOpen={() => say(`My leaf is ${leafInfo.label.toLowerCase()} — ${leafInfo.leaf.toLowerCase()}.`)} />
 
-      {children}
+      {children && <div className="stage-aside">{children}</div>}
     </div>
   );
 }

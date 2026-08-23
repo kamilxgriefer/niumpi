@@ -39,14 +39,10 @@ export function HomeScene() {
 
   return (
     <div className="scene scene-home">
-      <div className="home-grid">
-        <div className="home-left">
-          <Brand />
-          <MemorySeedCard />
-          <PersonalityPanel />
-        </div>
+      <Brand />
 
-        <div className="home-centre">
+      <div className="home-grid">
+        <div className="home-main">
           <section className="hero-panel">
             <header className="hero-head">
               <span className="hero-mark"><Art name="niumpi" size={22} /> {state.niumpi.name || copy.brand.name}</span>
@@ -93,16 +89,18 @@ export function HomeScene() {
               </button>
             </div>
           </section>
+
+          <ActivityTiles />
         </div>
 
-        <div className="home-right">
+        <aside className="home-side">
+          <MemorySeedCard />
+          <MissionsCard />
+          <PersonalityPanel />
           <EvolutionPreview />
           <RoomPreview />
-          <MissionsCard />
-        </div>
+        </aside>
       </div>
-
-      <ActivityTiles />
     </div>
   );
 }

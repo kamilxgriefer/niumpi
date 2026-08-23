@@ -56,30 +56,36 @@ export function GameShell() {
 
         {chrome && <DesktopSidebar />}
 
+        {/* Reserved strip for global controls, so they can never sit on top of
+            a scene heading the way a floating button does. */}
+        <div className="shell-topbar">
+          {chrome && (
+            <button
+              className="settings-button"
+              type="button"
+              aria-label={copy.nav.settings}
+              onClick={() => setSettingsOpen(true)}
+            >
+              <Art name="gear" size={18} />
+            </button>
+          )}
+        </div>
+
         <div className="shell-body">
           <SceneRouter />
         </div>
 
         {chrome && <MobileNav />}
 
-        <div className="shell-status" aria-live="polite">
-          {!online && <span className="status-pill is-offline">{copy.states.offline}</span>}
-          {slowSave && <span className="status-pill">{copy.states.saving}</span>}
-          {saveStatus === "error" && <span className="status-pill is-error">{copy.states.saveFailed}</span>}
+        <div className="shell-overlay">
+          <ToastLayer />
+          <div className="shell-status" aria-live="polite">
+            {!online && <span className="status-pill is-offline">{copy.states.offline}</span>}
+            {slowSave && <span className="status-pill">{copy.states.saving}</span>}
+            {saveStatus === "error" && <span className="status-pill is-error">{copy.states.saveFailed}</span>}
+          </div>
         </div>
 
-        {chrome && (
-          <button
-            className="settings-button"
-            type="button"
-            aria-label={copy.nav.settings}
-            onClick={() => setSettingsOpen(true)}
-          >
-            <Art name="gear" size={18} />
-          </button>
-        )}
-
-        <ToastLayer />
         <RewardLayer />
         {settingsOpen && <SettingsDialog onClose={() => setSettingsOpen(false)} />}
         {devMode && <DevPanel />}

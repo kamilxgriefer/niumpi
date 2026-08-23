@@ -7,7 +7,7 @@
   --rig-x: 0px; --rig-y: 0px; --gaze-x: 0px; --gaze-y: 0px; --gaze-tilt: 0deg;
   container-type: size;
   position: relative; z-index: 3;
-  width: clamp(190px, 27vw, 340px); aspect-ratio: 1;
+  width: clamp(168px, 62cqw, 300px); aspect-ratio: 1;
   transform: translate3d(var(--rig-x), var(--rig-y), 0) rotate(var(--gaze-tilt));
   transform-origin: 50% 88%;
   will-change: transform;
