@@ -3,6 +3,16 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
+  /*
+   * Measured per-test durations for the same suite, 4 workers on 8 cores:
+   * against a warm server the slowest test ran 21.3s, against a freshly built
+   * one it ran 52.7s (the whole run slows — the Home layout tests went 3.7s to
+   * 18-19s). Playwright's 30s default sits between those, so the suite passed
+   * or failed on server warmth alone. 60s clears the cold case with headroom.
+   * Under CI (workers: 1) these tests finish in single digits, so this budget
+   * is never approached there — no assertion or wait was relaxed to fit it.
+   */
+  timeout: 60_000,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
   workers: process.env.CI ? 1 : undefined,
