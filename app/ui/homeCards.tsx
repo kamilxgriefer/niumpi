@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Art } from "./Art";
+import { RoutePortrait } from "./RoutePortrait";
 import { Chip, DotPath, EmptyState, Meter, Panel, TabBar } from "./parts";
 import { useGame } from "./GameProvider";
 import { copy } from "../game/config/copy";
@@ -233,7 +234,7 @@ export function EvolutionPreview() {
           const locked = state.evolution.lockedRoute === route.id;
           return (
             <li key={route.id} className={`evo-route route-${route.id} ${locked ? "is-locked-in" : ""}`}>
-              <span className="evo-orb" aria-hidden="true" style={{ background: route.palette.body }} />
+              <RoutePortrait id={route.id} size={40} />
               <strong>{route.name}</strong>
               <small>{route.tagline}</small>
             </li>

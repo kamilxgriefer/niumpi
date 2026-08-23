@@ -1,6 +1,7 @@
 "use client";
 
 import { Art } from "../ui/Art";
+import { RoutePortrait } from "../ui/RoutePortrait";
 import { Meter, Panel } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
 import { routes, prismaticRequirements } from "../game/config/routes";
@@ -81,7 +82,7 @@ export function EvolutionScene() {
               route.rare ? "is-rare" : "",
             ].filter(Boolean).join(" ")}>
               <header>
-                <span className="route-orb" style={{ background: route.palette.body }} aria-hidden="true" />
+                <RoutePortrait id={route.id} size={56} />
                 <div>
                   <h3>{route.name}{route.rare && <em> (rare)</em>}</h3>
                   <p>{route.tagline}</p>
