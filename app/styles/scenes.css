@@ -621,7 +621,10 @@
 .reaction-row .art { --art-1: var(--coral); --art-2: var(--turquoise); }
 
 /* ------------------------------------------------------------ activity --- */
-.activity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--s-3); }
+/* 170px never fits twice on a 375px phone, so four tiles became four full
+   rows — 660px of a locked grid, which is the wall of padlocks this redesign
+   set out to remove. Two-up is the point. */
+.activity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(138px, 1fr)); gap: var(--s-3); }
 .activity-tile {
   display: grid; justify-items: center; gap: 6px;
   width: 100%; min-height: 156px; padding: var(--s-4);
@@ -632,7 +635,28 @@
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 .activity-tile:hover:not(.is-locked) { transform: translateY(-4px); box-shadow: var(--shadow-lg), var(--glow-violet); }
-.activity-tile.is-locked { opacity: .5; cursor: not-allowed; }
+/*
+ * A place you cannot go yet should not take the same room as one you can.
+ * Locked tiles collapse to a single line stating when they open, so the open
+ * destinations are what the eye lands on. Opacity alone left four padlocks
+ * dominating the screen at full size.
+ */
+.activity-tile.is-locked {
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
+  align-items: center;
+  gap: 4px var(--s-3);
+  min-height: var(--tap, 44px);
+  padding: var(--s-3);
+  text-align: left;
+  opacity: .62;
+  cursor: not-allowed;
+  background: rgb(33 16 68 / 54%);
+  box-shadow: none;
+}
+.activity-tile.is-locked .activity-art { grid-row: span 2; }
+.activity-tile.is-locked strong { font-size: var(--t-sm); }
+.activity-tile.is-locked small { font-size: var(--t-2xs); }
 .activity-tile strong { font-family: var(--font-head); font-size: var(--t-md); font-weight: 620; }
 .activity-tile small { color: var(--text-faint); font-size: var(--t-xs); font-weight: 620; }
 .activity-art .art { --art-1: var(--turquoise); --art-2: var(--gold); --art-3: white; }
@@ -1092,4 +1116,27 @@
 .status-tile.tile-growth {
   background: linear-gradient(155deg, rgb(255 255 255 / 94%), rgb(255 240 246 / 88%));
   border-color: rgb(255 144 189 / 30%);
+}
+
+/* Used by .morning-motes and .seed-dust, which were both animating a keyframe
+   set that had never been written — two effects rendering as frozen dots. */
+@keyframes mote-rise {
+  0% { opacity: 0; translate: 0 0; scale: .5; }
+  25% { opacity: 1; }
+  100% { opacity: 0; translate: 0 -68px; scale: 1.1; }
+}
+
+/* Both belong to the Seed Chamber's hatch reveal, and both were lost when the
+   rig stylesheet was rewritten around the generated body — the moment the
+   shell opens and the hatchling appears had been running with no animation at
+   all. They live beside the elements that use them now. */
+@keyframes rig-hatch {
+  0% { opacity: 0; transform: scale(.3) translateY(30px); }
+  40% { opacity: 1; transform: scale(1.18) translateY(-16px); }
+  62% { transform: scale(.94) translateY(4px); }
+  100% { transform: none; }
+}
+@keyframes aura-breathe {
+  0%, 100% { transform: scale(1); opacity: .42; }
+  50% { transform: scale(1.12); opacity: .62; }
 }

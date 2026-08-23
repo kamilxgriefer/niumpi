@@ -439,8 +439,21 @@ test("watering only ever shortens the wait, and only once", () => {
 });
 
 test("planting requires a seed and an empty plot", () => {
+  // States the empty pouch rather than relying on the starter inventory to
+  // have none — it now ships three seeds, because opening the garden onto a
+  // grid of disabled cards with no way to get a seed was a day-one dead end.
   const base = fresh();
-  assert.equal(plantSeed(base, 0, "dewdrop-lily", NOW), null, "no seed owned");
+  const empty = { ...base, inventory: { ...base.inventory, ingredients: {} } };
+  assert.equal(plantSeed(empty, 0, "dewdrop-lily", NOW), null, "no seed owned");
+
+  // And the starter pouch really does let a first visit plant something.
+  const planted = plantSeed(base, 0, "dewdrop-lily", NOW);
+  assert.ok(planted, "the starter seeds should be plantable");
+  assert.equal(planted!.garden.plots[0].plantId, "dewdrop-lily");
+  assert.equal(planted!.inventory.ingredients["seed:dewdrop-lily"], 1, "the seed is spent");
+
+  // An occupied plot still refuses a second seed.
+  assert.equal(plantSeed(planted!, 0, "sunseed-flower", NOW), null, "plot already taken");
 });
 
 /* ----------------------------------------------------------- missions --- */

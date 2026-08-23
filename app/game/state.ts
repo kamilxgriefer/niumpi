@@ -75,7 +75,13 @@ export function createGameState(now: number, id: string): GameState {
       talents: { cooking: 0, music: 0, gardening: 0, agility: 0, exploration: 0, storytelling: 0 },
     },
     inventory: {
-      ingredients: { moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3 },
+      // Three starter seeds. plantSeed() requires a `seed:<plantId>` key, and
+      // without one the garden opened onto a grid of disabled cards with no
+      // way to obtain the thing it was asking for.
+      ingredients: {
+        moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3,
+        "seed:dewdrop-lily": 2, "seed:sunseed-flower": 1,
+      },
       items: [...starterItems],
       currencies: { dewdrops: 40, starFragments: 0 },
     },
