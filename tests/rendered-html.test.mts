@@ -34,6 +34,10 @@ async function css(file: string): Promise<string> {
   return readFile(new URL(`../app/styles/${file}`, import.meta.url), "utf8");
 }
 
+async function source(file: string): Promise<string> {
+  return readFile(new URL(`../${file}`, import.meta.url), "utf8");
+}
+
 test("the persistent shell server-renders as real markup, not a spinner", async () => {
   const page = await html();
   for (const region of ["shell", "cosmic", "rail", "rail-tab", "bottom-nav", "scene-host", "brand-name"]) {
@@ -90,19 +94,28 @@ test("motion, safe areas and touch targets are handled in CSS", async () => {
   assert.ok(tap && Number(tap[1]) >= 44, "touch target token must be at least 44px");
 });
 
-test("the character scales with its container instead of fixed leaf pixels", async () => {
+test("the character scales with its container instead of fixed pixels", async () => {
   const rig = await css("rig.css");
   assert.match(rig, /\.rig-root \{[^}]*container-type: size/);
-  assert.match(rig, /\.rig-leaf \{[^}]*width: 14\.2cqw/);
-  assert.doesNotMatch(rig, /\.rig-leaf \{[^}]*width: 54px/);
+  // The body is one SVG in a viewBox, so every feature scales together. What
+  // still has to be fluid is the box it is drawn into.
+  assert.match(rig, /\.rig-root \{[^}]*width: clamp\([^)]*cqw/);
+  assert.doesNotMatch(rig, /\.nb \{[^}]*width: \d+px/);
 });
 
-test("recolour layers are masked to the body so a route cannot bleed outside it", async () => {
+test("shading is clipped to the silhouette so a route cannot bleed outside it", async () => {
+  const body = await source("app/ui/niumpi/NiumpiBody.tsx");
+  // The belly and rim light are drawn from the same path as the body, then
+  // clipped to it. Without the clip they spill past the outline at the stages
+  // where the silhouette narrows.
+  assert.match(body, /<clipPath id="nb-silhouette">/);
+  assert.match(body, /clipPath="url\(#nb-silhouette\)"/);
+
   const rig = await css("rig.css");
-  assert.match(rig, /mask-image: var\(--body-mask\)/);
   for (const route of ["moonveil", "bloomheart", "sparkleap", "mistwander", "prismatic"]) {
-    // Selectors in this file are column-aligned, so whitespace is not fixed.
-    assert.match(rig, new RegExp(`\\.body-${route}\\s+\\.layer-tint`), `missing tint layer for ${route}`);
+    // Every route must restyle the creature through custom properties only —
+    // a route that set geometry would break the growth model.
+    assert.match(rig, new RegExp(`\\.body-${route}\\s*\\{[^}]*--skin-mid:`), `missing palette for ${route}`);
   }
 });
 

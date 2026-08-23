@@ -32,7 +32,7 @@ test("the care scene keeps a versioned save and accessible controls", async () =
 
   // The save is versioned and older keys are still migrated forward.
   assert.match(state, /export const SAVE_VERSION = \d+/);
-  assert.match(state, /export const STORAGE_KEY = "niumpi-save-v4"/);
+  assert.match(state, /export const STORAGE_KEY = "niumpi-save-v5"/);
   assert.match(state, /LEGACY_KEYS = \["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"\]/);
   assert.match(persistence, /window\.localStorage\.setItem\(STORAGE_KEY/);
   assert.match(persistence, /window\.localStorage\.getItem\(STORAGE_KEY\)/);

@@ -183,7 +183,7 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         <NiumpiRenderer
           rigRef={rigRef}
           phenotype={state.phenotype}
-          visualStage={visualStage}
+          stage={visualStage}
           moodColour={leafInfo.colour}
           petName={name}
           onPartActivate={(bodyPart) => act(partActions[bodyPart])}

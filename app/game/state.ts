@@ -6,10 +6,11 @@ import type {
 } from "./types.ts";
 import { dayKeyFor, weekKeyFor } from "./time.ts";
 
-export const SAVE_VERSION = 4;
-export const STORAGE_KEY = "niumpi-save-v4";
+export const SAVE_VERSION = 5;
+export const STORAGE_KEY = "niumpi-save-v5";
 /** Read in order when the current key is missing, then migrated forward. */
 export const LEGACY_KEYS = ["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
+export const PRIOR_SAVE_KEYS = ["niumpi-save-v4"];
 
 export const vectorIds: VectorId[] = [
   "calm", "playful", "loving", "curious", "brave",

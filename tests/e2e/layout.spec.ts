@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const SAVE_KEY = "niumpi-save-v4";
-const LEGACY_KEYS = ["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
+const SAVE_KEY = "niumpi-save-v5";
+const LEGACY_KEYS = ["niumpi-save-v4", "niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
 
 type Viewport = { name: string; width: number; height: number };
 

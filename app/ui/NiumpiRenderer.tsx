@@ -1,13 +1,15 @@
 "use client";
 
-import Image from "next/image";
 import type { CSSProperties, MouseEvent, PointerEvent, RefObject } from "react";
-import type { Phenotype } from "../game/types";
+import type { Phenotype, StageId } from "../game/types";
+import { profileFor } from "../game/config/growth.ts";
+import { NiumpiBody } from "./niumpi/NiumpiBody.tsx";
 
 /**
- * Pure structure. Every layer is a composable element whose look comes from
- * CSS and whose motion comes from NiumpiAnimationController — this component
- * holds no animation state and never re-renders on a frame.
+ * Pure structure. The body itself is generated from the stage profile by
+ * NiumpiBody; this component owns only the interaction surfaces and the effect
+ * layers around it. It holds no animation state and never re-renders on a
+ * frame — NiumpiAnimationController drives the root's classes and variables.
  */
 
 export type BodyPart = "head" | "belly" | "side" | "feet" | "leaf";
@@ -16,8 +18,7 @@ type Props = {
   /** The controller attaches to this node and owns its classes and variables. */
   rigRef: RefObject<HTMLDivElement | null>;
   phenotype: Phenotype;
-  /** 1–4: how many leaves and how developed the arms are. */
-  visualStage: 1 | 2 | 3 | 4;
+  stage: StageId;
   moodColour: string;
   petName: string;
   onPartActivate?: (part: BodyPart) => void;
@@ -28,16 +29,19 @@ type Props = {
   onPointerUp: () => void;
 };
 
-/** Marking overlays are masked to the body silhouette, so nothing spills out. */
-const BODY_MASK = "url(/niumpi-rig-body.png)";
-
 export function NiumpiRenderer({
-  rigRef, phenotype, visualStage, moodColour, petName,
+  rigRef, phenotype, stage, moodColour, petName,
   onPartActivate, onLeafTouch, onActivate, onPointerDown, onPointerMove, onPointerUp,
 }: Props) {
+  const profile = profileFor(stage);
+
   const style = {
     "--mood-colour": `var(--mood-${moodColour})`,
-    "--body-mask": BODY_MASK,
+    // Growth is felt through the box the creature occupies, so a hatchling
+    // genuinely takes up less of the scene than a grown Niumpi.
+    "--stage-scale": profile.scale,
+    // Places the leaf touch target over wherever the leaves ended up.
+    "--tip-top": `${(profile.body.tipY / 200) * 100}%`,
   } as CSSProperties;
 
   return (
@@ -45,7 +49,8 @@ export function NiumpiRenderer({
       ref={rigRef}
       className={[
         "rig-root",
-        `growth-stage-${visualStage}`,
+        `growth-stage-${profile.id}`,
+        `arms-${profile.arms}`,
         `body-${phenotype.bodyPalette}`,
         `leaf-${phenotype.leafType}`,
         `eyes-${phenotype.eyeType}`,
@@ -56,17 +61,6 @@ export function NiumpiRenderer({
       style={style}
     >
       <span className="layer-aura" aria-hidden="true" />
-
-      <button
-        className="rig-leaf"
-        type="button"
-        aria-label={`Touch ${petName}'s mood leaf`}
-        onClick={onLeafTouch}
-      />
-      {[2, 3, 4, 5].map((index) => (
-        <span key={index} className={`rig-leaf-extra rig-leaf-${index}`} aria-hidden="true" />
-      ))}
-
       <span className="layer-particles" aria-hidden="true"><i /><i /><i /></span>
       <span className="sleep-wisp sleep-wisp-one" aria-hidden="true">z</span>
       <span className="sleep-wisp sleep-wisp-two" aria-hidden="true">z</span>
@@ -82,43 +76,17 @@ export function NiumpiRenderer({
         onClick={onActivate}
         onContextMenu={(event) => event.preventDefault()}
       >
-        <span className="rig-foot rig-foot-left" aria-hidden="true" />
-        <span className="rig-foot rig-foot-right" aria-hidden="true" />
-        <span className="rig-ear rig-ear-left" aria-hidden="true" />
-        <span className="rig-ear rig-ear-right" aria-hidden="true" />
-        <span className="rig-arm rig-arm-left" aria-hidden="true" />
-        <span className="rig-arm rig-arm-right" aria-hidden="true" />
-
-        <span className="rig-visual" aria-hidden="true">
-          <Image
-            className="layer-body"
-            src="/niumpi-rig-body.png"
-            alt=""
-            width={1254}
-            height={1254}
-            priority
-            draggable={false}
-          />
-          <span className="layer-tint" />
-          <span className="layer-belly" />
-          {phenotype.markings.map((marking) => (
-            <span key={marking} className={`layer-marking marking-${marking}`} />
-          ))}
-
-          <span className="rig-face">
-            <span className="rig-eye rig-eye-left">
-              <span className="rig-pupil" /><span className="rig-eyelid" />
-            </span>
-            <span className="rig-eye rig-eye-right">
-              <span className="rig-pupil" /><span className="rig-eyelid" />
-            </span>
-            <span className="rig-cheek rig-cheek-left" />
-            <span className="rig-cheek rig-cheek-right" />
-            <span className="rig-mouth"><span className="rig-tongue" /></span>
-          </span>
-          {phenotype.accessory && <span className={`layer-accessory accessory-${phenotype.accessory}`} />}
-        </span>
+        <NiumpiBody profile={profile} />
       </button>
+
+      {profile.leaves > 0 && (
+        <button
+          className="rig-leaf-touch"
+          type="button"
+          aria-label={`Touch ${petName}'s mood leaf`}
+          onClick={onLeafTouch}
+        />
+      )}
 
       {/* Keyboard-reachable body zones — the pointer path is not the only way in. */}
       {onPartActivate && (
@@ -140,10 +108,14 @@ export function NiumpiRenderer({
   );
 }
 
-/** Leaves and arms track overall maturity, not the evolution route. */
-export function visualStageFor(careMoments: number, stage: number): 1 | 2 | 3 | 4 {
-  if (stage >= 4 || careMoments >= 260) return 4;
-  if (stage >= 3 || careMoments >= 120) return 3;
-  if (stage >= 2 || careMoments >= 40) return 2;
+/**
+ * Growth stages and visual stages are the same thing now. Care moments are a
+ * fallback for saves whose stage never settled.
+ */
+export function visualStageFor(careMoments: number, stage: number): StageId {
+  if (stage >= 5 || careMoments >= 520) return 5;
+  if (stage >= 4 || careMoments >= 300) return 4;
+  if (stage >= 3 || careMoments >= 150) return 3;
+  if (stage >= 2 || careMoments >= 62) return 2;
   return 1;
 }

@@ -97,7 +97,7 @@
     "mood   mood";
   align-items: start;
   gap: var(--s-3);
-  min-height: clamp(320px, 40vh, 440px);
+  min-height: clamp(300px, 34vh, 390px);
   padding: var(--s-4);
   overflow: hidden;
   border-radius: var(--r-xl);

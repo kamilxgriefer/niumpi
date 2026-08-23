@@ -1,7 +1,22 @@
 import type { GameState } from "./types.ts";
-import { LEGACY_KEYS, SAVE_VERSION, STORAGE_KEY, createGameState, makeId, migrateLegacy, reconcile } from "./state.ts";
+import { LEGACY_KEYS, PRIOR_SAVE_KEYS, STORAGE_KEY, createGameState, makeId, migrateLegacy, reconcile } from "./state.ts";
 
 export type SaveStatus = "idle" | "saving" | "saved" | "error";
+
+/**
+ * Version 5 inserted the Hatchling stage between the egg and Sprouting, so
+ * every stage above the egg shifted up by one. Without this a saved
+ * "Sprouting" pet would silently become a newborn.
+ *
+ * The egg (0) stays put, and the top stage absorbs anything past the end.
+ */
+export function migrateStages(parsed: Record<string, unknown>): Record<string, unknown> {
+  const version = typeof parsed.version === "number" ? parsed.version : 0;
+  if (version >= 5) return parsed;
+  const niumpi = parsed.niumpi as { stage?: number } | undefined;
+  if (!niumpi || typeof niumpi.stage !== "number" || niumpi.stage < 1) return parsed;
+  return { ...parsed, niumpi: { ...niumpi, stage: Math.min(5, niumpi.stage + 1) } };
+}
 
 export type PersistenceAdapter = {
   load(): Promise<GameState | null>;
@@ -21,11 +36,16 @@ export function localAdapter(): PersistenceAdapter {
       const current = window.localStorage.getItem(STORAGE_KEY);
       if (current) {
         const parsed = JSON.parse(current) as Partial<GameState>;
-        if (typeof parsed.version === "number" && parsed.version > SAVE_VERSION) {
-          // A newer build wrote this. Read what we understand, never destroy it.
-          return reconcile(parsed, now);
-        }
+        // A newer build may have written this. Read what we understand and
+        // never destroy the rest.
         return reconcile(parsed, now);
+      }
+      for (const key of PRIOR_SAVE_KEYS) {
+        const prior = window.localStorage.getItem(key);
+        if (!prior) continue;
+        const parsed = migrateStages(JSON.parse(prior) as Record<string, unknown>);
+        // The old key stays put until the new save lands, so nothing is lost.
+        return reconcile(parsed as Partial<GameState>, now);
       }
       for (const key of LEGACY_KEYS) {
         const legacy = window.localStorage.getItem(key);
