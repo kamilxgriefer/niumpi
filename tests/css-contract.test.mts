@@ -55,3 +55,19 @@ test("interactive controls meet the touch floor the product sets", async () => {
   assert.match(components.text, /\.icon-button \{[^}]*width: var\(--tap/);
   assert.match(components.text, /\.icon-button \{[^}]*height: var\(--tap/);
 });
+
+test("a Niumpi drawn outside the full rig still has a palette", async () => {
+  // The default colours used to live on .rig-root, so any body rendered
+  // elsewhere — a neighbour's avatar, the cook — resolved every gradient stop
+  // to nothing and painted a black silhouette. They belong at the root.
+  const rig = (await stylesheets()).find((s) => s.file === "rig.css");
+  assert.ok(rig, "rig.css must exist");
+  for (const token of ["--skin-light", "--skin-mid", "--skin-deep", "--eye", "--leaf-light", "--foot"]) {
+    assert.match(
+      rig.text,
+      new RegExp(`:root \\{[^}]*${token}:`),
+      `${token} must have a root-level default`,
+    );
+  }
+  assert.doesNotMatch(rig.text, /\.rig-root \{[^}]*--skin-mid:/);
+});

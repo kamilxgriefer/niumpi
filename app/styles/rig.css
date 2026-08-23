@@ -11,12 +11,14 @@
  * creature without touching a single coordinate.
  */
 
-.rig-root {
-  --rig-x: 0px; --rig-y: 0px;
-  --gaze-x: 0px; --gaze-y: 0px; --gaze-tilt: 0deg;
-  --stage-scale: 1;
-
-  /* Default coral palette. Routes override just these. */
+/*
+ * The default coral palette lives at the root, not on .rig-root, so a Niumpi
+ * drawn outside the full rig — a neighbour's avatar, the cook — still has
+ * colours. When these sat on .rig-root, "body-coral" matched no rule at all
+ * and those instances rendered as black silhouettes with empty gradients.
+ * Route classes are more specific than :root, so they still win anywhere.
+ */
+:root {
   --skin-light: #ffb489;
   --skin-mid: #f8703f;
   --skin-deep: #dd4a2c;
@@ -29,6 +31,12 @@
   --leaf-vein: #d7fff2;
   --rim: #ffd9b8;
   --foot: #d9421f;
+}
+
+.rig-root {
+  --rig-x: 0px; --rig-y: 0px;
+  --gaze-x: 0px; --gaze-y: 0px; --gaze-tilt: 0deg;
+  --stage-scale: 1;
 
   container-type: size;
   position: relative;
