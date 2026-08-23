@@ -552,11 +552,44 @@
 .evo-history small { color: var(--text-faint); }
 
 /* -------------------------------------------------------------- room ----- */
-.room-preview { position: relative; height: 120px; overflow: hidden; background: linear-gradient(178deg, #FFE7DC, #E8D2F5); border-radius: var(--r-md); }
-.preview-window { position: absolute; top: 12%; right: 12%; width: 30px; height: 40px; background: linear-gradient(178deg, #BFE4FF, #E6F5FF); border: 3px solid white; border-radius: 40% 40% 8% 8%; }
-.preview-floor { position: absolute; inset: auto 0 0; height: 34%; background: #DDBBAD; }
-.preview-item { position: absolute; }
-.preview-item .art { --art-1: var(--coral); --art-2: var(--turquoise); --art-3: white; }
+/* A miniature of the real room stage, so the card previews the actual space
+   rather than showing an abstract coloured block. */
+.room-preview {
+  position: relative; height: 132px; overflow: hidden;
+  border-radius: var(--r-md);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 12%);
+}
+.preview-wall {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 6%) 0 1px, transparent 1px 14px),
+    linear-gradient(178deg, #FFE9DC, #FFDCE2 56%, #F2DCF7);
+}
+.preview-window {
+  position: absolute; top: 14%; right: 14%;
+  width: 22px; height: 30px;
+  background: linear-gradient(178deg, #BFE4FF, #E6F5FF);
+  border: 3px solid rgb(255 255 255 / 92%); border-radius: 44% 44% 10% 10%;
+  box-shadow: 0 3px 7px rgb(74 40 88 / 18%);
+}
+.preview-rail {
+  position: absolute; left: 0; right: 0; bottom: 34%;
+  height: 3px; background: linear-gradient(180deg, rgb(255 255 255 / 80%), rgb(214 176 168 / 55%));
+}
+.preview-floor {
+  position: absolute; inset: auto 0 0; height: 34%;
+  background:
+    repeating-linear-gradient(90deg, rgb(150 96 74 / 16%) 0 1px, transparent 1px 22px),
+    linear-gradient(178deg, #E8CBBE, #D6AE9F);
+}
+.preview-rug {
+  position: absolute; bottom: 7%; left: 50%; width: 52%; height: 13%; translate: -50% 0;
+  background: radial-gradient(ellipse at center, #C6A4EE 0 44%, #A87FE0 72%, #9169CC);
+  border-radius: 50%;
+}
+.preview-item { position: absolute; z-index: 2; }
+.preview-item .art { --art-1: var(--coral); --art-2: var(--turquoise); --art-3: white; filter: drop-shadow(0 2px 4px rgb(74 40 88 / 30%)); }
+
 .room-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 
 .room-canvas {

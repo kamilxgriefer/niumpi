@@ -1,10 +1,12 @@
 /* ============================================================
    Minigames — shared frame, Phaser host, DOM games
    ============================================================ */
-.game-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+/* Exactly six games, so the column count is stated rather than left to an
+   auto-fill that lands on an awkward 5 + 1. */
+.game-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .game-tile {
-  display: grid; justify-items: center; gap: 5px;
-  width: 100%; min-height: 176px; padding: var(--s-4);
+  display: grid; justify-items: center; gap: 6px;
+  width: 100%; min-height: 196px; padding: var(--s-3) var(--s-3) var(--s-4);
   color: var(--text); text-align: center;
   background: linear-gradient(165deg, rgb(67 33 116 / 74%), rgb(33 16 68 / 84%));
   border: 1px solid var(--glass-line); border-radius: var(--r-xl);
@@ -12,6 +14,12 @@
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 .game-tile:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg), var(--glow-violet); }
+/* The scene fills the tile head, so a game is recognisable before its title. */
+.game-scene {
+  width: 100%; max-width: 260px; height: auto; aspect-ratio: 8 / 5;
+  border-radius: var(--r-md);
+  box-shadow: 0 6px 16px rgb(16 7 43 / 40%), inset 0 0 0 1px rgb(255 255 255 / 10%);
+}
 .game-art .art { --art-1: var(--turquoise); --art-2: var(--gold); --art-3: white; }
 .tile-dewdrop-dash .game-art .art { --art-1: var(--turquoise); --art-2: var(--soft-blue); }
 .tile-moonberry-mix .game-art .art { --art-1: var(--mood-violet); --art-2: var(--hot-pink); }

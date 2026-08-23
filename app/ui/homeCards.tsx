@@ -262,8 +262,11 @@ export function RoomPreview() {
       className="card-room" onOpen={unlock.open ? () => goTo("room") : undefined}
     >
       <div className="room-preview" aria-hidden="true">
+        <span className="preview-wall" />
         <span className="preview-window" />
+        <span className="preview-rail" />
         <span className="preview-floor" />
+        <span className="preview-rug" />
         {state.room.placed.slice(0, 4).map((placed) => (
           <span
             key={placed.uid}

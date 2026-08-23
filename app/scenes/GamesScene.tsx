@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Art } from "../ui/Art";
+import { GameTileArt } from "../ui/GameTileArt";
 import { Panel } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
 import { minigames } from "../game/config/minigames";
@@ -49,7 +49,7 @@ export function GamesScene() {
           return (
             <li key={game.id}>
               <button className={`game-tile tile-${game.id}`} type="button" onClick={() => setOpen(game.id)}>
-                <span className="game-art"><Art name={game.art} size={38} /></span>
+                <GameTileArt id={game.id} className="game-scene" />
                 <strong>{game.name}</strong>
                 <small>{game.note}</small>
                 <span className="game-meta">
