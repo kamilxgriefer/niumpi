@@ -30,6 +30,23 @@
   }
   .stage-aside { justify-self: stretch; width: 100%; }
   .speech-bubble { max-width: 100%; }
+
+  /* The room is painted across the whole stage, which is right on desktop
+     where the stats card floats over it. Stacked, that put the floor and the
+     rug behind an opaque card and cut the scene in half. Here the room ends
+     where the creature's row ends and the stats sit on the panel below it. */
+  /* The room stays absolutely positioned — its wall, floor and props are all
+     absolute children and need it — but its grid area now stops after the
+     creature's row. `inset: 0` on an absolutely positioned grid item resolves
+     against that area, so the scene ends where the creature's row ends. */
+  .companion-stage .room-back {
+    grid-area: 1 / 1 / 3 / -1;
+    /* It no longer reaches the stage's own clipped edge, so it rounds itself. */
+    border-radius: var(--r-lg);
+    overflow: hidden;
+  }
+  .companion-stage { grid-template-rows: auto minmax(190px, 1fr) auto auto; gap: var(--s-2); }
+  .stage-aside { margin-top: var(--s-2); }
 }
 
 /* Short viewports must scroll, never clip. */

@@ -945,3 +945,71 @@
 .dice { flex: none; width: 52px; min-height: 52px; color: var(--gold); background: rgb(255 255 255 / 8%); border: 2px solid var(--glass-line); border-radius: var(--r-md); }
 .dice .art { --art-1: var(--gold); }
 .dice:hover { background: rgb(255 255 255 / 16%); transform: rotate(12deg); }
+
+/* ---------------------------------------------------------------- room depth
+ *
+ * Three layers the room was missing, in the order light actually works: a warm
+ * pool cast where the creature stands, a vignette that closes the corners, and
+ * a floor that catches the pool instead of sitting at the same value as the
+ * wall. Together they turn flat bands of colour into somewhere to be.
+ */
+
+.room-back::before {
+  /* The lit pool. Sits above the wall and below the props. */
+  content: "";
+  position: absolute; inset: 0; z-index: 1;
+  background: radial-gradient(52% 40% at 50% 74%, rgb(255 214 168 / 30%), transparent 72%);
+  transition: background 900ms var(--ease), opacity 600ms var(--ease);
+  pointer-events: none;
+}
+.daypart-night .room-back::before { background: radial-gradient(54% 42% at 50% 74%, rgb(255 198 138 / 20%), transparent 74%); }
+.lamp-on .room-back::before { background: radial-gradient(62% 50% at 50% 72%, rgb(255 210 150 / 44%), transparent 76%); }
+
+.room-back::after {
+  /* Vignette. Corners a little deeper so the eye lands on the creature. */
+  content: "";
+  position: absolute; inset: 0; z-index: 6;
+  background: radial-gradient(78% 68% at 50% 56%, transparent 46%, rgb(58 30 74 / 26%) 100%);
+  pointer-events: none;
+}
+.daypart-night .room-back::after { background: radial-gradient(76% 66% at 50% 56%, transparent 42%, rgb(22 12 44 / 46%) 100%); }
+
+/* The floor picks up the pool and drops away at the back, which is most of
+   what reads as a room having a depth at all. */
+.room-floor::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgb(58 30 74 / 22%) 0%, transparent 34%),
+    radial-gradient(44% 76% at 50% 24%, rgb(255 214 168 / 26%), transparent 72%);
+}
+.daypart-night .room-floor::after {
+  background:
+    linear-gradient(180deg, rgb(16 8 34 / 40%) 0%, transparent 38%),
+    radial-gradient(46% 78% at 50% 24%, rgb(255 198 138 / 18%), transparent 74%);
+}
+
+/* A contact shadow rather than a soft blob: tight and dark where the creature
+   meets the floor, fading fast. Without it a small hatchling floats. */
+.pet-shadow {
+  bottom: 5%;
+  width: 34%; height: 6.5%;
+  background:
+    radial-gradient(ellipse 52% 100% at 50% 50%, rgb(52 24 68 / 44%), transparent 72%),
+    radial-gradient(ellipse, rgb(52 24 68 / 20%), transparent 74%);
+  filter: blur(3px);
+}
+.daypart-night .pet-shadow {
+  background:
+    radial-gradient(ellipse 52% 100% at 50% 50%, rgb(12 6 30 / 56%), transparent 72%),
+    radial-gradient(ellipse, rgb(12 6 30 / 26%), transparent 74%);
+}
+
+/* Lamplight should spill onto the wall, not stop at the shade. */
+.lamp-on .room-lamp::before {
+  content: "";
+  position: absolute; left: 50%; top: -18px;
+  width: 190px; height: 190px; translate: -50% 0;
+  background: radial-gradient(circle, rgb(255 206 140 / 32%), transparent 66%);
+  pointer-events: none;
+}
