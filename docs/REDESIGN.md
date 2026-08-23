@@ -130,15 +130,82 @@ At 1280x720, freshly hatched:
 
 `lint 0 · typecheck 0 · unit 90/90 · build 0 · e2e 17/17`
 
+## Second pass: the scenes the first pass had not reached
+
+A parallel audit read Home and the four untouched scenes against the reference
+direction, and every finding was verified against the source before being acted
+on. One was rejected: deleting Home's activity tiles would have orphaned Cooking
+and Dream Doors, which have no navigation entry of their own.
+
+Most of what it found was not visual.
+
+**Two animations named keyframe sets that did not exist.** `mote-rise` drove the
+morning motes and the seed dust — both rendered as motionless dots. And the rig
+rewrite above had taken `rig-hatch` and `aura-breathe` with it, so the moment
+the shell opens and the hatchling appears had been playing with no animation at
+all since that commit. A test now walks every stylesheet and fails on any
+animation whose keyframes are missing; it found the two that had been broken by
+this very redesign.
+
+**The garden was a day-one dead end.** `plantSeed` requires a `seed:<plantId>`
+key and the starter inventory had none, so a first visit opened onto a grid of
+disabled cards with no way to obtain the thing being asked for.
+
+**Recipes rendered at 23% opacity.** A disabled card at `.42` inside an unknown
+list item at `.55` multiplies, and 13 of 15 recipes sat below readable contrast.
+
+**Cooking could not show its own rule.** The mixing slots sat at 151px on a
+phone and the ingredient source at 666px, so "combine two or three things" was
+never visible happening. A full bench also swallowed taps in silence.
+
+**Dream Doors had its order backwards twice.** The morning story — the payoff
+for waiting a night — rendered after a freshly reset door grid, about a screen
+and a half down. And the carry chips sat below the doors, so the choice a player
+makes first was behind an irreversible tap.
+
+**Friends had no panel layer**, which left a developer disclaimer as the
+brightest element on the screen, and its neighbours were one flat glyph
+recoloured — every neighbour the same creature.
+
+Rendering neighbours from the real geometry then exposed a bug in the rebuilt
+body: gradient and clip ids were literals. SVG ids are document-global, so a
+page with more than one Niumpi resolved every `url(#...)` to whichever instance
+rendered first, and the whole street wore one palette. Ids are per-instance now.
+A second instance of the same class: the default coral palette was declared on
+`.rig-root` rather than at the root, so any body drawn outside the full rig
+resolved its gradient stops to nothing and painted a black silhouette.
+
+### Home
+
+The hero panel was eight stacked blocks, four of them — shared moments, growth,
+discovery, vibe — sitting between the creature and the controls you use on it.
+Measured: 515px of reading between looking at your pet and doing something with
+it. They are readouts that link elsewhere, not actions, so they follow the care
+loop instead of splitting it, as one compact strip.
+
+Home was also rendering the creature smaller than the secondary Niumpi tab
+does — 330px against 420px — because only `.companion-hero` carried an override.
+A hero screen with the smaller hero.
+
+| | Before | After |
+|---|---|---|
+| Creature to snack bar | 515px | **12px** |
+| Creature on Home (hatchling) | 205px | **248px** |
+| Share of the stage | 11.1% | **14.5%** |
+| Activity tiles (375px) | 660px | **192px** |
+| Status readouts (375px) | 502px | **347px** |
+| Page height (375px) | 4135px | **3667px** |
+
+`lint 0 · typecheck 0 · unit 94/94 · build 0 · e2e 17/17`
+
 ## What is deliberately not done yet
 
-This is the foundation, not the finished product. Still open, roughly in order:
-
-1. **Home composition.** The panel is still a tall stack rather than the
-   composed hub of the reference. This is the next piece of work.
-2. **Illustrated assets.** Evolution portraits, room furniture and food items
-   are still geometric stand-ins.
-3. **Vertical rhythm.** The home screen runs to about 2000px on desktop and
-   4000px on mobile. That is too long and wants restructuring, not trimming.
-4. **The remaining scenes.** Cooking, Dream Doors, Friends and Garden have not
-   been touched by this pass and still carry the old visual weighting.
+1. **Illustrated assets.** Evolution portraits, room furniture and food items
+   are still geometric stand-ins rather than drawn art.
+2. **Vertical rhythm.** Home is down to 3667px on a phone from 4135px, but that
+   is still four screens. The remaining length is the five side panels, and
+   shortening them is an information-architecture decision rather than a trim.
+3. **Friends is still a closed world.** Visits are recorded and never read, and
+   the whole neighbourhood is a function of the player's own save.
+4. **Garden and Dream Doors have no hero.** Both are still flat grids of
+   same-weight cards with the creature absent.
