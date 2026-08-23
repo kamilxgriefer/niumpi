@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
 import { CompanionStage } from "../ui/CompanionStage";
+import { useFoodDrop } from "../ui/useFoodDrop";
 import { SnackBar } from "../ui/SnackBar";
 import { Art } from "../ui/Art";
 import { BondMeter, StatRow } from "../ui/parts";
@@ -11,28 +11,15 @@ import {
 } from "../ui/homeCards";
 import { useGame } from "../ui/GameProvider";
 import { copy } from "../game/config/copy";
-import { feed, sleep, toggleLamp, wake } from "../game/actions";
+import { sleep, toggleLamp, wake } from "../game/actions";
 import { relationshipFor } from "../identity";
 import { Brand } from "../ui/Brand";
 
 export function HomeScene() {
   const { state, run, goTo, cue, clock} = useGame();
-  const [armed, setArmed] = useState<string | null>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const { armed, setArmed, stageRef, hitTest, dropFood } = useFoodDrop(state, run, clock);
 
-  /** The drop zone is the creature itself, not the whole panel. */
-  const hitTest = useCallback((x: number, y: number) => {
-    const box = stageRef.current?.querySelector(".rig-root")?.getBoundingClientRect();
-    return Boolean(box && x >= box.left && x <= box.right && y >= box.top && y <= box.bottom);
-  }, []);
 
-  const dropFood = useCallback((x: number, y: number) => {
-    if (!armed) return false;
-    if (!hitTest(x, y)) return false;
-    run(feed(state, armed, clock()));
-    setArmed(null);
-    return true;
-  }, [armed, clock, hitTest, run, state]);
 
   const relationship = relationshipFor(state.niumpi.bond, state.memories.length);
   const asleep = state.niumpi.sleeping;

@@ -681,6 +681,12 @@
 .scene-companion { gap: var(--s-4); }
 .companion-hero { position: relative; }
 .companion-hero .companion-stage { min-height: clamp(340px, 54vh, 560px); border-radius: var(--r-2xl); }
+
+/* The home stage is the product's front door, and it was rendering the
+   creature smaller than the secondary tab does — a hero screen with the
+   smaller hero. Anchored to dvh so a phone's browser chrome cannot squeeze it. */
+.hero-stage .companion-stage { min-height: clamp(330px, 46dvh, 520px); }
+.hero-stage .rig-root { width: clamp(200px, 74cqw, 400px); }
 .companion-hero .rig-root { width: clamp(220px, 32vw, 420px); }
 .companion-stats {
   position: relative; z-index: 6;

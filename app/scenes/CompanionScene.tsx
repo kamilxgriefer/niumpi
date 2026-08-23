@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useState } from "react";
 import { CompanionStage } from "../ui/CompanionStage";
+import { useFoodDrop } from "../ui/useFoodDrop";
 import { SnackBar } from "../ui/SnackBar";
 import { Art } from "../ui/Art";
 import { Modal, StatRow } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
-import { feed, gesture, sleep, playWithItem, wake } from "../game/actions";
+import { gesture, sleep, playWithItem, wake } from "../game/actions";
 import { copy } from "../game/config/copy";
 import { itemMap, toys } from "../game/config/items";
 import { chooseLine, rememberLine } from "../game/reactions";
@@ -15,21 +16,10 @@ import type { CareActionId } from "../game/types";
 /** The full-screen care scene: fewer panels, more room to touch. */
 export function CompanionScene() {
   const { state, run, update, goTo, say, cue, clock} = useGame();
-  const [armed, setArmed] = useState<string | null>(null);
+  const { armed, setArmed, stageRef, hitTest, dropFood } = useFoodDrop(state, run, clock);
   const [panel, setPanel] = useState<"none" | "feed" | "toy">("none");
-  const stageRef = useRef<HTMLDivElement>(null);
 
-  const hitTest = useCallback((x: number, y: number) => {
-    const box = stageRef.current?.querySelector(".rig-root")?.getBoundingClientRect();
-    return Boolean(box && x >= box.left && x <= box.right && y >= box.top && y <= box.bottom);
-  }, []);
 
-  const dropFood = useCallback((x: number, y: number) => {
-    if (!armed || !hitTest(x, y)) return false;
-    run(feed(state, armed, clock()));
-    setArmed(null);
-    return true;
-  }, [armed, clock, hitTest, run, state]);
 
   const act = (action: CareActionId) => run(gesture(state, action, clock()));
 
