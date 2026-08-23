@@ -169,6 +169,12 @@ grze. Po dwóch dobach nieobecności spadek statystyk przestaje być naliczany.
 - Memory Seeds nie pytają o dane wrażliwe; odpowiedzi można zmienić lub usunąć.
 - Brak lootboxów, brak losowych szans, każda cena jest jawna.
 
+## Zgłaszanie podatności
+
+Podejrzeń podatności nie należy publikować w zwykłym issue ani pull requeście.
+Instrukcja prywatnego, odpowiedzialnego zgłoszenia znajduje się w
+[`SECURITY.md`](SECURITY.md).
+
 ## Tryb developerski
 
 `?dev=1` (tylko poza produkcją) włącza panel z mnożnikiem czasu, symulacją dni,
