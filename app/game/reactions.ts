@@ -75,15 +75,27 @@ export function reactToGesture(state: GameState, action: CareActionId, now: numb
     return { text: "Thank you for staying.", behavior: "happy", spark: "♡", sound: "hold" };
   }
   if (mood === "hungry" && action === "pet") {
-    return { text: "That's nice… but also, snacks?", behavior: "curious", spark: "♡", sound: "pet" };
+    // A small shift toward you rather than a full happy bounce: still asking.
+    return { text: "That's nice… but also, snacks?", behavior: "peek", spark: "♡", sound: "pet" };
   }
   if (mood === "excited" && action === "pet") {
-    return { text: "Again! Again!", behavior: "happy", spark: "✦", sound: "pet" };
+    return { text: "Again! Again!", behavior: "shimmy", spark: "✦", sound: "pet" };
+  }
+  if (mood === "curious" && (action === "leaf" || action === "brush")) {
+    return { text: "Ooh — what are you doing?", behavior: "ponder", spark: "✧", sound: "leaf" };
+  }
+  if (mood === "happy" && action === "hug") {
+    return { text: "Squeezing back!", behavior: "shimmy", spark: "♡", sound: "hold" };
   }
 
+  /**
+   * Calm gestures now resolve to the softer idle vocabulary rather than always
+   * firing the big `happy` hop — brushing should look like being brushed, not
+   * like winning something. The lively gestures keep their original states.
+   */
   const behaviorByAction: Record<string, string> = {
-    pet: "happy", hug: "happy", tickle: "spin", brush: "curious", leaf: "curious",
-    dance: "spin", comfort: "happy", sing: "float", toy: "happy", wake: "happy",
+    pet: "happy", hug: "happy", tickle: "spin", brush: "sway", leaf: "peek",
+    dance: "spin", comfort: "sway", sing: "float", toy: "shimmy", wake: "stretch",
   };
   const soundByAction: Record<string, string> = {
     pet: "pet", hug: "hold", tickle: "tap", brush: "leaf", leaf: "leaf",

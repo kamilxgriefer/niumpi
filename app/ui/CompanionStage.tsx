@@ -19,8 +19,8 @@ const HOLD_MS = 620;
 const PET_DISTANCE = 30;
 /** A fast back-and-forth drag reads as tickling. */
 const TICKLE_REVERSALS = 3;
-/** How often the creature drifts to a new spot while nothing else happens. */
-const WANDER_MS = 6_500;
+/** How far from centre the creature may stroll. */
+const STROLL_RANGE = 96;
 
 function capture(event: PointerEvent<HTMLButtonElement>) {
   try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* capture is optional */ }
@@ -40,6 +40,7 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
   const rigRef = useNiumpiController(controller);
   const pointer = useRef<{ at: number; x: number; y: number; distance: number; dir: number; flips: number } | null>(null);
   const drift = useRef({ x: 0, y: 0 });
+  const interest = useRef({ decidedUntil: 0, engaged: false });
 
   const mood = moodFor(state, now);
   const name = state.niumpi.name || "Niumpi";
@@ -55,19 +56,21 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     controller.setTargeted(targeting);
   }, [controller, targeting]);
 
-  /* Idle drift: one timer, one controller call — no React state per step. */
+  /* Where the creature may walk to. The controller owns *when* — it schedules
+     wandering alongside its other idle flourishes so there is one rhythm. */
   useEffect(() => {
-    if (state.niumpi.sleeping) return;
-    const timer = window.setInterval(() => {
-      if (controller.getState() !== "idle") return;
+    if (state.niumpi.sleeping) {
+      controller.setIdleWanderHandler(null);
+      return;
+    }
+    controller.setIdleWanderHandler(() => {
       drift.current = {
-        x: Math.max(-96, Math.min(96, drift.current.x + (Math.random() * 150 - 75))),
+        x: Math.max(-STROLL_RANGE, Math.min(STROLL_RANGE, drift.current.x + (Math.random() * 150 - 75))),
         y: Math.round(Math.random() * 10),
       };
       controller.setPosition(drift.current.x, drift.current.y);
-      controller.request("wander");
-    }, WANDER_MS);
-    return () => window.clearInterval(timer);
+    });
+    return () => controller.setIdleWanderHandler(null);
   }, [controller, state.niumpi.sleeping]);
 
   const act = useCallback((action: CareActionId) => {
@@ -120,14 +123,41 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     act("leaf");
   }
 
-  /** Gaze goes straight to the controller — it never becomes React state. */
+  /**
+   * Gaze goes straight to the controller — it never becomes React state.
+   *
+   * Tracking is deliberately occasional. Following the cursor every moment
+   * reads as a machine watching you; glancing up sometimes, and sometimes
+   * carrying on with its own business, reads as a creature. A treat being
+   * carried always wins attention, because that is the one moment where the
+   * player needs to see the creature respond.
+   */
   function follow(event: PointerEvent<HTMLDivElement>) {
-    if (moodFor(state, clock()) !== "curious" && !targeting) return;
+    const now = clock();
+    if (now >= interest.current.decidedUntil) {
+      const mood = moodFor(state, now);
+      const eager = mood === "curious" || mood === "excited";
+      // Eager moods look up most of the time; otherwise it is a rare glance.
+      const engaged = Math.random() < (eager ? 0.85 : 0.2);
+      interest.current = {
+        decidedUntil: now + (engaged ? 1_600 + Math.random() * 2_200 : 2_500 + Math.random() * 3_000),
+        engaged,
+      };
+      if (!engaged) controller.releaseGaze();
+    }
+    if (!targeting && !interest.current.engaged) return;
+
     const box = event.currentTarget.getBoundingClientRect();
     controller.setGaze(
       Math.max(-18, Math.min(18, (event.clientX - box.left - box.width / 2) * 0.08)),
       Math.max(-10, Math.min(10, (event.clientY - box.top - box.height / 2) * 0.05)),
     );
+  }
+
+  /** Leaving the scene returns the eyes to neutral straight away. */
+  function releaseInterest() {
+    interest.current = { decidedUntil: 0, engaged: false };
+    controller.releaseGaze();
   }
 
   const partActions: Record<BodyPart, CareActionId> = {
@@ -146,6 +176,7 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         compact ? "is-compact" : "",
       ].filter(Boolean).join(" ")}
       onPointerMove={follow}
+      onPointerLeave={releaseInterest}
     >
       <div className="room-back" aria-hidden="true">
         <span className="room-wall" />

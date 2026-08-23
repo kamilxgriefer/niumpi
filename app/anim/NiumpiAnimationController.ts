@@ -12,6 +12,7 @@ import { onMotionChange, prefersReducedMotion } from "./motionPrefs.ts";
 
 export type AnimState =
   | "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep"
+  | "peek" | "sway" | "shimmy" | "stretch" | "ponder"
   | "eating" | "hugging" | "petting" | "tickle" | "brushing" | "dancing"
   | "waking" | "hatching" | "evolving" | "gift" | "cooking" | "gardening" | "playing" | "returning";
 
@@ -28,6 +29,13 @@ const STATES: Record<AnimState, StateDef> = {
   float: { priority: 1, duration: 2_800 },
   curious: { priority: 1, duration: 4_600 },
   sleepy: { priority: 1, duration: 3_400 },
+  // Idle flourishes. Same priority as wander, so a player gesture (2+) always
+  // interrupts them and they never queue in front of a real reaction.
+  peek: { priority: 1, duration: 2_600 },
+  sway: { priority: 1, duration: 3_800 },
+  shimmy: { priority: 1, duration: 1_500 },
+  stretch: { priority: 1, duration: 2_400 },
+  ponder: { priority: 1, duration: 3_200 },
   petting: { priority: 2, duration: 900 },
   brushing: { priority: 2, duration: 1_400 },
   playing: { priority: 2, duration: 2_000 },
@@ -53,6 +61,31 @@ const POSITION_DAMPING = 0.84;
 const GAZE_STIFFNESS = 0.09;
 const GAZE_DAMPING = 0.72;
 
+/** How often the creature does something small of its own accord. */
+const IDLE_MIN_MS = 6_000;
+const IDLE_MAX_MS = 14_000;
+
+/**
+ * The idle repertoire. `wander` is in here too so travel and flourishes share a
+ * single rhythm — two competing schedulers made the creature look twitchy.
+ * Weights keep the big moves rare and the quiet ones common.
+ */
+const IDLE_REPERTOIRE: Array<{ state: AnimState; weight: number }> = [
+  { state: "sway", weight: 5 },
+  { state: "peek", weight: 4 },
+  { state: "ponder", weight: 3 },
+  { state: "wander", weight: 3 },
+  { state: "stretch", weight: 2 },
+  { state: "shimmy", weight: 2 },
+  { state: "float", weight: 1 },
+];
+
+/** Eyes drift a little between flourishes so they never look painted on. */
+const GAZE_DRIFT_MIN_MS = 2_600;
+const GAZE_DRIFT_MAX_MS = 5_200;
+/** After the stage sets a gaze, self-drift stays out of the way this long. */
+const GAZE_EXTERNAL_HOLD_MS = 1_400;
+
 type Options = {
   /** Called once whenever the visible state changes — never per frame. */
   onStateChange?: (state: AnimState) => void;
@@ -63,6 +96,10 @@ export class NiumpiAnimationController {
   private frame = 0;
   private blinkTimer: number | undefined;
   private stateTimer: number | undefined;
+  private idleTimer: number | undefined;
+  private gazeTimer: number | undefined;
+  private gazeExternalUntil = 0;
+  private onIdleWander: (() => void) | null = null;
   private unsubscribeMotion: (() => void) | null = null;
 
   private state: AnimState = "idle";
@@ -86,6 +123,8 @@ export class NiumpiAnimationController {
     this.applyState();
     this.startLoop();
     this.scheduleBlink();
+    this.scheduleIdleLife();
+    this.scheduleGazeDrift();
     this.unsubscribeMotion = onMotionChange((reduced) => {
       this.reduced = reduced;
       this.root?.classList.toggle("is-reduced", reduced);
@@ -98,6 +137,8 @@ export class NiumpiAnimationController {
     if (this.frame) window.cancelAnimationFrame(this.frame);
     window.clearTimeout(this.blinkTimer);
     window.clearTimeout(this.stateTimer);
+    window.clearTimeout(this.idleTimer);
+    window.clearTimeout(this.gazeTimer);
     this.unsubscribeMotion?.();
     this.unsubscribeMotion = null;
     this.frame = 0;
@@ -132,7 +173,24 @@ export class NiumpiAnimationController {
   setGaze(x: number, y: number) {
     this.target.gazeX = x;
     this.target.gazeY = y;
+    this.gazeExternalUntil = performance.now() + GAZE_EXTERNAL_HOLD_MS;
     if (this.reduced) this.snap();
+  }
+
+  /** Returns the eyes to neutral, e.g. when the pointer leaves the stage. */
+  releaseGaze() {
+    this.target.gazeX = 0;
+    this.target.gazeY = 0;
+    this.gazeExternalUntil = 0;
+    if (this.reduced) this.snap();
+  }
+
+  /**
+   * The stage owns where the creature may walk to, so it registers a handler
+   * that the idle scheduler calls when it picks `wander`.
+   */
+  setIdleWanderHandler(handler: (() => void) | null) {
+    this.onIdleWander = handler;
   }
 
   setPressed(pressed: boolean) {
@@ -214,6 +272,51 @@ export class NiumpiAnimationController {
     this.value.x = this.target.x; this.value.y = this.target.y;
     this.value.gazeX = this.target.gazeX; this.value.gazeY = this.target.gazeY;
     this.value.vx = 0; this.value.vy = 0; this.value.vgx = 0; this.value.vgy = 0;
+  }
+
+  /**
+   * Small unprompted behaviours on a 6-14s rhythm. They only ever fire while
+   * the creature is genuinely at rest, so nothing here can interrupt a
+   * reaction, a nap or an evolution.
+   */
+  private scheduleIdleLife() {
+    const run = () => {
+      this.idleTimer = window.setTimeout(() => {
+        const atRest = this.state === "idle" && this.restState === "idle";
+        if (atRest && !this.reduced) {
+          const total = IDLE_REPERTOIRE.reduce((sum, entry) => sum + entry.weight, 0);
+          let cursor = Math.random() * total;
+          let pick = IDLE_REPERTOIRE[0].state;
+          for (const entry of IDLE_REPERTOIRE) {
+            cursor -= entry.weight;
+            if (cursor <= 0) { pick = entry.state; break; }
+          }
+          if (pick === "wander") this.onIdleWander?.();
+          this.request(pick);
+        }
+        run();
+      }, IDLE_MIN_MS + Math.random() * (IDLE_MAX_MS - IDLE_MIN_MS));
+    };
+    run();
+  }
+
+  /**
+   * A small wandering gaze between flourishes. It always defers to a gaze the
+   * stage has just set, and never runs while asleep or under reduced motion.
+   */
+  private scheduleGazeDrift() {
+    const run = () => {
+      this.gazeTimer = window.setTimeout(() => {
+        const quiet = performance.now() >= this.gazeExternalUntil;
+        if (quiet && !this.reduced && this.state !== "asleep") {
+          // Deliberately small: this is a glance, not a head turn.
+          this.target.gazeX = (Math.random() * 2 - 1) * 5;
+          this.target.gazeY = (Math.random() * 2 - 1) * 3;
+        }
+        run();
+      }, GAZE_DRIFT_MIN_MS + Math.random() * (GAZE_DRIFT_MAX_MS - GAZE_DRIFT_MIN_MS));
+    };
+    run();
   }
 
   /** Blinking is a class toggle on a timer, not React state. */
