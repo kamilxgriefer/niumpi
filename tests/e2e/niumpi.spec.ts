@@ -2,69 +2,65 @@ import { expect, test, type Page } from "@playwright/test";
 
 const SAVE_KEY = "niumpi-save-v4";
 const LEGACY_KEYS = ["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
+/** Marks a context as already seeded so reloads read what the game wrote. */
+const SEED_SENTINEL = "__e2e_seeded";
 
 /**
- * Starts the game with no save at all, which lands on the Seed Chamber.
- * The clear happens once, before a reload, so later reloads in a test read the
- * save the game itself wrote rather than a wiped slot.
+ * Seeds the save before any application code runs.
+ *
+ * Writing it with page.evaluate after a first navigation raced the game's own
+ * boot: whichever landed second won, and when the game won it persisted a fresh
+ * state over the fixture. The router then sent the test to the Seed Chamber and
+ * the failure surfaced as a confusing missing-element error.
+ *
+ * The guard is what keeps reloads meaningful — init scripts re-run on every
+ * navigation, so without it a reload would wipe whatever the game had saved.
  */
-async function openFreshGame(page: Page) {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.evaluate(
-    ([save, legacy]) => {
-      window.localStorage.removeItem(save as string);
-      for (const key of legacy as string[]) window.localStorage.removeItem(key);
+async function seedSave(page: Page, save: unknown | null) {
+  await page.addInitScript(
+    ([key, legacy, sentinel, value]) => {
+      if (window.localStorage.getItem(sentinel as string)) return;
+      for (const stale of legacy as string[]) window.localStorage.removeItem(stale);
+      if (value === null) window.localStorage.removeItem(key as string);
+      else window.localStorage.setItem(key as string, JSON.stringify(value));
+      window.localStorage.setItem(sentinel as string, "1");
     },
-    [SAVE_KEY, LEGACY_KEYS],
+    [SAVE_KEY, LEGACY_KEYS, SEED_SENTINEL, save],
   );
-  await page.reload({ waitUntil: "domcontentloaded" });
-  // The dev server compiles the entry on the first visit of a run.
+}
+
+/** Starts the game with no save at all, which lands on the Seed Chamber. */
+async function openFreshGame(page: Page) {
+  await seedSave(page, null);
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("heading", { name: "Seed Chamber" })).toBeVisible({ timeout: 30_000 });
 }
 
 /**
  * Starts the game from an already-hatched companion. Only the fields the test
  * cares about are written — the save loader reconciles everything else, which
- * is exactly the partial-save path a migrated player takes. The seed is written
- * once, so a later reload exercises real persistence.
+ * is exactly the partial-save path a migrated player takes.
  */
 async function openHatchedGame(page: Page, extra: Record<string, unknown> = {}) {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.evaluate(
-    ([key, legacy, overrides]) => {
-      for (const stale of legacy as string[]) window.localStorage.removeItem(stale);
-      const now = Date.now();
-      window.localStorage.setItem(
-        key as string,
-        JSON.stringify({
-          version: 4,
-          profile: { id: "e2e-save", createdAt: now, lastSeenAt: now },
-          niumpi: {
-            name: "Mango",
-            createdAt: now,
-            hatchedAt: now,
-            seedProgress: 1,
-            stage: 2,
-            stageStartedAt: now,
-            careMoments: 60,
-            bond: 45,
-            lastInteractionAt: now,
-          },
-          // A partial save leaves the pantry empty by design, so the fixture
-          // states the stock it wants to feed from.
-          inventory: {
-            ingredients: { moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3 },
-            items: ["moon-lamp", "cloud-sofa", "garden-pot", "cozy-cushion", "ball-of-yarn"],
-            currencies: { dewdrops: 120, starFragments: 4 },
-          },
-          unlocks: ["seeds", "room", "games", "garden", "cooking", "dreams", "friends", "shop"],
-          ...(overrides as Record<string, unknown>),
-        }),
-      );
+  const now = 1787000000000;
+  await seedSave(page, {
+    version: 4,
+    profile: { id: "e2e-save", createdAt: now, lastSeenAt: now },
+    niumpi: {
+      name: "Mango", createdAt: now, hatchedAt: now, seedProgress: 1, stage: 2,
+      stageStartedAt: now, careMoments: 60, bond: 45, lastInteractionAt: now,
     },
-    [SAVE_KEY, LEGACY_KEYS, extra],
-  );
-  await page.reload({ waitUntil: "domcontentloaded" });
+    // A partial save leaves the pantry empty by design, so the fixture states
+    // the stock it wants to feed from.
+    inventory: {
+      ingredients: { moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3 },
+      items: ["moon-lamp", "cloud-sofa", "garden-pot", "cozy-cushion", "ball-of-yarn"],
+      currencies: { dewdrops: 120, starFragments: 4 },
+    },
+    unlocks: ["seeds", "room", "games", "garden", "cooking", "dreams", "friends", "shop"],
+    ...extra,
+  });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Pet Mango" })).toBeVisible({ timeout: 30_000 });
   await waitForReconciledSave(page);
 }
