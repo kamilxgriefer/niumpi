@@ -108,8 +108,12 @@ test("shading is clipped to the silhouette so a route cannot bleed outside it", 
   // The belly and rim light are drawn from the same path as the body, then
   // clipped to it. Without the clip they spill past the outline at the stages
   // where the silhouette narrows.
-  assert.match(body, /<clipPath id="nb-silhouette">/);
-  assert.match(body, /clipPath="url\(#nb-silhouette\)"/);
+  assert.match(body, /<clipPath id=\{id\("nb-silhouette"\)\}>/);
+  assert.match(body, /clipPath=\{`url\(#\$\{id\("nb-silhouette"\)\}\)`\}/);
+  // Ids are per-instance. SVG ids are document-global, so a shared literal id
+  // makes every Niumpi on a page resolve to the first one's gradients — the
+  // whole street of neighbours wearing one palette.
+  assert.match(body, /const uid = useId\(\)/);
 
   const rig = await css("rig.css");
   for (const route of ["moonveil", "bloomheart", "sparkleap", "mistwander", "prismatic"]) {

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Art } from "../ui/Art";
 import { Meter, Panel } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
-import { dreamCarry, dreamDoors } from "../game/config/dreams";
+import { dreamCarry, dreamDoorMap, dreamDoors } from "../game/config/dreams";
 import { claimDream, startDream } from "../game/dreams";
 import { countdownLabel } from "../game/time";
 import { recordCare } from "../game/care";
@@ -48,12 +48,26 @@ export function DreamDoorsScene() {
         </div>
       </header>
 
-      {run ? (
+      {morning ? (
+        <div className="dream-morning" role="status">
+          <span className="morning-motes" aria-hidden="true"><i /><i /><i /></span>
+          <Art name="niumpi" size={64} />
+          <div>
+            <p className="morning-door">{morning.door}</p>
+            <h2>{morning.title}</h2>
+            <p>{morning.story}</p>
+          </div>
+          <button className="ghost-button" type="button" onClick={() => setMorning(null)}>Good morning</button>
+        </div>
+      ) : run ? (
         <Panel title="Tonight's dream" art="dream" tone="cosmic">
           <div className="dream-running">
-            <Art name={run.door} size={64} />
+            {/* The door's own art and name. This rendered `run.door` — an id —
+                as an art name, and a de-slugged id as the title, so the panel
+                lost the identity of the door the player had just chosen. */}
+            <Art name={dreamDoorMap[run.door]?.art ?? "dream"} size={64} />
             <div>
-              <strong>{run.door.replace("-", " ")}</strong>
+              <strong>{dreamDoorMap[run.door]?.name ?? run.door}</strong>
               <Meter label={ready ? "Ready" : countdownLabel(run.completesAt, now)}
                 value={Math.min(1, (now - run.startedAt) / (run.completesAt - run.startedAt)) * 100} max={100} />
             </div>
@@ -64,6 +78,16 @@ export function DreamDoorsScene() {
         </Panel>
       ) : (
         <>
+          <Panel title="Take something along" art="collect" note="It changes what the night turns up">
+            <div className="carry-row">
+              {dreamCarry.map((item) => (
+                <button key={item.id} className={`carry-chip ${carry === item.id ? "is-active" : ""}`}
+                  type="button" onClick={() => setCarry(item.id)}>
+                  <strong>{item.label}</strong><small>{item.note}</small>
+                </button>
+              ))}
+            </div>
+          </Panel>
           <ul className="door-row">
             {dreamDoors.map((door) => (
               <li key={door.id}>
@@ -75,30 +99,7 @@ export function DreamDoorsScene() {
               </li>
             ))}
           </ul>
-          <Panel title="Take something along" art="collect" note="It changes what the night turns up">
-            <div className="carry-row">
-              {dreamCarry.map((item) => (
-                <button key={item.id} className={`carry-chip ${carry === item.id ? "is-active" : ""}`}
-                  type="button" onClick={() => setCarry(item.id)}>
-                  <strong>{item.label}</strong><small>{item.note}</small>
-                </button>
-              ))}
-            </div>
-          </Panel>
         </>
-      )}
-
-      {morning && (
-        <div className="dream-morning" role="status">
-          <span className="morning-motes" aria-hidden="true"><i /><i /><i /></span>
-          <Art name="niumpi" size={64} />
-          <div>
-            <p className="morning-door">{morning.door}</p>
-            <h2>{morning.title}</h2>
-            <p>{morning.story}</p>
-          </div>
-          <button className="ghost-button" type="button" onClick={() => setMorning(null)}>Good morning</button>
-        </div>
       )}
     </div>
   );

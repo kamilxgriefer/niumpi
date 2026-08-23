@@ -1,3 +1,4 @@
+import { useId } from "react";
 import type { StageProfile } from "../../game/config/growth.ts";
 import { bellyPath, bodyPath, tipRise } from "../../game/config/growth.ts";
 
@@ -25,6 +26,15 @@ function leafShape(w: number, h: number): string {
 
 export function NiumpiBody({ profile }: { profile: StageProfile }) {
   const { body, face } = profile;
+  /*
+   * Gradient and clip ids must be unique per instance. SVG ids are
+   * document-global, so two Niumpis on one page — the player and a neighbour,
+   * or a street of neighbours — would all resolve every url(#...) to whichever
+   * instance rendered first, and every creature would wear the first one's
+   * palette regardless of its own route.
+   */
+  const uid = useId().replace(/:/g, "");
+  const id = (name: string) => `${name}-${uid}`;
   const tipX = 100 + body.tipLean;
   const rise = tipRise(body);
   // Short stems on a small creature, longer as the tip grows, but never so long
@@ -41,25 +51,25 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
   return (
     <svg className="nb" viewBox="0 0 200 200" role="img" aria-hidden="true" focusable="false">
       <defs>
-        <linearGradient id="nb-skin" x1="0.25" y1="0" x2="0.75" y2="1">
+        <linearGradient id={id("nb-skin")} x1="0.25" y1="0" x2="0.75" y2="1">
           <stop offset="0%" stopColor="var(--skin-light)" />
           <stop offset="55%" stopColor="var(--skin-mid)" />
           <stop offset="100%" stopColor="var(--skin-deep)" />
         </linearGradient>
-        <radialGradient id="nb-belly" cx="0.5" cy="0.42" r="0.62">
+        <radialGradient id={id("nb-belly")} cx="0.5" cy="0.42" r="0.62">
           <stop offset="0%" stopColor="var(--belly)" stopOpacity="0.85" />
           <stop offset="70%" stopColor="var(--belly)" stopOpacity="0.35" />
           <stop offset="100%" stopColor="var(--belly)" stopOpacity="0" />
         </radialGradient>
-        <radialGradient id="nb-cheek" cx="0.5" cy="0.5" r="0.5">
+        <radialGradient id={id("nb-cheek")} cx="0.5" cy="0.5" r="0.5">
           <stop offset="0%" stopColor="var(--cheek)" stopOpacity="0.8" />
           <stop offset="100%" stopColor="var(--cheek)" stopOpacity="0" />
         </radialGradient>
-        <linearGradient id="nb-leaf" x1="0.2" y1="1" x2="0.8" y2="0">
+        <linearGradient id={id("nb-leaf")} x1="0.2" y1="1" x2="0.8" y2="0">
           <stop offset="0%" stopColor="var(--leaf-deep)" />
           <stop offset="100%" stopColor="var(--leaf-light)" />
         </linearGradient>
-        <clipPath id="nb-silhouette">
+        <clipPath id={id("nb-silhouette")}>
           <path d={bodyPath(body)} />
         </clipPath>
       </defs>
@@ -73,7 +83,7 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
             style={{ ["--leaf-angle" as string]: `${angle}deg`, ["--leaf-delay" as string]: `${index * -0.7}s` }}
             transform={`translate(${tipX} ${body.tipY + 4})`}
           >
-            <path d={leafShape(leafW, leafH)} fill="url(#nb-leaf)" />
+            <path d={leafShape(leafW, leafH)} fill={`url(#${id("nb-leaf")})`} />
             <path
               d={`M 0 -2 L 0 ${-leafH * 0.82}`}
               stroke="var(--leaf-vein)"
@@ -118,9 +128,9 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
       </g>
 
       <g className="nb-torso">
-        <path className="nb-skin" d={bodyPath(body)} fill="url(#nb-skin)" />
-        <g clipPath="url(#nb-silhouette)">
-          <path d={bellyPath(body)} fill="url(#nb-belly)" />
+        <path className="nb-skin" d={bodyPath(body)} fill={`url(#${id("nb-skin")})`} />
+        <g clipPath={`url(#${id("nb-silhouette")})`}>
+          <path d={bellyPath(body)} fill={`url(#${id("nb-belly")})`} />
           {/* A soft rim of light along the upper left keeps the form from
               reading flat at small sizes. */}
           <path
@@ -144,7 +154,7 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
             cy={face.eyeY + face.eyeR * 1.15}
             rx={face.cheekR}
             ry={face.cheekR * 0.74}
-            fill="url(#nb-cheek)"
+            fill={`url(#${id("nb-cheek")})`}
           />
         ))}
 

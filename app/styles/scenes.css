@@ -608,7 +608,7 @@
 .item-card small, .plant-card small, .toy-tile small, .recipe-card small { color: var(--text-faint); font-size: var(--t-2xs); font-weight: 620; }
 .plant-meta, .recipe-count { color: var(--gold); font-size: var(--t-2xs); font-weight: 800; }
 .plant-boost { color: var(--green); font-size: var(--t-2xs); font-weight: 800; }
-.toy-tile.is-locked, .plant-card:disabled, .recipe-card:disabled { opacity: .42; cursor: not-allowed; }
+.toy-tile.is-locked, .plant-card:disabled, .recipe-card:disabled { opacity: .62; cursor: not-allowed; }
 .theme-row { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .theme-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; color: var(--text-muted); background: rgb(255 255 255 / 7%); border: 1px solid var(--glass-line-soft); border-radius: var(--r-pill); font-size: var(--t-xs); font-weight: 750; }
 .theme-chip.is-active { color: white; border-color: var(--turquoise); background: rgb(73 212 208 / 18%); }
@@ -749,7 +749,7 @@
 .seed-answer .art { --art-1: var(--turquoise); --art-2: var(--gold); }
 
 /* ------------------------------------------------------------- garden ---- */
-.garden-bed { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: var(--s-4); }
+.garden-bed { display: grid; grid-template-columns: repeat(auto-fit, minmax(138px, 1fr)); gap: var(--s-3); }
 .plot {
   position: relative; display: grid; gap: var(--s-2); justify-items: center;
   min-height: 208px; padding: var(--s-4) var(--s-3) var(--s-3);
@@ -804,7 +804,14 @@
 .cook-result small { color: var(--text-faint); font-size: var(--t-xs); }
 .cook-result .art { --art-1: var(--gold); --art-2: var(--coral); }
 .pantry-card span { color: var(--gold); font-size: var(--t-2xs); font-weight: 800; }
-.recipe-grid li.is-unknown { opacity: .55; }
+/* Undiscovered recipes read as undiscovered through their surface, not by
+   being faded on top of an already-faded card — stacking the two put them at
+   23% opacity, well under readable. */
+.recipe-grid li.is-unknown .recipe-card {
+  background: rgb(255 255 255 / 4%);
+  border-style: dashed;
+  border-color: var(--glass-line-soft);
+}
 
 /* ------------------------------------------------------------- dreams ---- */
 .door-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: var(--s-4); }
@@ -844,9 +851,30 @@
 
 /* ------------------------------------------------------------ friends ---- */
 .friend-list { display: grid; gap: var(--s-3); }
-.friend-card { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); background: rgb(255 255 255 / 5%); border: 1px solid var(--glass-line-soft); border-radius: var(--r-xl); }
-.friend-avatar { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; box-shadow: var(--shadow-sm); }
-.friend-avatar .art { --art-1: rgb(255 255 255 / 84%); --art-2: white; --art-3: #33213F; }
+/* A 5% white wash on the cosmic background left these as near-invisible
+   outlines, with a developer note as the brightest element on the screen.
+   They are neighbours — they should look like somewhere worth visiting. */
+.friend-card {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: var(--s-3); padding: var(--s-3) var(--s-4);
+  background: linear-gradient(160deg, rgb(88 46 142 / 62%), rgb(40 20 78 / 76%));
+  border: 1px solid var(--glass-line); border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.friend-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg), var(--glow-violet); }
+.friend-avatar {
+  display: grid; place-items: center;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  box-shadow: var(--shadow-sm), inset 0 0 0 1px rgb(255 255 255 / 14%);
+  overflow: hidden;
+}
+/* The neighbour is a real Niumpi drawn from the same geometry as the player's,
+   not the full rig — no container query, no growth scale, no hit area. The
+   palette comes from the .body-<route> class on this element. */
+.friend-avatar .nb { width: 112%; height: 112%; translate: 0 6%; }
 .friend-copy { display: grid; flex: 1; min-width: 140px; }
 .friend-copy strong { font-size: var(--t-md); font-weight: 750; }
 .friend-copy small { color: var(--text-faint); font-size: var(--t-xs); font-weight: 650; }
