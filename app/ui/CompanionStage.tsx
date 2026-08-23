@@ -149,18 +149,25 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     >
       <div className="room-back" aria-hidden="true">
         <span className="room-wall" />
+        <span className="room-glow" />
         <span className="room-window">
           <span className="window-sky" />
           <span className="window-orb" />
           <span className="window-hill hill-back" />
           <span className="window-hill hill-front" />
           <span className="window-weather" />
+          <span className="window-bar" />
+          <span className="window-sill" />
         </span>
-        <span className="room-shelf"><i /><i /><i /></span>
-        <span className="room-plant"><i /><i /><b /></span>
-        <span className="room-lamp"><i /><b /></span>
+        <span className="room-frame"><i /></span>
+        <span className="room-shelf"><i /><i /><i /><i /><b /></span>
+        {/* Floor first: furniture standing on it must paint afterwards. */}
+        <span className="room-rail" />
         <span className="room-floor" />
-        <span className="room-rug" />
+        <span className="room-rug"><i /></span>
+        <span className="room-cushion" />
+        <span className="room-plant"><i /><i /><i /><b /></span>
+        <span className="room-lamp"><i /><b /></span>
       </div>
 
       {showBubble && (

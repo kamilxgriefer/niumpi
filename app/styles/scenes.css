@@ -112,29 +112,63 @@
 .companion-stage.is-compact .mood-badge { display: none; }
 .stage-aside { grid-area: stats; justify-self: end; width: min(240px, 100%); }
 
-.room-back { grid-area: 1 / 1 / -1 / -1; position: absolute; inset: 0; z-index: 0; }
+.room-back { grid-area: 1 / 1 / -1 / -1; position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+
+/* A warm, layered room rather than flat bands of colour: papered wall, picture
+   rail, boarded floor, and a pool of lamplight the creature sits in. */
 .room-wall {
   position: absolute; inset: 0;
-  background: linear-gradient(178deg, #FFE7DC 0%, #FFD9E2 56%, #F0DEF8 100%);
+  background:
+    repeating-linear-gradient(90deg, rgb(255 255 255 / 6%) 0 2px, transparent 2px 26px),
+    linear-gradient(178deg, #FFE9DC 0%, #FFDCE2 54%, #F2DCF7 100%);
   transition: background 1.2s var(--ease);
 }
-.daypart-morning .room-wall { background: linear-gradient(178deg, #FFF0E0, #FFE0E4 58%, #F3E4FB); }
-.daypart-sunset .room-wall { background: linear-gradient(178deg, #FFDCC8, #FFC8CE 52%, #E5C9F2); }
-.daypart-night .room-wall { background: linear-gradient(178deg, #4B3B78, #6B4A85 54%, #7E5C93); }
-.lamp-on .room-wall { filter: brightness(1.1) saturate(1.05); }
-.is-sleeping .room-wall { filter: brightness(.82) saturate(.86); }
+.daypart-morning .room-wall { background: repeating-linear-gradient(90deg, rgb(255 255 255 / 7%) 0 2px, transparent 2px 26px), linear-gradient(178deg, #FFF3E4, #FFE2E6 56%, #F5E6FC); }
+.daypart-sunset  .room-wall { background: repeating-linear-gradient(90deg, rgb(255 255 255 / 5%) 0 2px, transparent 2px 26px), linear-gradient(178deg, #FFDCC4, #FFC6CC 52%, #E8CDF4); }
+.daypart-night   .room-wall { background: repeating-linear-gradient(90deg, rgb(255 255 255 / 4%) 0 2px, transparent 2px 26px), linear-gradient(178deg, #4A3A72, #61457E 54%, #77568C); }
+.is-sleeping .room-wall { filter: brightness(.86) saturate(.88); }
+
+/* Ambient warmth pooled behind the character, lifted when the lamp is on. */
+.room-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(60% 46% at 50% 62%, rgb(255 214 160 / 26%), transparent 70%);
+  opacity: .55; transition: opacity 600ms var(--ease);
+}
+.lamp-on .room-glow { opacity: 1; }
+.daypart-night .room-glow { opacity: .34; }
+.daypart-night.lamp-on .room-glow { opacity: .95; }
+
+/* Picture rail separates wall from floor and gives the room a horizon. */
+.room-rail {
+  position: absolute; left: 0; right: 0; bottom: 30%;
+  height: 5px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 78%), rgb(214 176 168 / 55%));
+  box-shadow: 0 3px 8px rgb(120 70 60 / 12%);
+}
+.daypart-night .room-rail { background: linear-gradient(180deg, rgb(255 255 255 / 30%), rgb(60 44 92 / 55%)); }
 
 .room-window {
-  position: absolute; top: 30%; right: 6%;
+  position: absolute; top: 26%; right: 6%;
   width: clamp(64px, 12%, 116px); aspect-ratio: 3/4; overflow: hidden;
   background: linear-gradient(178deg, #BFE4FF, #E6F5FF);
-  border: 5px solid rgb(255 255 255 / 88%); border-radius: 46% 46% 12% 12%;
-  box-shadow: inset 0 -10px 18px rgb(120 84 130 / 12%), 0 8px 20px rgb(74 40 88 / 14%);
+  border: 5px solid rgb(255 255 255 / 92%); border-radius: 46% 46% 12% 12%;
+  box-shadow: inset 0 -10px 18px rgb(120 84 130 / 14%), 0 10px 22px rgb(74 40 88 / 18%);
 }
-.daypart-sunset .window-sky, .daypart-sunset .room-window { background: linear-gradient(178deg, #FFC08A, #FFE3C4); }
-.daypart-night .room-window { background: linear-gradient(178deg, #26205A, #4B3B78); }
+.window-sill {
+  position: absolute; left: -14%; right: -14%; bottom: -9%;
+  height: 8%; background: rgb(255 255 255 / 92%); border-radius: 3px;
+  box-shadow: 0 3px 7px rgb(120 70 60 / 20%);
+}
+.window-bar {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, transparent calc(50% - 1.5px), rgb(255 255 255 / 88%) calc(50% - 1.5px) calc(50% + 1.5px), transparent calc(50% + 1.5px)),
+    linear-gradient(180deg, transparent calc(58% - 1.5px), rgb(255 255 255 / 88%) calc(58% - 1.5px) calc(58% + 1.5px), transparent calc(58% + 1.5px));
+}
+.daypart-sunset .room-window { background: linear-gradient(178deg, #FFC08A, #FFE3C4); }
+.daypart-night  .room-window { background: linear-gradient(178deg, #26205A, #4B3B78); }
 .window-orb {
-  position: absolute; top: 16%; left: 26%;
+  position: absolute; top: 14%; left: 24%;
   width: 26%; aspect-ratio: 1; border-radius: 50%;
   background: radial-gradient(circle at 36% 32%, #FFF6D4, #FFD37A);
   box-shadow: 0 0 22px rgb(255 211 122 / 70%);
@@ -142,8 +176,10 @@
 }
 .daypart-night .window-orb { background: radial-gradient(circle at 38% 34%, #FFFFFF, #D6D9F5); box-shadow: 0 0 26px rgb(214 217 245 / 70%); }
 .window-hill { position: absolute; bottom: 0; border-radius: 50% 50% 0 0; }
-.hill-back { left: -12%; width: 74%; height: 30%; background: #9FD8B4; }
-.hill-front { right: -16%; width: 82%; height: 22%; background: #7CC79E; }
+.hill-back { left: -12%; width: 74%; height: 32%; background: #9FD8B4; }
+.hill-front { right: -16%; width: 82%; height: 23%; background: #7CC79E; }
+.daypart-night .hill-back { background: #4E6E73; }
+.daypart-night .hill-front { background: #3E5A62; }
 .window-weather { position: absolute; inset: 0; pointer-events: none; }
 .weather-rainy .window-weather, .weather-storm .window-weather {
   background: repeating-linear-gradient(76deg, transparent 0 7px, rgb(255 255 255 / 55%) 7px 8px);
@@ -155,27 +191,90 @@
 @keyframes rain-fall { to { background-position: 0 14px; } }
 @keyframes star-drift { to { transform: translate(-14px, 22px); } }
 
-.room-shelf { position: absolute; top: 44%; left: 5%; display: flex; gap: 7px; align-items: flex-end; }
-.room-shelf::after { content: ""; position: absolute; left: -8px; right: -8px; bottom: -6px; height: 5px; background: rgb(255 255 255 / 70%); border-radius: 3px; }
-.room-shelf i { width: 12px; border-radius: 3px 3px 1px 1px; background: var(--coral); }
-.room-shelf i:nth-child(1) { height: 26px; }
-.room-shelf i:nth-child(2) { height: 18px; background: var(--turquoise); }
-.room-shelf i:nth-child(3) { height: 22px; background: var(--gold); }
+/* A framed picture, because bare walls read as unfinished. */
+.room-frame {
+  position: absolute; top: 15%; left: 12%;
+  width: clamp(26px, 5%, 46px); aspect-ratio: 4/5;
+  background: rgb(255 255 255 / 88%); border-radius: 4px;
+  box-shadow: 0 4px 10px rgb(120 70 60 / 18%);
+  display: grid; place-items: center;
+}
+.room-frame i {
+  width: 74%; height: 74%; border-radius: 2px;
+  background: linear-gradient(160deg, #FFD3B0, #F2A8C4 60%, #C9A6FF);
+}
+.daypart-night .room-frame { background: rgb(255 255 255 / 40%); }
 
-.room-plant { position: absolute; bottom: 20%; left: 6%; width: 42px; height: 56px; }
-.room-plant i { position: absolute; bottom: 22px; width: 22px; height: 34px; background: linear-gradient(150deg, #8FDCC0, #4CA98A); border-radius: 74% 30% 70% 34%; }
-.room-plant i:first-child { left: 0; rotate: -18deg; }
-.room-plant i:last-child { right: 0; rotate: 18deg; }
+/* Shelf with books and a small pot. */
+.room-shelf { position: absolute; top: 40%; left: 7%; display: flex; gap: 4px; align-items: flex-end; }
+.room-shelf::after {
+  content: ""; position: absolute; left: -10px; right: -10px; bottom: -6px; height: 5px;
+  background: linear-gradient(180deg, rgb(255 255 255 / 88%), rgb(214 176 168 / 70%));
+  border-radius: 3px; box-shadow: 0 3px 7px rgb(120 70 60 / 18%);
+}
+.room-shelf i { width: 8px; border-radius: 2px 2px 1px 1px; }
+.room-shelf i:nth-child(1) { height: 24px; background: linear-gradient(180deg, #FF8E7A, #E4614F); }
+.room-shelf i:nth-child(2) { height: 18px; background: linear-gradient(180deg, #6FD8D4, #37A8A6); }
+.room-shelf i:nth-child(3) { height: 22px; background: linear-gradient(180deg, #FFD371, #E8A62E); }
+.room-shelf i:nth-child(4) { height: 15px; background: linear-gradient(180deg, #C3A6F5, #8E6BD8); }
+.room-shelf b {
+  width: 14px; height: 12px; margin-left: 3px;
+  background: linear-gradient(160deg, #FFB59A, #E38468); border-radius: 3px 3px 6px 6px;
+}
+.room-shelf b::after {
+  content: ""; position: absolute; bottom: 10px; right: 1px;
+  width: 12px; height: 12px; background: #7CC79E; border-radius: 60% 40% 55% 45%;
+}
+
+/* Potted plant with three leaves. */
+.room-plant { position: absolute; bottom: 20%; left: 6%; width: 46px; height: 62px; }
+.room-plant i { position: absolute; bottom: 22px; width: 20px; height: 32px; background: linear-gradient(150deg, #8FDCC0, #4CA98A); border-radius: 74% 30% 70% 34%; }
+.room-plant i:nth-child(1) { left: 0; rotate: -22deg; }
+.room-plant i:nth-child(2) { left: 50%; translate: -50% 0; height: 38px; rotate: 2deg; }
+.room-plant i:nth-child(3) { right: 0; rotate: 22deg; }
 .room-plant b { position: absolute; bottom: 0; left: 50%; width: 30px; height: 24px; translate: -50% 0; background: linear-gradient(160deg, #FFB59A, #E38468); border-radius: 4px 4px 12px 12px; }
+.room-plant b::after { content: ""; position: absolute; inset: 3px 4px auto; height: 4px; background: rgb(255 255 255 / 34%); border-radius: 2px; }
 
-.room-lamp { position: absolute; bottom: 20%; right: 7%; width: 36px; height: 66px; }
-.room-lamp i { position: absolute; top: 0; left: 50%; width: 40px; height: 26px; translate: -50% 0; background: linear-gradient(160deg, #FFE2B8, #FFC078); border-radius: 50% 50% 12% 12%; transition: box-shadow 500ms var(--ease); }
-.lamp-on .room-lamp i { box-shadow: 0 0 34px 12px rgb(255 200 120 / 55%); }
-.room-lamp b { position: absolute; bottom: 0; left: 50%; width: 6px; height: 50px; translate: -50% 0; background: #C99A72; border-radius: 3px; }
+/* Floor lamp casting the warm pool above. */
+.room-lamp { position: absolute; bottom: 20%; right: 7%; width: 38px; height: 70px; }
+.room-lamp i {
+  position: absolute; top: 0; left: 50%; width: 38px; height: 26px; translate: -50% 0;
+  background: linear-gradient(160deg, #FFE2B8, #FFC078);
+  border-radius: 50% 50% 12% 12%;
+  transition: box-shadow 500ms var(--ease), filter 500ms var(--ease);
+}
+.lamp-on .room-lamp i { box-shadow: 0 0 34px 12px rgb(255 200 120 / 55%); filter: brightness(1.1); }
+.room-lamp b { position: absolute; bottom: 0; left: 50%; width: 5px; height: 48px; translate: -50% 0; background: linear-gradient(90deg, #B4835F, #D9A97F, #B4835F); border-radius: 3px; }
+.room-lamp::after { content: ""; position: absolute; bottom: -3px; left: 50%; width: 22px; height: 6px; translate: -50% 0; background: #B4835F; border-radius: 50%; }
 
-.room-floor { position: absolute; inset: auto 0 0; height: 26%; background: linear-gradient(178deg, #E8CBBE, #D9B4A8); }
-.daypart-night .room-floor { background: linear-gradient(178deg, #5A4677, #4A3A66); }
-.room-rug { position: absolute; bottom: 6%; left: 50%; width: 56%; height: 16%; translate: -50% 0; background: radial-gradient(ellipse at center, #C6A4EE 0 42%, #A87FE0 70%, #9169CC); border-radius: 50%; opacity: .92; }
+/* A cushion beside the rug so the floor is not empty. */
+.room-cushion {
+  position: absolute; bottom: 12%; left: 17%;
+  width: clamp(28px, 6%, 52px); aspect-ratio: 3/2;
+  background: linear-gradient(160deg, #C9B0F2, #A487E0); border-radius: 42% 42% 38% 38%;
+  box-shadow: 0 5px 10px rgb(74 40 88 / 20%);
+}
+.daypart-night .room-cushion { filter: brightness(.82); }
+
+/* Boarded floor rather than a flat band. */
+.room-floor {
+  position: absolute; inset: auto 0 0; height: 30%;
+  background:
+    repeating-linear-gradient(90deg, rgb(150 96 74 / 16%) 0 1px, transparent 1px 42px),
+    linear-gradient(178deg, #E8CBBE, #D6AE9F);
+}
+.daypart-night .room-floor { background: repeating-linear-gradient(90deg, rgb(20 12 40 / 24%) 0 1px, transparent 1px 42px), linear-gradient(178deg, #5A4677, #4A3A66); }
+
+.room-rug {
+  position: absolute; bottom: 6%; left: 50%; width: 56%; height: 17%; translate: -50% 0;
+  background: radial-gradient(ellipse at center, #C6A4EE 0 42%, #A87FE0 70%, #9169CC);
+  border-radius: 50%;
+  box-shadow: 0 6px 16px rgb(74 40 88 / 22%);
+}
+.room-rug i {
+  position: absolute; inset: 22% 16%;
+  border: 2px dashed rgb(255 255 255 / 34%); border-radius: 50%;
+}
 
 .pet-stage { grid-area: pet; container-type: inline-size; position: relative; z-index: 3; display: grid; place-items: center; align-self: center; padding: 0; }
 .pet-shadow { position: absolute; bottom: 6%; left: 50%; width: 46%; height: 8%; translate: -50% 0; background: radial-gradient(ellipse, rgb(74 40 88 / 30%), transparent 70%); filter: blur(4px); }
@@ -411,7 +510,8 @@
 .evo-route { display: grid; justify-items: center; gap: 3px; padding: var(--s-2); background: rgb(255 255 255 / 5%); border: 1px solid var(--glass-line-soft); border-radius: var(--r-md); text-align: center; }
 .evo-route strong { font-size: var(--t-2xs); font-weight: 800; }
 .evo-route small { color: var(--text-faint); font-size: .62rem; font-weight: 620; }
-.evo-orb { width: 26px; height: 26px; border-radius: 50%; box-shadow: 0 0 16px currentColor; }
+.route-portrait { flex: none; filter: drop-shadow(0 3px 8px rgb(16 7 43 / 45%)); }
+.evo-route .route-portrait { width: 40px; height: 40px; }
 .evo-route.is-locked-in { border-color: var(--gold); box-shadow: 0 0 22px rgb(255 200 87 / 30%); }
 .evo-hint { color: var(--turquoise); font-size: var(--t-xs); font-weight: 700; font-style: italic; }
 
@@ -434,7 +534,7 @@
 .route-card header { display: flex; align-items: center; gap: var(--s-3); }
 .route-card h3 { font-family: var(--font-head); font-size: var(--t-lg); font-weight: 620; }
 .route-card header p { color: var(--text-faint); font-size: var(--t-xs); font-weight: 650; }
-.route-orb { width: 40px; height: 40px; border-radius: 50%; box-shadow: 0 0 20px currentColor; flex: none; }
+.route-card .route-portrait { width: 56px; height: 56px; }
 .route-flag { margin-left: auto; padding: 5px 11px; color: #0C0522; background: var(--gold); border-radius: var(--r-pill); font-size: var(--t-2xs); font-weight: 900; }
 .route-flag.is-soft { color: white; background: rgb(255 255 255 / 18%); }
 .route-card.is-locked-in { border-color: var(--gold); box-shadow: 0 0 30px rgb(255 200 87 / 22%); }
