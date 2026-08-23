@@ -19,14 +19,18 @@ public repository:
   `Analyze JavaScript and TypeScript` must pass;
 - unresolved review conversations block merge;
 - force pushes and branch deletion are blocked;
-- history must remain linear;
-- commits reaching the protected branch must be signed.
+- history must remain linear.
 
 The required approval count is intentionally zero. GitHub does not let an
 author approve their own pull request, so requiring one approval in a
 single-maintainer repository would create a permanent deadlock without adding
 an independent reviewer. Automated checks and resolved review conversations
 remain mandatory.
+
+Verified signatures remain visible in GitHub but are not a merge requirement.
+Requiring signed commits can prevent the maintainer from squash-merging a pull
+request authored by an automation account such as Dependabot, which would make
+the dependency-update workflow needlessly brittle.
 
 ## Applying or restoring the ruleset
 
