@@ -4,6 +4,7 @@
 [![CodeQL](https://github.com/kamilxgriefer/niumpi/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/kamilxgriefer/niumpi/actions/workflows/codeql.yml)
 [![Playwright](https://img.shields.io/badge/Playwright-Chromium-2EAD33?logo=playwright&logoColor=white)](https://github.com/kamilxgriefer/niumpi/tree/main/tests/e2e)
 [![Dependabot](https://img.shields.io/badge/Dependabot-enabled-025E8C?logo=dependabot&logoColor=white)](https://github.com/kamilxgriefer/niumpi/network/updates)
+[![Branch policy](https://img.shields.io/badge/main-PR%20%2B%20required%20checks-6f42c1?logo=github&logoColor=white)](docs/BRANCH_PROTECTION.md)
 
 A cozy virtual pet that grows with you.
 
@@ -15,6 +16,29 @@ przyszły rozwój postaci zależą od tego, jak gracz ją karmi, dotyka, uspokaj
 spędza z nią czas.
 
 Projekt jest niezależny od YO Voice.
+
+## Aktualny zakres gry
+
+- trwały `GameShell` z responsywną nawigacją desktopową i mobilną;
+- osobne sceny Home, Niumpi, Room, Memory, Garden, Games, Shop i Evolution;
+- bezpośrednie interakcje z postacią, karmienie, sen, dźwięk i reakcje zależne
+  od aktualnego stanu;
+- warstwowy wygląd Niumpi zmieniany przez dietę, cechy i ścieżkę ewolucji;
+- lokalny, wersjonowany zapis z migracjami i progresją czasu poza otwartą kartą;
+- minigry dostępne w wariancie DOM/React oraz w silniku Phaser;
+- automatyczne testy logiki, produkcyjnego buildu i najważniejszych ścieżek w
+  prawdziwej przeglądarce.
+
+## Dokumentacja projektu
+
+- [`SECURITY.md`](SECURITY.md) — prywatne zgłaszanie podatności i zasady
+  odpowiedzialnego testowania;
+- [`docs/QUALITY_AUTOMATION.md`](docs/QUALITY_AUTOMATION.md) — CI, Playwright,
+  CodeQL, Dependabot, artefakty diagnostyczne i gotowe opisy do portfolio;
+- [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md) — workflow zmian,
+  wymagane kontrole oraz wersjonowany ruleset dla `main`;
+- [`.github/rulesets/main-protection.json`](.github/rulesets/main-protection.json)
+  — importowalna konfiguracja ochrony domyślnej gałęzi.
 
 ## Stos technologiczny
 
@@ -92,7 +116,8 @@ raport HTML, trace, screenshot i nagranie.
 
 ## Automatyczna kontrola projektu
 
-Każdy push do `main` i każdy pull request do `main` automatycznie uruchamia:
+Każdy pull request do `main` oraz każda aktualizacja `main` automatycznie
+uruchamia:
 
 - instalację zależności przez `npm ci`;
 - ESLint;
@@ -112,6 +137,30 @@ na odznakach na górze README.
 
 Pełny opis, zakres dowodów i gotowe sformułowania do CV znajdują się w
 [`docs/QUALITY_AUTOMATION.md`](docs/QUALITY_AUTOMATION.md).
+
+## Workflow zmian i ochrona `main`
+
+Przyjęty workflow dla zmian produkcyjnych wygląda następująco:
+
+```text
+focused branch
+→ pull request
+→ CI + Playwright + CodeQL
+→ rozwiązanie uwag
+→ squash merge
+→ main
+```
+
+Wersjonowany ruleset wymaga aktualnej gałęzi, liniowej historii i przejścia
+kontroli `Lint, types, tests and build`, `Playwright (Chromium)` oraz
+`Analyze JavaScript and TypeScript`. Blokuje również force push i usunięcie
+`main`. Ponieważ repozytorium ma jednego maintainera, wymaganych jest zero
+formalnych aprobat, ale automatyczne kontrole i nierozwiązane rozmowy nadal
+blokują merge.
+
+Konfiguracja w repozytorium jest źródłem dokumentacji i odtwarzania polityki;
+faktyczne egzekwowanie zapewnia ruleset ustawiony jako **Active** w GitHub.
+Szczegóły znajdują się w [`docs/BRANCH_PROTECTION.md`](docs/BRANCH_PROTECTION.md).
 
 ## Architektura
 
