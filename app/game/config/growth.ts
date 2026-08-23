@@ -209,3 +209,20 @@ export function bellyPath(g: BodyGeometry): string {
 export function tipRise(g: BodyGeometry): number {
   return Math.max(0, g.baseY - g.ry - g.tipY);
 }
+
+/**
+ * Growth stages and visual stages are the same thing now. Care moments are a
+ * fallback for saves whose stage never settled.
+ *
+ * Read from the growth table rather than repeated as literals: thresholds
+ * copied into a second place drift the moment growth is retuned, and the
+ * failure is silent — the creature simply stops matching its own stage.
+ */
+export function visualStageFor(careMoments: number, stage: number): StageId {
+  const grown = growthStages.filter((profile) => profile.id > 0);
+  for (let i = grown.length - 1; i >= 0; i -= 1) {
+    const profile = grown[i];
+    if (stage >= profile.id || careMoments >= profile.careMoments) return profile.id;
+  }
+  return grown[0].id;
+}

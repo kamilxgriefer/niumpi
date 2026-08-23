@@ -6,6 +6,7 @@ import {
   growthStages,
   profileFor,
   tipRise,
+  visualStageFor,
 } from "../app/game/config/growth.ts";
 
 /**
@@ -106,4 +107,25 @@ test("care thresholds only ever climb", () => {
       `stage ${growthStages[i].id} does not cost more care than the one before`,
     );
   }
+});
+
+test("the renderer's stage lookup cannot drift from the growth table", () => {
+  // These thresholds used to be copied into NiumpiRenderer as literals. A
+  // retune of growth.ts would have left the creature silently rendering a
+  // stage it was no longer in, so the lookup now reads the table.
+  for (const profile of grown) {
+    assert.equal(
+      visualStageFor(0, profile.id),
+      profile.id,
+      `stage ${profile.id} should render as itself`,
+    );
+    assert.equal(
+      visualStageFor(profile.careMoments, 0),
+      profile.id,
+      `${profile.careMoments} care moments should reach stage ${profile.id}`,
+    );
+  }
+  // One short of a threshold must stay on the stage below.
+  const second = grown[1];
+  assert.equal(visualStageFor(second.careMoments - 1, 0), grown[0].id);
 });

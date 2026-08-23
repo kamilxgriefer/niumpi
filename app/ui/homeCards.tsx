@@ -11,7 +11,7 @@ import { traitMap, traits } from "../game/config/traits";
 import { routeMap, routes } from "../game/config/routes";
 import { itemMap } from "../game/config/items";
 import { missionMap } from "../game/config/missions";
-import { stageMap } from "../game/config/stages";
+import { stages } from "../game/config/stages";
 import { answerSeed } from "../game/actions";
 import { claimMission } from "../game/missions";
 import { discoveryLine } from "../game/reactions";
@@ -215,10 +215,14 @@ export function EvolutionPreview() {
       className="card-evolution" onOpen={unlock.open ? () => goTo("evolution") : undefined}
     >
       <ol className="evo-line">
-        {[0, 1, 2, 3].map((stage) => (
-          <li key={stage} className={state.niumpi.stage >= stage ? "is-done" : ""}>
-            <Art name={stageMap[stage].art} size={22} />
-            <span>{stageMap[stage].name}</span>
+        {/* Driven from the stage table, not a literal — a hardcoded [0,1,2,3]
+            here quietly dropped the last two stages when the hatchling was
+            inserted, and showed the egg as a milestone the player had passed.
+            The egg is the state before the journey, so the line starts after it. */}
+        {stages.filter((stage) => stage.id > 0).map((stage) => (
+          <li key={stage.id} className={state.niumpi.stage >= stage.id ? "is-done" : ""}>
+            <Art name={stage.art} size={22} />
+            <span>{stage.name}</span>
           </li>
         ))}
       </ol>

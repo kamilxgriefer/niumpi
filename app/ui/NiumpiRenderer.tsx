@@ -107,15 +107,3 @@ export function NiumpiRenderer({
     </div>
   );
 }
-
-/**
- * Growth stages and visual stages are the same thing now. Care moments are a
- * fallback for saves whose stage never settled.
- */
-export function visualStageFor(careMoments: number, stage: number): StageId {
-  if (stage >= 5 || careMoments >= 520) return 5;
-  if (stage >= 4 || careMoments >= 300) return 4;
-  if (stage >= 3 || careMoments >= 150) return 3;
-  if (stage >= 2 || careMoments >= 62) return 2;
-  return 1;
-}

@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef } from "react";
 import type { CSSProperties, MouseEvent, PointerEvent, ReactNode } from "react";
-import { NiumpiRenderer, visualStageFor } from "./NiumpiRenderer";
+import { NiumpiRenderer } from "./NiumpiRenderer";
+import { visualStageFor } from "../game/config/growth.ts";
 import type { BodyPart } from "./NiumpiRenderer";
 import { Art } from "./Art";
 import { useGame } from "./GameProvider";
