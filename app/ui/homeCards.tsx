@@ -2,25 +2,20 @@
 
 import { useMemo, useState } from "react";
 import { Art } from "./Art";
-import { RoutePortrait } from "./RoutePortrait";
 import { Chip, EmptyState, Meter, Panel, TabBar } from "./parts";
 import { useGame } from "./GameProvider";
 import { copy } from "../game/config/copy";
 import { seedQuestions } from "../game/config/seeds";
 import { traitMap, traits } from "../game/config/traits";
-import { routeMap, routes } from "../game/config/routes";
-import { itemMap } from "../game/config/items";
-import { missionMap } from "../game/config/missions";
-import { stages } from "../game/config/stages";
+import { routeMap } from "../game/config/routes";
+import { missionMap, weeklyMissionMap } from "../game/config/missions";
 import { answerSeed } from "../game/actions";
 import { claimMission } from "../game/missions";
 import { discoveryLine } from "../game/reactions";
-import { routeOutlook } from "../game/evolution";
 import { stageProgress } from "../game/care";
 import { vibeChips } from "../game/mood";
 import { hashSeed, makeRng } from "../game/rng";
 import { dayKeyFor } from "../game/time";
-import { relationshipFor } from "../identity";
 
 /* -------------------------------------------------------- memory seeds ---- */
 
@@ -71,6 +66,15 @@ export function MemorySeedCard() {
 }
 
 /* --------------------------------------------------------- personality ---- */
+
+/* ----------------------------------------------------------- discovery ---- */
+
+/* ---------------------------------------------------------- personality ----
+ *
+ * The full trait and preference list. It used to live on Home, which was the
+ * only place it existed — so the compact preview there had to lead somewhere
+ * real rather than replace it. It belongs beside the creature it describes.
+ */
 
 export function PersonalityPanel() {
   const { state, say, cue } = useGame();
@@ -132,7 +136,105 @@ export function PersonalityPanel() {
   );
 }
 
-/* ----------------------------------------------------------- discovery ---- */
+/* ------------------------------------------------------- system previews ----
+ *
+ * Home used to carry a full copy of Personality, Evolution Journey and Your
+ * Room — 981px of a 3581px phone page, each one repeating a whole scene that
+ * already has its own screen. A preview says what changed and offers a way in;
+ * the scene itself is where the detail lives.
+ */
+
+type PreviewProps = {
+  title: string;
+  art: string;
+  /** The one live fact worth knowing without opening the scene. */
+  headline: string;
+  note: string;
+  cta: string;
+  onOpen?: () => void;
+  lockedNote?: string;
+  children?: React.ReactNode;
+};
+
+function SystemPreview({ title, art, headline, note, cta, onOpen, lockedNote, children }: PreviewProps) {
+  const body = (
+    <>
+      <span className="preview-art"><Art name={art} size={26} /></span>
+      <span className="preview-copy">
+        <span className="preview-title">{title}</span>
+        <strong className="preview-headline">{headline}</strong>
+        <small className="preview-note">{lockedNote ?? note}</small>
+      </span>
+      {children}
+      {onOpen && <span className="preview-cta" aria-hidden="true">{cta}</span>}
+    </>
+  );
+
+  if (!onOpen) return <div className="system-preview is-locked">{body}</div>;
+  return (
+    <button className="system-preview" type="button" onClick={onOpen}>
+      {body}
+    </button>
+  );
+}
+
+export function PersonalityPreview() {
+  const { state, goTo } = useGame();
+  const known = Object.keys(state.personality.traits);
+  const latest = known.length ? traitMap[known[known.length - 1]] : null;
+  return (
+    <SystemPreview
+      title={copy.home.personality}
+      art="personality"
+      headline={latest ? latest.name : "Still a mystery"}
+      note={`${known.length} of ${traits.length} traits discovered`}
+      cta="Open"
+      onOpen={() => goTo("niumpi")}
+    />
+  );
+}
+
+export function EvolutionPreviewCard() {
+  const { state, now, goTo, isOpen } = useGame();
+  const unlock = isOpen("evolution");
+  const progress = stageProgress(state, now);
+  return (
+    <SystemPreview
+      title={copy.home.evolution}
+      art="evolution"
+      headline={progress.name}
+      note={
+        progress.careTarget
+          ? `${progress.careMoments} of ${progress.careTarget} care moments`
+          : "Fully grown together"
+      }
+      cta="Open"
+      onOpen={unlock.open ? () => goTo("evolution") : undefined}
+      lockedNote={unlock.open ? undefined : unlock.note}
+    >
+      <span className="preview-meter" aria-hidden="true">
+        <i style={{ width: `${progress.percent}%` }} />
+      </span>
+    </SystemPreview>
+  );
+}
+
+export function RoomPreviewCard() {
+  const { state, goTo, isOpen } = useGame();
+  const unlock = isOpen("room");
+  const placed = state.room.placed.length;
+  return (
+    <SystemPreview
+      title={copy.home.room}
+      art="room"
+      headline={placed ? `${placed} things placed` : "An empty corner"}
+      note={copy.home.roomNote}
+      cta="Open"
+      onOpen={unlock.open ? () => goTo("room") : undefined}
+      lockedNote={unlock.open ? undefined : unlock.note}
+    />
+  );
+}
 
 /* ---------------------------------------------------------- status strip ----
  *
@@ -146,9 +248,7 @@ export function PersonalityPanel() {
 
 export function PetStatusStrip() {
   const { state, now, goTo } = useGame();
-  const progress = stageProgress(state, now);
   const moments = state.memories.length;
-  const relationship = relationshipFor(state.niumpi.bond, moments);
   const discovery = discoveryLine(state);
   const chips = vibeChips(state, now);
 
@@ -162,31 +262,12 @@ export function PetStatusStrip() {
       </div>
 
       <div className="status-tiles">
-        <button className="status-tile tile-growth" type="button" onClick={() => goTo("evolution")}>
-          <span className="status-kicker">Stage {progress.stage}</span>
-          <strong className="status-title">{progress.name}</strong>
-          <span className="status-meter" aria-hidden="true">
-            <i style={{ width: `${progress.percent}%` }} />
-          </span>
-          <small className="status-note">
-            {progress.careTarget
-              ? `${progress.careMoments} / ${progress.careTarget} care moments`
-              : "Fully grown together"}
-          </small>
-        </button>
-
         <button className="status-tile tile-moments" type="button" onClick={() => goTo("memory")}>
           <span className="status-icon"><Art name="star" size={20} /></span>
           <strong className="status-title">{moments} {copy.home.sharedMoments}</strong>
           <small className="status-note">
             {moments ? copy.home.sharedMomentsNote : "Your story starts here"}
           </small>
-        </button>
-
-        <button className="status-tile tile-bond" type="button" onClick={() => goTo("evolution")}>
-          <span className="status-icon"><Art name="bond" size={20} /></span>
-          <strong className="status-title">{relationship.name}</strong>
-          <small className="status-note">Bond is growing</small>
         </button>
 
         <button className="status-tile tile-discovery" type="button" onClick={() => goTo("memory")}>
@@ -205,90 +286,26 @@ export function PetStatusStrip() {
 
 /* ------------------------------------------------------ evolution card ---- */
 
-export function EvolutionPreview() {
-  const { state, goTo, isOpen } = useGame();
-  const unlock = isOpen("evolution");
-  const outlook = routeOutlook(state);
-  return (
-    <Panel
-      title={copy.home.evolution} note={copy.home.evolutionNote} art="evolution"
-      className="card-evolution" onOpen={unlock.open ? () => goTo("evolution") : undefined}
-    >
-      <ol className="evo-line">
-        {/* Driven from the stage table, not a literal — a hardcoded [0,1,2,3]
-            here quietly dropped the last two stages when the hatchling was
-            inserted, and showed the egg as a milestone the player had passed.
-            The egg is the state before the journey, so the line starts after it. */}
-        {stages.filter((stage) => stage.id > 0).map((stage) => (
-          <li key={stage.id} className={state.niumpi.stage >= stage.id ? "is-done" : ""}>
-            <Art name={stage.art} size={22} />
-            <span>{stage.name}</span>
-          </li>
-        ))}
-      </ol>
-      <ul className="evo-routes">
-        {routes.map((route) => {
-          const locked = state.evolution.lockedRoute === route.id;
-          return (
-            <li key={route.id} className={`evo-route route-${route.id} ${locked ? "is-locked-in" : ""}`}>
-              <RoutePortrait id={route.id} size={40} />
-              <strong>{route.name}</strong>
-              <small>{route.tagline}</small>
-            </li>
-          );
-        })}
-      </ul>
-      {unlock.open ? (
-        <p className="evo-hint">{outlook.hint}</p>
-      ) : (
-        <p className="soft-note">{unlock.note}</p>
-      )}
-    </Panel>
-  );
-}
-
 /* ----------------------------------------------------------- room card ---- */
-
-export function RoomPreview() {
-  const { state, goTo, isOpen } = useGame();
-  const unlock = isOpen("room");
-  const owned = state.inventory.items.slice(0, 4);
-  return (
-    <Panel
-      title={copy.home.room} note={copy.home.roomNote} art="room"
-      className="card-room" onOpen={unlock.open ? () => goTo("room") : undefined}
-    >
-      <div className="room-preview" aria-hidden="true">
-        <span className="preview-window" />
-        <span className="preview-floor" />
-        {state.room.placed.slice(0, 4).map((placed) => (
-          <span
-            key={placed.uid}
-            className="preview-item"
-            style={{ left: `${8 + placed.x * 11}%`, bottom: `${8 + placed.y * 9}%` }}
-          >
-            <Art name={itemMap[placed.itemId]?.art ?? "cushion"} size={26} />
-          </span>
-        ))}
-      </div>
-      <ul className="room-chips">
-        {owned.map((id) => (
-          <li key={id}><Chip label={itemMap[id]?.name ?? id} art={itemMap[id]?.art} /></li>
-        ))}
-      </ul>
-      {!unlock.open && <p className="soft-note">{unlock.note}</p>}
-    </Panel>
-  );
-}
 
 /* ------------------------------------------------------------ missions ---- */
 
+/** How many of today's missions Home shows before pointing at the rest. */
+const MISSIONS_ON_HOME = 2;
+
 export function MissionsCard() {
-  const { state, update, showReward, cue, clock } = useGame();
+  const { state, update, showReward, cue, clock, goTo } = useGame();
+  const weeklyDone = state.missions.weekly.entries.filter((entry) => {
+    const template = weeklyMissionMap[entry.id];
+    return template && entry.progress >= template.target;
+  }).length;
   return (
-    <Panel title={copy.home.missions} art="check" className="card-missions">
+    <Panel title={copy.home.missions} note="Five small reasons to come back — never a streak to lose"
+      art="check" className="card-missions" onOpen={() => goTo("journey")} openLabel="Open Journey">
+      {/* Home carries today's next steps, not the whole board — three full rows
+          cost 301px of a phone page that also has to hold the creature. */}
       <ul className="mission-list">
-        {state.missions.daily.map((entry) => {
+        {state.missions.daily.slice(0, MISSIONS_ON_HOME).map((entry) => {
           const template = missionMap[entry.id];
           if (!template) return null;
           const done = entry.progress >= template.target;
@@ -321,8 +338,13 @@ export function MissionsCard() {
           );
         })}
       </ul>
+      {state.missions.daily.length > MISSIONS_ON_HOME && (
+        <button className="mission-more" type="button" onClick={() => goTo("journey")}>
+          +{state.missions.daily.length - MISSIONS_ON_HOME} more today · see all goals
+        </button>
+      )}
       <p className="mission-weekly">
-        Complete activities on 5 of 7 days — {state.missions.weekly.days.length}/5 so far.
+        Weekly journey: {weeklyDone}/{state.missions.weekly.entries.length || 3} challenges · {state.missions.weekly.days.length}/5 active days.
         {" "}Missing a day costs nothing.
       </p>
     </Panel>
@@ -331,6 +353,15 @@ export function MissionsCard() {
 
 /* ---------------------------------------------------------- activities ---- */
 
+/**
+ * Short ways in to the activity scenes.
+ *
+ * All four are reachable from navigation — Games from the rail, and Cooking,
+ * Dream Doors and Friends from the More menu — so Home does not need to repeat
+ * them at full size. It repeated them as four 156px tiles, which on a phone was
+ * 660px of mostly padlocks. A chip rail keeps them one tap away for a child who
+ * will not go hunting in a More menu, at a fifth of the height.
+ */
 export function ActivityTiles() {
   const { goTo, isOpen } = useGame();
   const tiles = [
@@ -340,20 +371,20 @@ export function ActivityTiles() {
     { id: "friends" as const, title: copy.home.friends, note: copy.home.friendsNote, art: "friends" },
   ];
   return (
-    <ul className="activity-grid">
+    <ul className="activity-rail" aria-label="More to do">
       {tiles.map((tile) => {
         const unlock = isOpen(tile.id);
         return (
           <li key={tile.id}>
             <button
-              className={`activity-tile tile-${tile.id} ${unlock.open ? "" : "is-locked"}`}
+              className={`activity-chip tile-${tile.id} ${unlock.open ? "" : "is-locked"}`}
               type="button"
               aria-disabled={!unlock.open}
+              title={unlock.open ? tile.note : unlock.note}
               onClick={() => unlock.open && goTo(tile.id)}
             >
-              <span className="activity-art"><Art name={unlock.open ? tile.art : "lock"} size={30} /></span>
+              <span className="activity-art"><Art name={unlock.open ? tile.art : "lock"} size={22} /></span>
               <strong>{tile.title}</strong>
-              <small>{unlock.open ? tile.note : unlock.note}</small>
             </button>
           </li>
         );

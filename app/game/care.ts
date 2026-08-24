@@ -18,7 +18,7 @@ export function diminishFactor(timesToday: number): number {
 export const actionWeight: Record<CareActionId, number> = {
   pet: 1, hug: 1.4, tickle: 1, brush: 1.2, leaf: 0.8, dance: 1.4, comfort: 1.6, sing: 1.2,
   feed: 1.5, cook: 2.4, sleep: 2, dream: 2.4, minigame: 2.2, seed: 2, harvest: 1.8,
-  plant: 1.2, toy: 1.2, explore: 2, visit: 1.8, decorate: 1.2, warm: 1, dewdrop: 1, hum: 1,
+  plant: 1.2, toy: 1.2, explore: 2, visit: 1.8, decorate: 1.2, warm: 1, dewdrop: 1, hum: 1, wash: 1.4,
 };
 
 /** Bond earned per care moment, before the variety bonus. */

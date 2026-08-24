@@ -5,19 +5,22 @@ import { CompanionStage } from "../ui/CompanionStage";
 import { useFoodDrop } from "../ui/useFoodDrop";
 import { SnackBar } from "../ui/SnackBar";
 import { Art } from "../ui/Art";
-import { Modal, StatRow } from "../ui/parts";
+import { CleanlinessRow, Modal, StatRow } from "../ui/parts";
+import { PersonalityPanel } from "../ui/homeCards";
 import { useGame } from "../ui/GameProvider";
-import { gesture, sleep, playWithItem, wake } from "../game/actions";
+import { gesture, sleep, playWithItem, wake, washNiumpi } from "../game/actions";
 import { copy } from "../game/config/copy";
 import { itemMap, toys } from "../game/config/items";
 import { chooseLine, rememberLine } from "../game/reactions";
 import type { CareActionId } from "../game/types";
+import { washTools } from "../game/hygiene";
+import type { WashTool } from "../game/hygiene";
 
 /** The full-screen care scene: fewer panels, more room to touch. */
 export function CompanionScene() {
   const { state, run, update, goTo, say, cue, clock} = useGame();
   const { armed, setArmed, stageRef, hitTest, dropFood } = useFoodDrop(state, run, clock);
-  const [panel, setPanel] = useState<"none" | "feed" | "toy">("none");
+  const [panel, setPanel] = useState<"none" | "feed" | "toy" | "wash">("none");
 
 
 
@@ -27,7 +30,7 @@ export function CompanionScene() {
     { id: "pet", label: copy.actions.pet, art: "heart", onClick: () => act("pet") },
     { id: "hug", label: copy.actions.hug, art: "bond", onClick: () => act("hug") },
     { id: "tickle", label: copy.actions.tickle, art: "playful", onClick: () => act("tickle") },
-    { id: "brush", label: copy.actions.brush, art: "leaf", onClick: () => act("brush") },
+    { id: "wash", label: copy.actions.wash, art: "drop", onClick: () => setPanel("wash") },
     { id: "dance", label: copy.actions.dance, art: "note", onClick: () => act("dance") },
     { id: "sing", label: copy.actions.sing, art: "note", onClick: () => act("sing") },
     { id: "comfort", label: copy.actions.comfort, art: "hush", onClick: () => act("comfort") },
@@ -59,6 +62,7 @@ export function CompanionScene() {
           {(["fullness", "energy", "joy"] as const).map((id) => (
             <StatRow key={id} id={id} value={state.stats[id]} />
           ))}
+          <CleanlinessRow value={state.niumpi.cleanliness} />
         </aside>
       </div>
 
@@ -101,6 +105,36 @@ export function CompanionScene() {
           </ul>
         </Modal>
       )}
+
+      {panel === "wash" && (
+        <Modal title="Bath Time" onClose={() => setPanel("none")}>
+          <div className="wash-tool-grid">
+            {(Object.entries(washTools) as Array<[WashTool, (typeof washTools)[WashTool]]>).map(([id, tool]) => (
+              <button
+                key={id}
+                className={`wash-tool wash-tool-${id}`}
+                type="button"
+                disabled={state.niumpi.cleanliness >= 98}
+                onClick={() => { run(washNiumpi(state, id, clock())); setPanel("none"); }}
+              >
+                <span className="wash-tool-art"><Art name={tool.art} size={34} /><i aria-hidden="true" /></span>
+                <strong>{tool.name}</strong>
+                <small>{tool.note}</small>
+                <span>+{tool.gain} clean</span>
+              </button>
+            ))}
+          </div>
+          <p className="soft-note">
+            {state.niumpi.cleanliness >= 98
+              ? "Niumpi is already sparkling. More bubbles can wait."
+              : "A gentle wash clears the visible dust and becomes part of how Niumpi remembers your care."}
+          </p>
+        </Modal>
+      )}
+
+      {/* Who they are becoming, beside the creature it describes. Home carries
+          only a one-line preview that leads here. */}
+      <PersonalityPanel />
     </div>
   );
 }

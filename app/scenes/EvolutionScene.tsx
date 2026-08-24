@@ -1,10 +1,11 @@
 "use client";
 
-import { Art } from "../ui/Art";
+import Image from "next/image";
+import { useEffect, useRef } from "react";
 import { RoutePortrait } from "../ui/RoutePortrait";
 import { Meter, Panel } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
-import { routes, prismaticRequirements } from "../game/config/routes";
+import { routes, routeMap, prismaticRequirements } from "../game/config/routes";
 import { stages, stageMap } from "../game/config/stages";
 import { vectorIds } from "../game/state";
 import { meetsPrismatic, phenotypeNotes, routeOutlook } from "../game/evolution";
@@ -18,11 +19,22 @@ export function EvolutionScene() {
   const locked = state.evolution.lockedRoute;
   const notes = phenotypeNotes(state);
   const maxVector = Math.max(1, ...vectorIds.map((id) => state.evolution.vectors[id]));
+  const visibleForm = locked ?? (state.phenotype.morphology !== "seedling" ? state.phenotype.morphology : outlook.leading);
+  const currentStageNode = useRef<HTMLLIElement>(null);
+
+  useEffect(() => {
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const frame = window.requestAnimationFrame(() => currentStageNode.current?.scrollIntoView({
+      behavior: reduced ? "auto" : "smooth", block: "nearest", inline: "center",
+    }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [state.niumpi.stage]);
 
   return (
     <div className="scene scene-evolution">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>{copy.home.evolution}</h1>
           <p>{copy.home.evolutionNote}</p>
         </div>
@@ -30,16 +42,31 @@ export function EvolutionScene() {
 
       <Panel title="The main line" art="evolution">
         <ol className="evo-track">
-          {stages.map((stage) => (
-            <li key={stage.id} className={[
-              state.niumpi.stage > stage.id ? "is-done" : "",
-              state.niumpi.stage === stage.id ? "is-current" : "",
-            ].filter(Boolean).join(" ")}>
-              <span className="evo-node"><Art name={stage.art} size={26} /></span>
-              <strong>{stage.name}</strong>
-              <small>{stage.blurb}</small>
-            </li>
-          ))}
+          {stages.map((stage) => {
+            const finalForm = stage.id === 5 && visibleForm;
+            const image = finalForm
+              ? `/assets/niumpi/forms/${visibleForm}.webp`
+              : stage.id > 0
+                ? `/assets/niumpi/stages/stage-${stage.id}.webp`
+                : null;
+            return (
+              <li key={stage.id} ref={state.niumpi.stage === stage.id ? currentStageNode : undefined} className={[
+                state.niumpi.stage > stage.id ? "is-done" : "",
+                state.niumpi.stage === stage.id ? "is-current" : "",
+              ].filter(Boolean).join(" ")}>
+                <span className="evo-node">
+                  {image ? (
+                    <Image className="evo-stage-image" src={image} alt="" width={112} height={112} sizes="112px" />
+                  ) : (
+                    <span className="evo-seed-shell" aria-hidden="true"><i /><b /></span>
+                  )}
+                </span>
+                <strong>{stage.name}</strong>
+                <small>{stage.blurb}</small>
+                {state.niumpi.stage === stage.id && <span className="evo-you-are-here">Now</span>}
+              </li>
+            );
+          })}
         </ol>
         <div className="evo-progress">
           <Meter label={`${progress.careMoments} / ${progress.careTarget} care moments`}
@@ -54,10 +81,20 @@ export function EvolutionScene() {
 
       <Panel title="Where this is heading" art="spark"
         note={locked ? "This is settled now." : "Nothing is locked in yet."}>
-        <p className="evo-outlook">{outlook.hint}</p>
-        {!locked && (
-          <Meter label={`Direction is ${outlook.confidence}% clear`} value={outlook.confidence} max={100} />
-        )}
+        <div className="evo-forecast">
+          {visibleForm && <RoutePortrait id={visibleForm} size={124} />}
+          <div>
+            <p className="evo-outlook">{outlook.hint}</p>
+            <p className="soft-note">
+              {locked
+                ? `The care you gave has settled into ${routeMap[locked].name}.`
+                : visibleForm
+                  ? `${routeMap[visibleForm].name} details are beginning to appear, but gentle changes are still possible.`
+                  : "The first visible details will appear as Niumpi learns how you care for them."}
+            </p>
+          </div>
+        </div>
+        {!locked && <Meter label={`Direction is ${outlook.confidence}% clear`} value={outlook.confidence} max={100} />}
         <ul className="vector-list">
           {vectorIds.map((id) => (
             <li key={id}>
@@ -82,7 +119,7 @@ export function EvolutionScene() {
               route.rare ? "is-rare" : "",
             ].filter(Boolean).join(" ")}>
               <header>
-                <RoutePortrait id={route.id} size={56} />
+                <RoutePortrait id={route.id} size={92} />
                 <div>
                   <h3>{route.name}{route.rare && <em> (rare)</em>}</h3>
                   <p>{route.tagline}</p>

@@ -54,6 +54,16 @@ test("interactive controls meet the touch floor the product sets", async () => {
   // minimum in its own tokens, and this is the control small hands use most.
   assert.match(components.text, /\.icon-button \{[^}]*width: var\(--tap/);
   assert.match(components.text, /\.icon-button \{[^}]*height: var\(--tap/);
+
+  // Everything else a child taps. Each of these was measured under the floor on
+  // the running app: sound toggle and cook at 38px, tabs and trait chips at
+  // 36px, the panel link at 34px.
+  for (const control of [".sound-toggle", ".snack-cook", ".tab", ".trait-chip", ".panel-open"]) {
+    assert.ok(
+      new RegExp(`\\${control},`).test(components.text) || new RegExp(`\\${control} \\{[^}]*min-height: var\\(--tap`).test(components.text),
+      `${control} must be held to the touch floor`,
+    );
+  }
 });
 
 test("a Niumpi drawn outside the full rig still has a palette", async () => {

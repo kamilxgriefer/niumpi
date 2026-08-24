@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import test from "node:test";
 
 import { createGameState, migrateLegacy, reconcile, SAVE_VERSION, vectorIds } from "../app/game/state.ts";
@@ -10,7 +11,10 @@ import { buyItem, canSpend, grant, spendIngredients } from "../app/game/inventor
 import { alreadyClaimed, markClaimed, pruneClaims } from "../app/game/persistence.ts";
 import { claimDream, dreamReady, startDream } from "../app/game/dreams.ts";
 import { harvest, plantSeed, viewPlot, water } from "../app/game/garden.ts";
-import { claimMission, rollMissions } from "../app/game/missions.ts";
+import {
+  achievementProgress, claimAchievement, claimMission, claimWeeklyMission,
+  progressMissions, rollMissions,
+} from "../app/game/missions.ts";
 import { awardMemory } from "../app/game/memories.ts";
 import { feed, gesture, seedAction, hatch, cook } from "../app/game/actions.ts";
 import { moodFor } from "../app/game/mood.ts";
@@ -20,7 +24,10 @@ import { traits } from "../app/game/config/traits.ts";
 import { dialogue } from "../app/game/config/dialogue.ts";
 import { shopItems } from "../app/game/config/items.ts";
 import { plants } from "../app/game/config/plants.ts";
-import { missionTemplates } from "../app/game/config/missions.ts";
+import {
+  achievementMap, achievementTemplates, missionTemplates,
+  weeklyMissionMap, weeklyMissionTemplates,
+} from "../app/game/config/missions.ts";
 import { dreamOutcomes } from "../app/game/config/dreams.ts";
 import { exploreOutcomes } from "../app/game/config/explore.ts";
 import { weathers } from "../app/game/config/weather.ts";
@@ -201,12 +208,55 @@ test("diet tints only show once they pass the threshold, and stay on a safe pale
   assert.ok(phenotypeFor(state).markings.every((marking) => marking !== undefined));
 });
 
-test("a locked route repaints the body and the leaves", () => {
+test("a locked route selects the authored body, leaf and final morphology", () => {
   const state = fresh();
   const locked = { ...state, evolution: { ...state.evolution, lockedRoute: "moonveil" as const } };
   const look = phenotypeFor(locked);
   assert.equal(look.bodyPalette, "moonveil");
-  assert.equal(look.leafType, "moonveil-leaf");
+  assert.equal(look.leafType, "moon");
+  assert.equal(look.morphology, "moonveil");
+});
+
+test("an untouched care profile stays visually unbranched", () => {
+  assert.equal(phenotypeFor(fresh()).morphology, "seedling");
+});
+
+test("reconcile restores the canonical final form for an older locked save", () => {
+  const legacy = fresh();
+  legacy.evolution.lockedRoute = "moonveil";
+  legacy.phenotype = {
+    ...legacy.phenotype,
+    bodyPalette: "coral",
+    bellyPalette: "cream",
+    leafType: "moonveil-leaf",
+  };
+  delete (legacy.phenotype as Partial<typeof legacy.phenotype>).morphology;
+  const restored = reconcile(legacy, NOW + 1);
+  assert.equal(restored.phenotype.bodyPalette, "moonveil");
+  assert.equal(restored.phenotype.bellyPalette, "moonveil-belly");
+  assert.equal(restored.phenotype.leafType, "moon");
+  assert.equal(restored.phenotype.morphology, "moonveil");
+});
+
+test("a stable care direction changes the visible morphology from stage two", () => {
+  const expectations = {
+    dream: "moonveil",
+    loving: "bloomheart",
+    playful: "sparkleap",
+    curious: "mistwander",
+  } as const;
+  for (const [vector, morphology] of Object.entries(expectations)) {
+    const state = fresh();
+    const shaped = {
+      ...state,
+      niumpi: { ...state.niumpi, stage: 2 as const },
+      evolution: {
+        ...state.evolution,
+        vectors: { ...state.evolution.vectors, [vector]: 12 },
+      },
+    };
+    assert.equal(phenotypeFor(shaped).morphology, morphology, `${vector} should visibly hint ${morphology}`);
+  }
 });
 
 test("vector helpers agree with each other", () => {
@@ -460,7 +510,7 @@ test("planting requires a seed and an empty plot", () => {
 
 test("daily missions roll once a day and pay out once", () => {
   const state = rollMissions(fresh(), NOW, () => true);
-  assert.equal(state.missions.daily.length, 3);
+  assert.equal(state.missions.daily.length, 5);
   const again = rollMissions(state, NOW, () => true);
   assert.deepEqual(again.missions.daily, state.missions.daily);
 
@@ -472,6 +522,69 @@ test("daily missions roll once a day and pay out once", () => {
   const claimed = claimMission(done, target.id, NOW);
   assert.ok(claimed.rewards.length > 0);
   assert.deepEqual(claimMission(claimed.state, target.id, NOW).rewards, [], "cannot claim twice");
+});
+
+test("journey has a deep authored pool with valid, unique and completable goals", () => {
+  assert.ok(missionTemplates.length >= 45, "daily pool should keep rotating");
+  assert.ok(weeklyMissionTemplates.length >= 15, "weekly pool should feel varied");
+  assert.ok(achievementTemplates.length >= 60, "permanent journey should have long-term depth");
+  const allIds = [...missionTemplates, ...weeklyMissionTemplates, ...achievementTemplates].map((entry) => entry.id);
+  assert.equal(new Set(allIds).size, allIds.length, "every goal id must be globally unique");
+  for (const mission of [...missionTemplates, ...weeklyMissionTemplates]) {
+    assert.ok(mission.label.length >= 5 && mission.note.length >= 5, `${mission.id} needs useful copy`);
+    assert.ok(mission.actions.length > 0 && mission.target > 0, `${mission.id} must be progressable`);
+  }
+});
+
+test("lifetime achievement history grows even before today's board is rolled", () => {
+  const state = progressMissions(fresh(), "hug", NOW);
+  assert.equal(state.missions.lifetimeActions.hug, 1);
+  const gentle = achievementMap["gentle-1"];
+  assert.equal(achievementProgress(state, gentle), 1);
+  const restored = reconcile(JSON.parse(JSON.stringify(state)), NOW + 1);
+  assert.equal(restored.missions.lifetimeActions.hug, 1, "lifetime history survives reload");
+});
+
+test("weekly challenges progress and pay once", () => {
+  let state = rollMissions(fresh(), NOW, () => true);
+  const target = state.missions.weekly.entries[0];
+  const template = weeklyMissionMap[target.id];
+  assert.ok(template);
+  for (let count = 0; count < template.target; count += 1) {
+    state = progressMissions(state, template.actions[0], NOW);
+  }
+  const complete = state.missions.weekly.entries.find((entry) => entry.id === target.id)!;
+  assert.equal(complete.progress, template.target);
+  const claimed = claimWeeklyMission(state, target.id, NOW);
+  assert.ok(claimed.rewards.length > 0);
+  assert.deepEqual(claimWeeklyMission(claimed.state, target.id, NOW).rewards, []);
+});
+
+test("permanent achievements derive progress and cannot be claimed twice", () => {
+  const template = achievementMap["care-1"];
+  const ready = { ...fresh(), niumpi: { ...fresh().niumpi, careMoments: template.target } };
+  assert.equal(achievementProgress(ready, template), template.target);
+  const claimed = claimAchievement(ready, template.id, NOW);
+  assert.ok(claimed.rewards.length > 0);
+  assert.ok(claimed.state.missions.achievements.claimed.includes(template.id));
+  assert.deepEqual(claimAchievement(claimed.state, template.id, NOW).rewards, []);
+});
+
+test("old mission saves receive journey fields without losing daily progress", () => {
+  const current = fresh();
+  const legacy = {
+    ...current,
+    missions: {
+      dayKey: "old-day",
+      daily: [{ id: "hug-once", progress: 1, claimed: false }],
+      weekly: { weekKey: "old-week", days: ["old-day"], claimed: false },
+    },
+  };
+  const restored = reconcile(legacy as never, NOW + 1);
+  assert.equal(restored.missions.daily[0].progress, 1);
+  assert.deepEqual(restored.missions.weekly.entries, []);
+  assert.deepEqual(restored.missions.lifetimeActions, {});
+  assert.deepEqual(restored.missions.achievements.claimed, []);
 });
 
 /* ------------------------------------------------------------- unlocks --- */
@@ -495,7 +608,7 @@ test("features open on care and time, and never close again", () => {
 test("the seed only hatches once it is fully ready", () => {
   let state = fresh();
   assert.equal(hatch(state, NOW).state.niumpi.hatchedAt, null);
-  for (let index = 0; index < 8; index += 1) {
+  for (let index = 0; index < 14; index += 1) {
     state = seedAction(state, "warm", NOW + index * 10_000).state;
   }
   assert.equal(state.niumpi.seedProgress, 1);
@@ -507,7 +620,9 @@ test("the seed only hatches once it is fully ready", () => {
 test("seed actions respect their cooldown", () => {
   const first = seedAction(fresh(), "warm", NOW);
   const tooSoon = seedAction(first.state, "warm", NOW + 500);
+  const switchedTool = seedAction(first.state, "brush", NOW + 500);
   assert.equal(tooSoon.refused, true);
+  assert.equal(switchedTool.refused, true);
   assert.equal(tooSoon.state.niumpi.seedProgress, first.state.niumpi.seedProgress);
 });
 
@@ -537,7 +652,8 @@ test("the shipped content meets the minimum the design calls for", () => {
   assert.ok(recipes.length >= 15, "fifteen recipes");
   assert.ok(traits.length >= 20, "twenty traits");
   assert.ok(seedQuestions.length >= 30, "thirty Memory Seed questions");
-  assert.ok(dialogue.length >= 60, "sixty dialogue lines");
+  assert.ok(dialogue.length >= 110, "at least one hundred and ten dialogue lines");
+  assert.equal(new Set(dialogue.map((line) => line.id)).size, dialogue.length, "dialogue ids stay unique");
   assert.ok(minigames.length >= 6, "six minigames");
   assert.ok(shopItems.filter((item) => item.category !== "accessories").length >= 20, "twenty room items");
   assert.ok(plants.length >= 10, "ten plants");
@@ -557,6 +673,19 @@ test("no content entry is missing an id or a name", () => {
   }
   const ids = ingredients.map((item) => item.id);
   assert.equal(new Set(ids).size, ids.length, "ingredient ids must be unique");
+});
+
+test("every room collectible and evolution stage ships its production artwork", () => {
+  for (const item of shopItems.filter((entry) => entry.category !== "accessories")) {
+    assert.ok(item.image, `${item.id} falls back to prototype icon art`);
+    assert.ok(existsSync(`./public${item.image}`), `${item.id} points to missing artwork ${item.image}`);
+  }
+  for (let stage = 1; stage <= 5; stage += 1) {
+    assert.ok(existsSync(`./public/assets/niumpi/stages/stage-${stage}.webp`), `stage ${stage} art is missing`);
+  }
+  for (const route of routes) {
+    assert.ok(existsSync(`./public/assets/niumpi/forms/${route.id}.webp`), `${route.id} final art is missing`);
+  }
 });
 
 test("every recipe is made only from real ingredients", () => {

@@ -1,14 +1,13 @@
 "use client";
 
 import { lazy, Suspense } from "react";
-import { motion } from "motion/react";
 import { useGame } from "./GameProvider";
 import { HomeScene } from "../scenes/HomeScene";
 import { SeedChamberScene } from "../scenes/SeedChamberScene";
 import { CompanionScene } from "../scenes/CompanionScene";
-import { easeOut, sceneVariants } from "../anim/transitions";
 import { LockedState } from "./parts";
 import { Brand } from "./Brand";
+import { SceneAtmosphere } from "./SceneAtmosphere";
 import type { SceneId } from "../game/types";
 
 /**
@@ -20,6 +19,7 @@ const MemoryScene = lazy(() => import("../scenes/MemoryScene").then((m) => ({ de
 const GardenScene = lazy(() => import("../scenes/GardenScene").then((m) => ({ default: m.GardenScene })));
 const GamesScene = lazy(() => import("../scenes/GamesScene").then((m) => ({ default: m.GamesScene })));
 const ShopScene = lazy(() => import("../scenes/ShopScene").then((m) => ({ default: m.ShopScene })));
+const JourneyScene = lazy(() => import("../scenes/JourneyScene").then((m) => ({ default: m.JourneyScene })));
 const EvolutionScene = lazy(() => import("../scenes/EvolutionScene").then((m) => ({ default: m.EvolutionScene })));
 const CookingScene = lazy(() => import("../scenes/CookingScene").then((m) => ({ default: m.CookingScene })));
 const DreamDoorsScene = lazy(() => import("../scenes/DreamDoorsScene").then((m) => ({ default: m.DreamDoorsScene })));
@@ -35,6 +35,7 @@ const registry: Record<SceneId, React.ComponentType> = {
   garden: GardenScene,
   games: GamesScene,
   shop: ShopScene,
+  journey: JourneyScene,
   evolution: EvolutionScene,
   cooking: CookingScene,
   dreams: DreamDoorsScene,
@@ -51,14 +52,19 @@ export function SceneRouter() {
   const Scene = registry[active] ?? HomeScene;
 
   return (
-    <motion.main
-      key={active}
-      className="scene-host"
-      variants={sceneVariants}
-      initial="enter"
-      animate="center"
-      transition={easeOut}
-    >
+    /*
+     * Deliberately not animated.
+     *
+     * A 16px slide on this container moved every control in the scene for
+     * ~300ms after mount — and the router remounts it when `ready` flips and
+     * `active` changes, so the slide replayed just as the first controls became
+     * clickable. Measured: 13.7px of travel still in progress at the moment a
+     * button first appears. That is a button sliding out from under a finger,
+     * which matters more for this audience than the flourish was worth, and it
+     * was the cause of clicks landing on a moving target.
+    */
+    <main key={active} className="scene-host">
+      <SceneAtmosphere scene={active} />
       {!ready ? (
         <SceneSkeleton />
       ) : unlock.open ? (
@@ -68,7 +74,7 @@ export function SceneRouter() {
       ) : (
         <div className="scene"><LockedState note={unlock.note} /></div>
       )}
-    </motion.main>
+    </main>
   );
 }
 

@@ -5,12 +5,15 @@ import type {
   CareStats, GameState, PlacedItem, Plot, Settings, VectorId,
 } from "./types.ts";
 import { dayKeyFor, weekKeyFor } from "./time.ts";
+import { createRoomLayout, reconcileRoomLayout } from "./rooms.ts";
+import { defaultRoomLoot, reconcileRoomLoot } from "./roomLoot.ts";
+import { routeMap } from "./config/routes.ts";
 
-export const SAVE_VERSION = 5;
-export const STORAGE_KEY = "niumpi-save-v5";
+export const SAVE_VERSION = 6;
+export const STORAGE_KEY = "niumpi-save-v6";
 /** Read in order when the current key is missing, then migrated forward. */
 export const LEGACY_KEYS = ["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
-export const PRIOR_SAVE_KEYS = ["niumpi-save-v4"];
+export const PRIOR_SAVE_KEYS = ["niumpi-save-v5", "niumpi-save-v4"];
 
 export const vectorIds: VectorId[] = [
   "calm", "playful", "loving", "curious", "brave",
@@ -36,6 +39,31 @@ function emptyVectors(): Record<VectorId, number> {
   return Object.fromEntries(vectorIds.map((id) => [id, 0])) as Record<VectorId, number>;
 }
 
+function savedCount(value: unknown): number {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.max(0, Math.floor(number)) : 0;
+}
+
+/** Repairs saves from before silhouettes were persisted without waiting for
+ * the player to perform another action. The full scorer remains in evolution;
+ * this only chooses the same broad early visual family from the top vector. */
+function morphologyFromSavedCare(saved: Partial<GameState>): GameState["phenotype"]["morphology"] {
+  if (saved.evolution?.lockedRoute) return saved.evolution.lockedRoute;
+  const vectors = saved.evolution?.vectors;
+  const total = vectors ? vectorIds.reduce((sum, id) => sum + (vectors[id] ?? 0), 0) : 0;
+  if (!vectors || (saved.niumpi?.stage ?? 0) < 2 || total < 8) return "seedling";
+  const top = vectorIds.reduce<VectorId | null>((winner, id) => {
+    if ((vectors[id] ?? 0) <= 0) return winner;
+    if (!winner || (vectors[id] ?? 0) > (vectors[winner] ?? 0)) return id;
+    return winner;
+  }, null);
+  if (top === "dream" || top === "calm" || top === "creative") return "moonveil";
+  if (top === "loving" || top === "social") return "bloomheart";
+  if (top === "playful" || top === "brave") return "sparkleap";
+  if (top === "curious" || top === "nature" || top === "balance") return "mistwander";
+  return "seedling";
+}
+
 function starterPlots(): Plot[] {
   return Array.from({ length: GARDEN_PLOTS }, (_, id) => ({
     id, plantId: null, plantedAt: null, wateredAt: null, harvestReadyAt: null, rare: false,
@@ -45,7 +73,7 @@ function starterPlots(): Plot[] {
 /** Starter furniture, arranged so a brand-new room already looks lived in. */
 function starterLayout(): PlacedItem[] {
   const spots: Array<[string, number, number]> = [
-    ["cloud-sofa", 1, 2], ["cozy-cushion", 4, 3], ["garden-pot", 6, 1], ["moon-lamp", 0, 1],
+    ["cloud-sofa", 0, 0], ["cozy-cushion", 4, 0], ["garden-pot", 6, 0], ["moon-lamp", 7, 0],
   ];
   return spots.map(([itemId, x, y], index) => ({
     uid: `start-${itemId}`, itemId, x, y, flipped: false, layer: index,
@@ -63,12 +91,13 @@ export function createGameState(now: number, id: string): GameState {
       seedProgress: 0, seedActions: {},
       stage: 0, stageStartedAt: now, careMoments: 0, bond: 8,
       lastInteractionAt: now, sleeping: false, sleepStartedAt: null, lampOn: false,
+      cleanliness: 100, lastWashedAt: null, lastWashTool: null,
     },
     stats: { ...defaultStats },
     evolution: { vectors: emptyVectors(), lockedRoute: null, routeConfidence: 0, history: [] },
     phenotype: {
-      bodyPalette: "coral", bellyPalette: "cream", markings: [], leafType: "classic",
-      eyeType: "round", aura: null, particles: null, accessory: null, tints: {},
+      bodyPalette: "cloud", bellyPalette: "pearl", markings: [], leafType: "classic",
+      eyeType: "round", morphology: "seedling", aura: null, particles: null, accessory: null, tints: {},
     },
     personality: {
       traits: {}, signals: {}, favoriteFoods: [], dislikedFoods: [], favoriteToy: null,
@@ -85,12 +114,17 @@ export function createGameState(now: number, id: string): GameState {
       items: [...starterItems],
       currencies: { dewdrops: 40, starFragments: 0 },
     },
-    room: { theme: "cozy", placed: starterLayout() },
+    room: createRoomLayout(now, starterLayout()),
+    roomLoot: { ...defaultRoomLoot },
+    starlightShop: { opened: 0, epicPity: 0, legendaryPity: 0, lastDropAt: null },
     garden: { plots: starterPlots() },
     memories: [],
     dream: null,
     expedition: null,
-    missions: { dayKey: "", daily: [], weekly: { weekKey: weekKeyFor(now), days: [], claimed: false } },
+    missions: {
+      dayKey: "", daily: [], lifetimeActions: {}, achievements: { claimed: [] },
+      weekly: { weekKey: weekKeyFor(now), days: [], claimed: false, entries: [] },
+    },
     cooking: { known: [...starterRecipes], cooked: {} },
     minigames: {},
     seedAnswers: {},
@@ -163,6 +197,14 @@ function clampStat(value: unknown): number {
 /** Fills in anything a newer version added without discarding saved values. */
 export function reconcile(saved: Partial<GameState>, now: number): GameState {
   const base = createGameState(now, saved.profile?.id ?? makeId(now));
+  const lockedRoute = saved.evolution?.lockedRoute && routeMap[saved.evolution.lockedRoute]
+    ? saved.evolution.lockedRoute
+    : null;
+  const lockedLeaf = lockedRoute === "moonveil" ? "moon"
+    : lockedRoute === "bloomheart" ? "petal"
+      : lockedRoute === "sparkleap" ? "sun"
+        : lockedRoute === "mistwander" ? "long"
+          : lockedRoute === "prismatic" ? "prismatic" : null;
   const state: GameState = {
     ...base,
     ...saved,
@@ -175,7 +217,19 @@ export function reconcile(saved: Partial<GameState>, now: number): GameState {
       vectors: { ...base.evolution.vectors, ...saved.evolution?.vectors },
       history: saved.evolution?.history ?? [],
     },
-    phenotype: { ...base.phenotype, ...saved.phenotype, tints: { ...saved.phenotype?.tints } },
+    phenotype: {
+      ...base.phenotype,
+      ...saved.phenotype,
+      // Coral was the old vegetable-shaped prototype's default. Existing
+      // relationships move to the approved cloud species without losing tints.
+      bodyPalette: lockedRoute ?? (saved.phenotype?.bodyPalette === "coral" ? "cloud" : (saved.phenotype?.bodyPalette ?? base.phenotype.bodyPalette)),
+      bellyPalette: lockedRoute ? `${lockedRoute}-belly` : (saved.phenotype?.bellyPalette ?? base.phenotype.bellyPalette),
+      leafType: lockedLeaf ?? saved.phenotype?.leafType ?? base.phenotype.leafType,
+      morphology: lockedRoute ?? saved.phenotype?.morphology ?? morphologyFromSavedCare(saved),
+      aura: lockedRoute ? routeMap[lockedRoute].palette.aura : (saved.phenotype?.aura ?? base.phenotype.aura),
+      particles: lockedRoute === "prismatic" ? "prism" : (saved.phenotype?.particles ?? base.phenotype.particles),
+      tints: { ...saved.phenotype?.tints },
+    },
     personality: {
       ...base.personality, ...saved.personality,
       traits: { ...saved.personality?.traits },
@@ -187,10 +241,31 @@ export function reconcile(saved: Partial<GameState>, now: number): GameState {
       items: saved.inventory?.items ?? base.inventory.items,
       currencies: { ...base.inventory.currencies, ...saved.inventory?.currencies },
     },
-    room: { ...base.room, ...saved.room, placed: saved.room?.placed ?? base.room.placed },
+    room: reconcileRoomLayout(saved.room, base.room),
+    roomLoot: reconcileRoomLoot(saved.roomLoot),
+    starlightShop: {
+      opened: savedCount(saved.starlightShop?.opened),
+      epicPity: savedCount(saved.starlightShop?.epicPity),
+      legendaryPity: savedCount(saved.starlightShop?.legendaryPity),
+      lastDropAt: Number.isFinite(saved.starlightShop?.lastDropAt)
+        ? Number(saved.starlightShop?.lastDropAt)
+        : null,
+    },
     garden: { plots: normalisePlots(saved.garden?.plots) },
     memories: saved.memories ?? [],
-    missions: saved.missions ?? base.missions,
+    missions: {
+      ...base.missions,
+      ...saved.missions,
+      daily: saved.missions?.daily ?? [],
+      lifetimeActions: { ...saved.missions?.lifetimeActions },
+      achievements: { claimed: saved.missions?.achievements?.claimed ?? [] },
+      weekly: {
+        ...base.missions.weekly,
+        ...saved.missions?.weekly,
+        days: saved.missions?.weekly?.days ?? [],
+        entries: saved.missions?.weekly?.entries ?? [],
+      },
+    },
     cooking: { known: saved.cooking?.known ?? base.cooking.known, cooked: saved.cooking?.cooked ?? {} },
     minigames: saved.minigames ?? {},
     seedAnswers: saved.seedAnswers ?? {},

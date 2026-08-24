@@ -13,7 +13,7 @@ export const copy = {
   },
   nav: {
     home: "Home", niumpi: BRAND, room: "Room", memory: "Memory", garden: "Garden",
-    games: "Games", shop: "Shop", more: "More", evolution: "Evolution",
+    games: "Games", shop: "Shop", more: "More", journey: "Journey", evolution: "Evolution",
     cooking: "Cooking", dreams: "Dreams", friends: "Friends", about: "About", seed: "Seed",
     settings: "Settings",
   },
@@ -53,20 +53,20 @@ export const copy = {
     sharedMomentsNote: "So many memories together!",
   },
   stats: {
-    fullness: "Fullness", energy: "Energy", joy: "Joy",
+    fullness: "Fullness", energy: "Energy", joy: "Joy", cleanliness: "Cleanliness",
     bond: "Bond", level: "Level",
-    lowFullness: "Hungry", lowEnergy: "Tired", lowJoy: "Needs company",
+    lowFullness: "Hungry", lowEnergy: "Tired", lowJoy: "Needs company", lowCleanliness: "Needs a wash",
   },
   seed: {
-    title: "Seed Chamber",
-    lead: "Something is waiting inside.",
-    hatching: "It's opening…",
+    title: "The First Care",
+    lead: "Before Niumpi opens their eyes, the seed learns your touch.",
+    hatching: "Stay close. It is almost here.",
     nameTitle: "What will you call them?",
     nameLead: "You can change this later — nothing is lost.",
   },
   actions: {
     pet: "Pet", hug: "Hug", feed: "Feed", play: "Play",
-    brush: "Brush", talk: "Talk", toy: "Toy", tickle: "Tickle",
+    brush: "Brush", wash: "Wash", talk: "Talk", toy: "Toy", tickle: "Tickle",
     dance: "Dance", comfort: "Comfort", sing: "Sing", wake: "Wake",
   },
   states: {

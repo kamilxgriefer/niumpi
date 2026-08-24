@@ -1,0 +1,119 @@
+/* Journey turns a very large goal library into three calm levels of focus. */
+.scene-journey { gap: clamp(18px, 2.4vw, 30px); }
+.journey-head { align-items: center; }
+.journey-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px; margin-bottom: 5px;
+  color: var(--turquoise); font-size: var(--t-xs); font-weight: 850; letter-spacing: .08em; text-transform: uppercase;
+}
+.journey-eyebrow .art { --art-1: var(--turquoise); --art-2: var(--gold); }
+.journey-summary { display: flex; flex-wrap: wrap; gap: 8px; }
+.journey-summary span {
+  display: grid; min-width: 112px; padding: 10px 14px; color: var(--text-faint);
+  background: rgb(255 255 255 / 6%); border: 1px solid var(--glass-line-soft); border-radius: var(--r-lg);
+  font-size: var(--t-2xs); font-weight: 700; line-height: 1.25;
+}
+.journey-summary strong { color: white; font-family: var(--font-head); font-size: var(--t-lg); }
+
+.journey-intro {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(240px, 1.25fr);
+  overflow: hidden; background: linear-gradient(120deg, rgb(87 54 157 / 72%), rgb(38 29 83 / 76%));
+  border: 1px solid rgb(255 255 255 / 14%); border-radius: var(--r-xl); box-shadow: var(--shadow-sm);
+}
+.journey-intro > div { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 2px 10px; padding: var(--s-4); border-right: 1px solid var(--glass-line-soft); }
+.journey-intro > div .art { grid-row: span 2; --art-1: var(--turquoise); --art-2: var(--gold); }
+.journey-intro strong { font-size: var(--t-sm); }
+.journey-intro span { color: var(--text-faint); font-size: var(--t-2xs); font-weight: 650; }
+.journey-intro p { align-self: center; padding: var(--s-4); color: var(--text-soft); font-size: var(--t-xs); font-weight: 700; line-height: 1.5; }
+
+.journey-columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--s-4); align-items: start; }
+.journey-goal-list { display: grid; gap: 10px; }
+.journey-goal {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 7px 12px;
+  padding: 12px; background: rgb(255 255 255 / 4%); border: 1px solid var(--glass-line-soft); border-radius: var(--r-lg);
+  transition: border-color .2s ease, background .2s ease;
+}
+.journey-goal.is-ready { background: linear-gradient(120deg, rgb(99 224 188 / 10%), rgb(255 211 110 / 7%)); border-color: rgb(99 224 188 / 38%); }
+.journey-goal.is-claimed { opacity: .72; }
+.journey-goal-art {
+  display: grid; place-items: center; width: 42px; height: 42px; grid-row: span 2;
+  background: rgb(255 255 255 / 8%); border-radius: 14px;
+}
+.journey-goal-art .art { --art-1: var(--turquoise); --art-2: var(--gold); --art-3: white; }
+.journey-goal-copy { display: grid; min-width: 0; }
+.journey-kicker, .achievement-tier { color: var(--turquoise); font-size: 10px; font-weight: 900; letter-spacing: .09em; text-transform: uppercase; }
+.journey-goal-copy strong { overflow: hidden; font-size: var(--t-sm); font-weight: 800; text-overflow: ellipsis; white-space: nowrap; }
+.journey-goal-copy small { color: var(--text-faint); font-size: var(--t-2xs); font-weight: 620; }
+.journey-reward { color: var(--gold); font-size: 11px; font-weight: 850; white-space: nowrap; }
+.journey-goal .meter { grid-column: 2 / -1; }
+.journey-claim {
+  min-height: 38px; padding: 7px 13px; color: #16082e; background: linear-gradient(135deg, var(--gold), var(--peach));
+  border: 0; border-radius: var(--r-pill); box-shadow: 0 7px 18px rgb(255 174 87 / 20%); font-size: var(--t-2xs); font-weight: 900;
+}
+.journey-complete { display: inline-flex; align-items: center; gap: 5px; color: var(--turquoise); font-size: var(--t-2xs); font-weight: 850; }
+.journey-complete .art { --art-1: var(--turquoise); }
+
+.journey-week-bonus {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px 12px;
+  margin-top: 12px; padding: 14px; background: linear-gradient(135deg, rgb(159 99 246 / 20%), rgb(255 201 91 / 10%));
+  border: 1px dashed rgb(255 211 110 / 35%); border-radius: var(--r-lg);
+}
+.week-bonus-art { display: grid; place-items: center; width: 46px; height: 46px; grid-row: span 2; background: rgb(255 210 96 / 13%); border-radius: 50%; }
+.week-bonus-art .art { --art-1: var(--gold); --art-2: var(--hot-pink); }
+.journey-week-bonus > div { display: grid; }
+.journey-week-bonus small { color: var(--text-faint); font-size: var(--t-2xs); }
+.journey-week-bonus .meter { grid-column: 2 / -1; }
+
+.journey-achievements .tab-bar { margin-bottom: var(--s-4); overflow-x: auto; scrollbar-width: none; }
+.achievement-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.achievement-card {
+  --achievement-accent: var(--turquoise);
+  display: grid; gap: 10px; min-height: 190px; padding: 15px;
+  background: linear-gradient(145deg, rgb(255 255 255 / 7%), rgb(255 255 255 / 2%));
+  border: 1px solid var(--glass-line-soft); border-radius: var(--r-xl); overflow: hidden; position: relative;
+}
+.achievement-card::after { content: ""; position: absolute; inset: auto -22px -32px auto; width: 90px; height: 90px; border-radius: 50%; background: var(--achievement-accent); filter: blur(34px); opacity: .14; pointer-events: none; }
+.achievement-bloom { --achievement-accent: #71dda8; }
+.achievement-glow { --achievement-accent: #b58cff; border-color: rgb(181 140 255 / 28%); }
+.achievement-cosmic { --achievement-accent: #ffd56e; border-color: rgb(255 213 110 / 35%); }
+.achievement-card.is-ready { border-color: color-mix(in srgb, var(--achievement-accent) 60%, transparent); box-shadow: 0 12px 32px color-mix(in srgb, var(--achievement-accent) 12%, transparent); }
+.achievement-card.is-claimed { background: linear-gradient(145deg, rgb(99 224 188 / 9%), rgb(255 255 255 / 2%)); }
+.achievement-card header { display: flex; align-items: center; gap: 10px; }
+.achievement-emblem { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; background: color-mix(in srgb, var(--achievement-accent) 14%, transparent); border: 1px solid color-mix(in srgb, var(--achievement-accent) 26%, transparent); border-radius: 15px; }
+.achievement-emblem .art { --art-1: var(--achievement-accent); --art-2: white; }
+.achievement-card h3 { margin: 1px 0 0; font-family: var(--font-head); font-size: var(--t-md); font-weight: 650; }
+.achievement-card p { color: var(--text-faint); font-size: var(--t-xs); font-weight: 620; line-height: 1.45; }
+.achievement-card footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; }
+
+.card-missions .panel-open { white-space: nowrap; }
+.mission-more { width: 100%; padding: 8px 10px; color: var(--turquoise); background: transparent; border: 0; font-size: var(--t-2xs); font-weight: 800; text-align: left; }
+
+@media (max-width: 1100px) {
+  .journey-intro { grid-template-columns: repeat(3, 1fr); }
+  .journey-intro p { grid-column: 1 / -1; border-top: 1px solid var(--glass-line-soft); }
+  .achievement-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+  .journey-summary { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); }
+  .journey-summary span { min-width: 0; padding: 9px; }
+  .journey-summary strong { font-size: var(--t-md); }
+  .journey-intro { grid-template-columns: 1fr; }
+  .journey-intro > div { border-right: 0; border-bottom: 1px solid var(--glass-line-soft); }
+  .journey-intro p { grid-column: auto; border-top: 0; }
+  .journey-columns { grid-template-columns: 1fr; }
+  .achievement-grid { grid-template-columns: 1fr; }
+  .achievement-card { min-height: 170px; }
+}
+
+@media (max-width: 430px) {
+  .journey-goal { grid-template-columns: auto minmax(0, 1fr); }
+  .journey-goal .journey-reward { grid-column: 2; }
+  .journey-goal .meter { grid-column: 1 / -1; }
+  .journey-goal .journey-claim, .journey-goal .journey-complete { grid-column: 1 / -1; justify-self: stretch; justify-content: center; }
+  .journey-week-bonus { grid-template-columns: auto minmax(0, 1fr); }
+  .journey-week-bonus .meter, .journey-week-bonus .journey-claim, .journey-week-bonus .journey-complete { grid-column: 1 / -1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-goal, .journey-claim { transition: none; }
+}

@@ -20,7 +20,7 @@ export function MemoryScene() {
   return (
     <div className="scene scene-memory">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>Memory</h1>
           <p>Everything worth keeping, in the order it happened.</p>
         </div>

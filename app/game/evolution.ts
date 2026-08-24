@@ -104,7 +104,7 @@ export const tintPalettes: Record<string, { marking: string; label: string }> = 
 };
 
 /** How much of one tint is needed before it shows up on the body. */
-export const TINT_THRESHOLD = 8;
+export const TINT_THRESHOLD = 4;
 
 export function phenotypeFor(state: GameState): Phenotype {
   const route = state.evolution.lockedRoute ? routeMap[state.evolution.lockedRoute] : null;
@@ -115,17 +115,31 @@ export function phenotypeFor(state: GameState): Phenotype {
     .map(([tint]) => tintPalettes[tint]?.marking)
     .filter((marking): marking is string => Boolean(marking));
 
-  const top = topVectors(state, 1)[0];
+  const candidate = topVectors(state, 1)[0];
+  const top = candidate && state.evolution.vectors[candidate] > 0 ? candidate : undefined;
+  const outlook = routeOutlook(state);
+  const morphology = state.evolution.lockedRoute
+    ?? (state.niumpi.stage >= 2 && vectorTotal(state) >= 8 && outlook.confidence >= 18 ? outlook.leading : null)
+    ?? "seedling";
   return {
     ...state.phenotype,
-    bodyPalette: route ? route.id : "coral",
-    bellyPalette: route ? `${route.id}-belly` : "cream",
+    bodyPalette: route ? route.id : "cloud",
+    bellyPalette: route ? `${route.id}-belly` : "pearl",
     markings,
-    leafType: route ? `${route.id}-leaf` : leafForVector(top),
+    leafType: route ? leafForRoute(route.id) : leafForVector(top),
     eyeType: state.niumpi.bond > 70 ? "bright" : "round",
+    morphology,
     aura: route ? route.palette.aura : state.niumpi.bond > 55 ? "soft" : null,
     particles: route?.id === "prismatic" ? "prism" : state.stats.joy > 80 ? "spark" : null,
   };
+}
+
+function leafForRoute(route: RouteId): string {
+  if (route === "moonveil") return "moon";
+  if (route === "bloomheart") return "petal";
+  if (route === "sparkleap") return "sun";
+  if (route === "mistwander") return "long";
+  return "prismatic";
 }
 
 function leafForVector(vector: VectorId | undefined): string {

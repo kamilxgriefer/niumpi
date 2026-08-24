@@ -4,10 +4,10 @@ import { CompanionStage } from "../ui/CompanionStage";
 import { useFoodDrop } from "../ui/useFoodDrop";
 import { SnackBar } from "../ui/SnackBar";
 import { Art } from "../ui/Art";
-import { BondMeter, StatRow } from "../ui/parts";
+import { BondMeter, CleanlinessRow, StatRow } from "../ui/parts";
 import {
-  ActivityTiles, EvolutionPreview, MemorySeedCard, MissionsCard,
-  PersonalityPanel, PetStatusStrip, RoomPreview,
+  ActivityTiles, EvolutionPreviewCard, MemorySeedCard, MissionsCard,
+  PersonalityPreview, PetStatusStrip, RoomPreviewCard,
 } from "../ui/homeCards";
 import { useGame } from "../ui/GameProvider";
 import { copy } from "../game/config/copy";
@@ -26,7 +26,7 @@ export function HomeScene() {
 
   return (
     <div className="scene scene-home">
-      <Brand />
+      <Brand compact />
 
       <div className="home-grid">
         <div className="home-main">
@@ -39,19 +39,26 @@ export function HomeScene() {
               </div>
             </header>
 
+            <div className="hero-status-strip" aria-label="Niumpi's needs">
+              <div className="hero-stats">
+                {(["fullness", "energy", "joy"] as const).map((id) => (
+                  <StatRow key={id} id={id} value={state.stats[id]} />
+                ))}
+                <CleanlinessRow value={state.niumpi.cleanliness} />
+              </div>
+            </div>
+
             <div className="hero-stage" ref={stageRef}>
-              <CompanionStage targeting={Boolean(armed)} onDropFood={dropFood}>
-                <div className="hero-stats">
-                  {(["fullness", "energy", "joy"] as const).map((id) => (
-                    <StatRow key={id} id={id} value={state.stats[id]} />
-                  ))}
-                </div>
-              </CompanionStage>
+              <CompanionStage targeting={Boolean(armed)} onDropFood={dropFood} />
             </div>
 
             <SnackBar armed={armed} onArm={setArmed} hitTest={hitTest} onCook={() => goTo("cooking")} />
 
             <div className="action-bar">
+              <button className="action-button action-wash" type="button" onClick={() => goTo("niumpi")}>
+                <Art name="drop" size={20} />
+                {copy.actions.wash}
+              </button>
               <button
                 className={`action-button action-lamp ${state.niumpi.lampOn ? "is-active" : ""}`}
                 type="button"
@@ -80,9 +87,12 @@ export function HomeScene() {
         <aside className="home-side">
           <MemorySeedCard />
           <MissionsCard />
-          <PersonalityPanel />
-          <EvolutionPreview />
-          <RoomPreview />
+          {/* Compact previews, not second copies of their scenes. */}
+          <div className="preview-stack">
+            <EvolutionPreviewCard />
+            <PersonalityPreview />
+            <RoomPreviewCard />
+          </div>
         </aside>
       </div>
     </div>

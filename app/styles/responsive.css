@@ -26,10 +26,14 @@
   /* Stats drop below the character rather than squeezing beside it. */
   .companion-stage {
     grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: "bubble" "pet" "stats" "mood";
+    grid-template-areas: "bubble" "pet" "stats";
   }
   .stage-aside { justify-self: stretch; width: 100%; }
-  .speech-bubble { max-width: 100%; }
+  .speech-bubble { width: min(420px, calc(100% - 28px)); bottom: 55%; }
+  .seed-care-layout { grid-template-columns: minmax(0, 1fr); width: min(700px, 100%); }
+  .wonder-shop { grid-template-columns: minmax(0, 1fr); }
+  .wonder-chest-card { position: relative; top: auto; grid-template-columns: auto minmax(0, 1fr); justify-items: stretch; text-align: left; }
+  .wonder-chest-copy { justify-items: start; }
 
   /* The room is painted across the whole stage, which is right on desktop
      where the stats card floats over it. Stacked, that put the floor and the
@@ -45,7 +49,7 @@
     border-radius: var(--r-lg);
     overflow: hidden;
   }
-  .companion-stage { grid-template-rows: auto minmax(190px, 1fr) auto auto; gap: var(--s-2); }
+  .companion-stage { grid-template-rows: auto minmax(190px, 1fr) auto; gap: var(--s-2); }
   .stage-aside { margin-top: var(--s-2); }
 }
 
@@ -57,7 +61,15 @@
 
 /* ----------------------------------------------------- phone < 768px ----- */
 @media (max-width: 767px) {
+  .scene-atmosphere { inset: -32px 0 -54px; border-radius: 28px; opacity: .72; }
+  .atmosphere-orbit { width: 82vw; right: -38%; top: 4%; }
+  .atmosphere-horizon { left: -18%; right: -18%; height: 26%; }
+  .atmosphere-motes i:nth-child(n + 6) { display: none; }
   :root { --shell-pad: 12px; --bottom-nav-h: 62px; }
+  .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-stats .stat:nth-child(3) { border-left: 0; }
+  .hero-stats .stat:nth-child(n + 3) { padding-top: 7px; border-top: 1px solid rgb(120 84 130 / 12%); }
+  .wash-tool-grid { grid-template-columns: minmax(0, 1fr); }
   .shell {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: "topbar" "main";
@@ -96,10 +108,32 @@
   .shell-overlay { bottom: calc(var(--bottom-nav-h) + 12px + env(safe-area-inset-bottom)); }
   .dev-panel { bottom: calc(var(--bottom-nav-h) + 14px + env(safe-area-inset-bottom)); }
 
+  .scene-head { gap: var(--s-3); }
+  .scene-title-block { flex-basis: 100%; gap: 5px; }
   .scene-head h1 { font-size: var(--t-xl); }
+  .scene-head p { font-size: var(--t-sm); }
+  .scene-head-tools, .scene-head .wallet { width: 100%; justify-content: flex-start; }
+  .shop-head { align-items: flex-start; }
+  .shop-wallet-row { width: 100%; justify-content: space-between; }
+  .starlight-grid { grid-template-columns: minmax(0, 1fr); }
+  .shop-feature-head { align-items: flex-start; padding: var(--s-3); }
+  .shop-feature-art { flex-basis: 50px; width: 50px; height: 50px; border-radius: 17px; }
+  .wonder-chest-card { grid-template-columns: minmax(0, 1fr); justify-items: center; padding: var(--s-4); text-align: center; }
+  .wonder-chest-copy { justify-items: center; }
+  .wonder-odds { padding: var(--s-3); }
+  .wonder-odds header { display: grid; gap: var(--s-2); }
+  .wonder-odds header p { max-width: none; text-align: left; }
+  .odds-row { grid-template-columns: auto minmax(0, 1fr) 44px; }
+  .odds-row em { grid-column: 2; grid-row: 2; }
+  .odds-row > b { grid-column: 3; grid-row: 1 / 3; }
+  .star-pack-list li { grid-template-columns: minmax(0, 1fr) auto; }
+  .star-pack-list button { grid-column: 1 / -1; width: 100%; }
   .hero-panel { padding: var(--s-3); border-radius: var(--r-xl); }
   .home-side { grid-template-columns: minmax(0, 1fr); }
   .companion-stage { min-height: 300px; padding: var(--s-3); }
+  .speech-bubble { bottom: 57%; padding: 9px 13px 10px; border-radius: 15px; }
+  .speech-speaker { font-size: 9px; }
+  .speech-text { font-size: .88rem; }
   .mood-badge { padding: 6px 12px 6px 8px; }
 
   /* The snack rail scrolls sideways, each treat keeping a deliberate width. */
@@ -115,7 +149,24 @@
 
   .action-bar { grid-template-columns: 1fr 1fr; }
   .action-button { min-height: 54px; padding: 12px 14px; font-size: var(--t-md); }
-  .seed-options { grid-template-columns: 1fr; }
+  /* An either/or reads as a pair. Stacked, it cost 244px on the phone page and
+     stopped looking like a choice between two things. */
+  .seed-options { grid-template-columns: 1fr 1fr; }
+  .seed-option { min-height: 96px; padding: var(--s-2); }
+  .scene-seed { gap: var(--s-3); padding-top: var(--s-2); }
+  .seed-room { min-height: 280px; padding: var(--s-4); border-radius: var(--r-2xl); }
+  .seed-shell { width: 124px; height: 152px; }
+  .seed-pedestal { width: 190px; }
+  .seed-ritual { padding: var(--s-3); border-radius: var(--r-xl); }
+  .ritual-head { align-items: flex-start; }
+  .ritual-head h2 { font-size: var(--t-lg); }
+  .seed-actions { grid-template-columns: 1fr 1fr; }
+  .seed-action { grid-template-columns: minmax(0, 1fr); justify-items: center; min-height: 122px; padding: var(--s-2); text-align: center; }
+  .seed-action-copy { justify-items: center; }
+  .seed-action strong { font-size: var(--t-sm); }
+  .seed-action small { font-size: var(--t-2xs); }
+  .care-hand { left: calc(50% + 58px); }
+  .care-blanket { width: 205px; }
   .memory-album { grid-template-columns: minmax(0, 1fr); }
   .route-grid { grid-template-columns: minmax(0, 1fr); }
   .path-forks { grid-template-columns: minmax(0, 1fr); }

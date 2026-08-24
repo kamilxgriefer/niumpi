@@ -83,7 +83,152 @@ img { max-width: 100%; }
   min-width: 0;
 }
 .shell-body { grid-area: main; position: relative; z-index: 1; min-width: 0; }
-.scene-host { display: block; min-width: 0; }
+.scene-host {
+  position: relative; isolation: isolate;
+  display: block; min-width: 0;
+}
+
+/* ------------------------------------------------ scene atmospheres ----- */
+/*
+ * The global starfield says where Niumpi's world lives; this layer says which
+ * part of that world is open. It is intentionally low-contrast and sits behind
+ * every card, so the interface keeps its hierarchy while empty margins gain
+ * depth and identity.
+ */
+.scene-atmosphere {
+  --atmo-a: 134 87 255;
+  --atmo-b: 73 212 208;
+  --atmo-c: 255 95 168;
+  position: absolute; z-index: -1;
+  /* Vertical bleed is harmless; horizontal negative insets enlarge the page's
+     scroll area even when the layer itself clips its contents. Keep the world
+     exactly as wide as the scene host and let its internal shapes do the bleed. */
+  inset: -58px 0 -80px;
+  min-height: calc(100dvh - var(--shell-pad) * 2);
+  overflow: hidden; pointer-events: none;
+  border-radius: 46px;
+  opacity: .84;
+}
+.atmosphere-haze,
+.atmosphere-orbit,
+.atmosphere-horizon,
+.atmosphere-motes { position: absolute; }
+.atmosphere-haze {
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 12% 16%, rgb(var(--atmo-a) / 16%), transparent 42%),
+    radial-gradient(ellipse at 88% 30%, rgb(var(--atmo-b) / 12%), transparent 40%),
+    radial-gradient(ellipse at 52% 96%, rgb(var(--atmo-c) / 10%), transparent 48%);
+  animation: atmosphere-breathe 16s ease-in-out infinite;
+}
+.atmosphere-haze::after {
+  content: ""; position: absolute; inset: 7% 5% 14%;
+  background-image: radial-gradient(circle, rgb(255 255 255 / 15%) 0 1px, transparent 1.5px);
+  background-size: 86px 86px;
+  mask-image: linear-gradient(90deg, transparent, black 24% 76%, transparent);
+  opacity: .38;
+}
+.atmosphere-orbit {
+  top: 4%; right: -8%; width: min(48vw, 560px); aspect-ratio: 1;
+  border: 1px solid rgb(var(--atmo-a) / 15%); border-radius: 50%;
+  transform: rotate(-18deg); animation: atmosphere-float 20s ease-in-out infinite;
+}
+.atmosphere-orbit::before,
+.atmosphere-orbit::after {
+  content: ""; position: absolute; border: 1px solid rgb(var(--atmo-b) / 13%); border-radius: 50%;
+}
+.atmosphere-orbit::before { inset: 17%; }
+.atmosphere-orbit::after {
+  inset: 40% -5%; border-color: rgb(var(--atmo-c) / 18%);
+  box-shadow: 0 0 34px rgb(var(--atmo-c) / 8%);
+}
+.atmosphere-horizon {
+  left: -8%; right: -8%; bottom: -8%; height: 35%;
+  background:
+    radial-gradient(ellipse at 18% 100%, rgb(var(--atmo-a) / 17%) 0 42%, transparent 43%),
+    radial-gradient(ellipse at 70% 110%, rgb(var(--atmo-b) / 13%) 0 48%, transparent 49%),
+    radial-gradient(ellipse at 105% 100%, rgb(var(--atmo-c) / 12%) 0 46%, transparent 47%);
+  filter: blur(2px);
+}
+.atmosphere-motes { inset: 0; }
+.atmosphere-motes i {
+  --mote-size: 6px;
+  position: absolute; width: var(--mote-size); height: var(--mote-size);
+  background: rgb(var(--atmo-b) / 54%); border-radius: 70% 30% 65% 35%;
+  box-shadow: 0 0 14px rgb(var(--atmo-b) / 36%);
+  transform: rotate(38deg); animation: atmosphere-mote 9s ease-in-out infinite;
+}
+.atmosphere-motes i:nth-child(1) { left: 4%;  top: 26%; animation-delay: -1s; }
+.atmosphere-motes i:nth-child(2) { left: 18%; top: 72%; --mote-size: 9px; animation-delay: -5s; }
+.atmosphere-motes i:nth-child(3) { left: 34%; top: 12%; --mote-size: 4px; animation-delay: -3s; }
+.atmosphere-motes i:nth-child(4) { left: 52%; top: 84%; --mote-size: 7px; animation-delay: -7s; }
+.atmosphere-motes i:nth-child(5) { left: 68%; top: 18%; --mote-size: 5px; animation-delay: -4s; }
+.atmosphere-motes i:nth-child(6) { left: 79%; top: 66%; --mote-size: 10px; animation-delay: -8s; }
+.atmosphere-motes i:nth-child(7) { left: 92%; top: 38%; --mote-size: 5px; animation-delay: -2s; }
+.atmosphere-motes i:nth-child(8) { left: 46%; top: 44%; --mote-size: 4px; animation-delay: -6s; }
+
+/* Home is warm and inhabited; the shapes lean toward soft lamplight. */
+.atmosphere-home { --atmo-a: 255 159 125; --atmo-b: 73 212 208; --atmo-c: 201 166 255; }
+.atmosphere-home .atmosphere-orbit { top: 18%; right: 12%; opacity: .6; scale: .72; }
+
+/* Niumpi's profile keeps the living, leaf-led identity of the companion. */
+.atmosphere-niumpi { --atmo-a: 255 111 115; --atmo-b: 73 212 208; --atmo-c: 134 87 255; }
+.atmosphere-niumpi .atmosphere-motes i { border-radius: 78% 28% 72% 34%; }
+
+/* The room gets a warmer pool at floor level, like light beyond the canvas. */
+.atmosphere-room { --atmo-a: 255 200 87; --atmo-b: 255 111 115; --atmo-c: 134 87 255; }
+.atmosphere-room .atmosphere-horizon { height: 48%; opacity: .8; }
+
+/* Memories float like quiet cards in a loose constellation. */
+.atmosphere-memory { --atmo-a: 102 167 255; --atmo-b: 201 166 255; --atmo-c: 255 95 168; }
+.atmosphere-memory .atmosphere-motes i {
+  border: 1px solid rgb(255 255 255 / 24%); border-radius: 3px;
+  background: rgb(var(--atmo-a) / 22%); rotate: 7deg;
+}
+
+/* Garden has a readable horizon and leaf-shaped motes without a literal image. */
+.atmosphere-garden { --atmo-a: 100 215 165; --atmo-b: 73 212 208; --atmo-c: 255 200 87; }
+.atmosphere-garden .atmosphere-horizon { bottom: -2%; height: 52%; opacity: 1; }
+.atmosphere-garden .atmosphere-orbit { top: -16%; right: -2%; scale: .52; border-color: rgb(255 245 205 / 22%); }
+.atmosphere-garden .atmosphere-motes i { border-radius: 86% 22% 78% 28%; }
+
+/* Games uses a restrained arcade grid and concentric energy rings. */
+.atmosphere-games { --atmo-a: 134 87 255; --atmo-b: 73 212 208; --atmo-c: 234 85 200; }
+.atmosphere-games .atmosphere-haze::after {
+  inset: 42% -8% -12%; opacity: .34;
+  background-image:
+    linear-gradient(rgb(var(--atmo-b) / 16%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--atmo-a) / 18%) 1px, transparent 1px);
+  background-size: 52px 52px; transform: perspective(360px) rotateX(56deg); transform-origin: 50% 100%;
+  mask-image: linear-gradient(0deg, black, transparent 88%);
+}
+.atmosphere-games .atmosphere-orbit { right: 22%; top: 8%; scale: .72; }
+
+/* Shop borrows the glow of a tiny night market. */
+.atmosphere-shop { --atmo-a: 255 200 87; --atmo-b: 255 95 168; --atmo-c: 134 87 255; }
+.atmosphere-shop .atmosphere-motes i { border-radius: 50%; box-shadow: 0 0 20px rgb(var(--atmo-a) / 52%); }
+
+.atmosphere-evolution { --atmo-a: 201 166 255; --atmo-b: 73 212 208; --atmo-c: 255 200 87; }
+.atmosphere-cooking { --atmo-a: 255 154 77; --atmo-b: 255 200 87; --atmo-c: 255 95 168; }
+.atmosphere-dreams { --atmo-a: 102 167 255; --atmo-b: 134 87 255; --atmo-c: 73 212 208; }
+.atmosphere-friends { --atmo-a: 73 212 208; --atmo-b: 100 215 165; --atmo-c: 255 95 168; }
+.atmosphere-about { --atmo-a: 255 111 115; --atmo-b: 73 212 208; --atmo-c: 255 200 87; }
+.atmosphere-seed { --atmo-a: 255 200 87; --atmo-b: 201 166 255; --atmo-c: 255 111 115; }
+.atmosphere-seed .atmosphere-orbit { left: 50%; right: auto; top: 7%; translate: -50% 0; scale: .72; }
+
+@keyframes atmosphere-breathe {
+  0%, 100% { opacity: .72; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.035); }
+}
+@keyframes atmosphere-float {
+  0%, 100% { translate: 0 0; }
+  50% { translate: -18px 24px; }
+}
+@keyframes atmosphere-mote {
+  0%, 100% { translate: 0 0; opacity: .28; }
+  45% { translate: 12px -20px; opacity: .82; }
+  72% { translate: -5px -8px; opacity: .5; }
+}
 
 .boot, .scene-loading {
   display: grid; place-items: center; gap: var(--s-4);

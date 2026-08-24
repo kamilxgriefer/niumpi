@@ -1,5 +1,5 @@
 /**
- * Sixty-plus lines with conditions attached. The reaction engine scores every
+ * A hundred-plus lines with conditions attached. The reaction engine scores every
  * line and keeps a short history so the same one cannot repeat immediately.
  */
 import type { DayPart, MoodId, RouteId, WeatherId } from "../types.ts";
@@ -13,8 +13,8 @@ export type DialogueLine = {
   route?: RouteId[];
   trait?: string;
   /** Stat gates, checked as "value below" / "value above". */
-  below?: Partial<Record<"fullness" | "energy" | "joy" | "bond", number>>;
-  above?: Partial<Record<"fullness" | "energy" | "joy" | "bond", number>>;
+  below?: Partial<Record<"fullness" | "energy" | "joy" | "bond" | "cleanliness", number>>;
+  above?: Partial<Record<"fullness" | "energy" | "joy" | "bond" | "cleanliness", number>>;
   /** Uses the player's stored Memory Seed answer for this question. */
   seed?: string;
   weight?: number;
@@ -42,6 +42,10 @@ export const dialogue: DialogueLine[] = [
   { id: "tired-2", text: "Maybe a very short rest. A tiny one.", below: { energy: 45 } },
   { id: "sad-1", text: "Could you stay a moment longer?", below: { joy: 35 }, weight: 3 },
   { id: "sad-2", text: "I'm okay. I'd just like some company.", below: { joy: 40 } },
+  { id: "dusty-1", text: "I think I collected a little bit of the floor.", below: { cleanliness: 58 }, weight: 3 },
+  { id: "dusty-2", text: "Do clouds take baths? This one probably should.", below: { cleanliness: 42 }, weight: 4 },
+  { id: "dusty-3", text: "My fluff has a smudge. It may have friends.", below: { cleanliness: 68 }, weight: 2 },
+  { id: "clean-1", text: "I still smell like tiny bubbles!", above: { cleanliness: 94 }, weight: 2 },
   { id: "happy-1", text: "Today is a very good day, I think.", above: { joy: 80 }, weight: 2 },
   { id: "happy-2", text: "I remembered that I like you. Again!", above: { joy: 75 } },
   { id: "happy-3", text: "Everything is exactly the right size right now.", above: { joy: 85 } },
@@ -81,6 +85,55 @@ export const dialogue: DialogueLine[] = [
   { id: "trait-collector", text: "Don't move anything. I know where it all is.", trait: "collector" },
   { id: "trait-garden", text: "I watered them. Twice. Possibly three times.", trait: "garden-helper" },
   { id: "trait-star", text: "One more star than yesterday. I'm sure of it.", trait: "star-gazer", weight: 2 },
+  { id: "home-1", text: "I moved three inches. It changed everything." },
+  { id: "home-2", text: "This room feels more like ours every day." },
+  { id: "home-3", text: "I saved you the softest part of the rug." },
+  { id: "home-4", text: "The lamp makes a tiny sun when it wakes up." },
+  { id: "home-5", text: "The books whisper when nobody is looking." },
+  { id: "home-6", text: "I think the window likes us." },
+  { id: "question-1", text: "What was the nicest part of your day?" },
+  { id: "question-2", text: "If we could go anywhere, where would we float?" },
+  { id: "question-3", text: "Do you think stars get lonely?" },
+  { id: "question-4", text: "What colour does happy feel like to you?" },
+  { id: "question-5", text: "Would you rather find a tiny door or a giant key?" },
+  { id: "question-6", text: "Can tomorrow have pancakes? Just asking." },
+  { id: "question-7", text: "What song is hiding in your head today?" },
+  { id: "question-8", text: "If clouds had names, what would that one be?" },
+  { id: "small-1", text: "I found a quiet spot. You can share it." },
+  { id: "small-2", text: "Some moments are tiny and still very important." },
+  { id: "small-3", text: "I like doing nothing when we do it together." },
+  { id: "small-4", text: "My crown tingled. That means something good." },
+  { id: "small-5", text: "I was brave for almost seven whole seconds." },
+  { id: "small-6", text: "The floor and I have made peace." },
+  { id: "small-7", text: "I have one thought. It is very round." },
+  { id: "small-8", text: "Everything smells a little like warm light." },
+  { id: "bond-4", text: "I know your footsteps now.", above: { bond: 45 } },
+  { id: "bond-5", text: "You make this place feel safe.", above: { bond: 55 }, weight: 2 },
+  { id: "bond-6", text: "I kept a little happiness for when you came back.", above: { bond: 65 } },
+  { id: "bond-7", text: "We're a very good team, you and me.", above: { bond: 75 }, weight: 2 },
+  { id: "morning-3", text: "Good morning! I already inspected the sunlight.", dayPart: ["morning"] },
+  { id: "morning-4", text: "My first thought today was hello.", dayPart: ["morning"], weight: 2 },
+  { id: "morning-5", text: "The room is stretching awake with us.", dayPart: ["morning"] },
+  { id: "day-3", text: "Afternoon is excellent for small adventures.", dayPart: ["day"] },
+  { id: "day-4", text: "I wonder what the garden is thinking.", dayPart: ["day"] },
+  { id: "day-5", text: "There is plenty of day left. Let's use a little.", dayPart: ["day"] },
+  { id: "sunset-3", text: "The sky saved its soft colours for us.", dayPart: ["sunset"], weight: 2 },
+  { id: "sunset-4", text: "Everything looks like a memory at sunset.", dayPart: ["sunset"] },
+  { id: "sunset-5", text: "Wait — don't miss the pink bit!", dayPart: ["sunset"] },
+  { id: "night-4", text: "We can whisper. The room is sleeping.", dayPart: ["night"] },
+  { id: "night-5", text: "I left one tiny light on for you.", dayPart: ["night"], weight: 2 },
+  { id: "night-6", text: "The moon is doing a very good job tonight.", dayPart: ["night"] },
+  { id: "night-7", text: "Tell me one last thing before sleep.", dayPart: ["night"] },
+  { id: "rain-4", text: "Let's count raindrops until one surprises us.", weather: ["rainy"] },
+  { id: "rain-5", text: "Rain makes the whole world sound closer.", weather: ["rainy"] },
+  { id: "sun-3", text: "I am charging my warm side.", weather: ["sunny"] },
+  { id: "sun-4", text: "The sunshine found my favourite spot.", weather: ["sunny"] },
+  { id: "cloud-3", text: "That cloud looks suspiciously comfortable.", weather: ["cloudy"] },
+  { id: "cloud-4", text: "Cloudy weather feels a little like home.", weather: ["cloudy"] },
+  { id: "playful-1", text: "I have an idea. It may involve rolling.", mood: ["happy", "excited"] },
+  { id: "playful-2", text: "Bet you can't catch my next wiggle!", mood: ["excited"] },
+  { id: "calm-1", text: "We don't have to hurry anywhere.", mood: ["happy"] },
+  { id: "calm-2", text: "This is a good place to breathe.", mood: ["happy"], weight: 2 },
   { id: "idle-1", text: "What if the floor is optional?", weight: 1 },
   { id: "idle-2", text: "I've been practising standing very still.", weight: 1 },
   { id: "idle-3", text: "Do you ever think about doors?", weight: 1 },

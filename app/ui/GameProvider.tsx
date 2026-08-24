@@ -60,7 +60,7 @@ const GameContext = createContext<GameContextValue | null>(null);
 
 export const scenes: SceneId[] = [
   "home", "niumpi", "room", "memory", "garden", "games", "shop",
-  "evolution", "cooking", "dreams", "friends", "about", "seed",
+  "journey", "evolution", "cooking", "dreams", "friends", "about", "seed",
 ];
 
 function sceneFromUrl(): SceneId {

@@ -1,8 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 /*
- * Port 3000 is not always ours — a tunnel or another project can hold it, and
- * a suite that can only run on one hardcoded port simply refuses to start.
+ * Port 3000 is not always ours — a tunnel or another project can hold it, and a
+ * suite that can only run on one hardcoded port simply refuses to start.
  * PW_PORT moves the whole harness together.
  */
 const PORT = process.env.PW_PORT ?? "3000";
@@ -11,6 +11,16 @@ const ORIGIN = `http://localhost:${PORT}`;
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
+  /*
+   * Measured per-test durations for the same suite, 4 workers on 8 cores:
+   * against a warm server the slowest test ran 21.3s, against a freshly built
+   * one it ran 52.7s (the whole run slows — the Home layout tests went 3.7s to
+   * 18-19s). Playwright's 30s default sits between those, so the suite passed
+   * or failed on server warmth alone. 60s clears the cold case with headroom.
+   * Under CI (workers: 1) these tests finish in single digits, so this budget
+   * is never approached there — no assertion or wait was relaxed to fit it.
+   */
+  timeout: 60_000,
   forbidOnly: Boolean(process.env.CI),
   retries: 0,
   workers: process.env.CI ? 1 : undefined,
@@ -24,11 +34,27 @@ export default defineConfig({
     video: "retain-on-failure",
     actionTimeout: 10_000,
   },
+  /**
+   * Tests run against the production build, not the dev server.
+   *
+   * `vinext dev` compiles on demand, and under parallel workers it competes for
+   * CPU with the browsers driving it. Measured on an 8-core machine: the same
+   * suite was 12 failed / 3 passed in 3.7 min against dev, and 15 passed in
+   * 20.6s against the built output. The dev server was not erroring on its own
+   * account — it was logging `GET /?scene=home 500 in 61.3s (render: 46.7s)`,
+   * i.e. a render starved of CPU rather than a routing or asset fault.
+   *
+   * Set PW_DEV_SERVER=1 to run against `npm run dev` instead, which keeps the
+   * fast edit-reload loop when debugging a single test.
+   */
   webServer: {
-    command: `npm run dev -- --port ${PORT}`,
+    command: process.env.PW_DEV_SERVER
+      ? `npm run dev -- --port ${PORT}`
+      : `npm run build && npm start -- --port ${PORT}`,
     url: ORIGIN,
     reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
+    // Now covers a production build, not just a dev boot.
+    timeout: process.env.PW_DEV_SERVER ? 120_000 : 240_000,
     stdout: "pipe",
     stderr: "pipe",
   },

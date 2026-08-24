@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, MouseEvent, PointerEvent, ReactNode } from "react";
 import { NiumpiRenderer } from "./NiumpiRenderer";
 import { visualStageFor } from "../game/config/growth.ts";
@@ -8,11 +8,17 @@ import type { BodyPart } from "./NiumpiRenderer";
 import { Art } from "./Art";
 import { useGame } from "./GameProvider";
 import { useNiumpiController } from "../anim/useNiumpiController";
-import { gesture, wake } from "../game/actions";
+import { gesture, toggleLamp, wake } from "../game/actions";
 import { moodFor, moodTable } from "../game/mood";
 import { dayPartAt } from "../game/time";
 import { sparkStyle } from "./parts";
 import type { CareActionId } from "../game/types";
+import type { AnimState } from "../anim/NiumpiAnimationController";
+import { learnedRoomLine } from "../game/behavior";
+import type { RoomMomentId } from "../game/behavior";
+import { chooseLine, rememberLine } from "../game/reactions";
+import { resolveRigAppearance } from "../rig/appearance.ts";
+import type { BehaviorMood } from "../anim/NiumpiBehaviorMachine.ts";
 
 /** Held longer than this counts as a hug rather than a tap. */
 const HOLD_MS = 620;
@@ -20,8 +26,19 @@ const HOLD_MS = 620;
 const PET_DISTANCE = 30;
 /** A fast back-and-forth drag reads as tickling. */
 const TICKLE_REVERSALS = 3;
-/** How often the creature drifts to a new spot while nothing else happens. */
-const WANDER_MS = 6_500;
+const ROOM_MOMENTS: Array<{
+  state: RoomMomentId; x: number; y: number; gazeX: number; gazeY: number;
+  line: string; sound: "blip" | "leaf" | "tap" | "pet" | "chime";
+}> = [
+  { state: "book", x: -76, y: 2, gazeX: -12, gazeY: -6, line: "This one has a map inside.", sound: "blip" },
+  { state: "window", x: 76, y: -3, gazeX: 14, gazeY: -8, line: "Something moved past the window…", sound: "leaf" },
+  { state: "lamp", x: 84, y: 5, gazeX: 12, gazeY: 5, line: "A little warmer. That's better.", sound: "tap" },
+  { state: "roll", x: 0, y: 8, gazeX: 0, gazeY: 5, line: "Wheee— I meant to do that!", sound: "pet" },
+  { state: "dancing", x: 0, y: 0, gazeX: 0, gazeY: -2, line: "One, two… leaf turn!", sound: "chime" },
+  { state: "singing", x: 0, y: -2, gazeX: 0, gazeY: -4, line: "Nium… niuuum…", sound: "chime" },
+  { state: "peek", x: 34, y: 0, gazeX: 9, gazeY: -2, line: "Just checking what you're doing.", sound: "blip" },
+  { state: "stretch", x: 0, y: -2, gazeX: 0, gazeY: -5, line: "Tiny stretch. Big day.", sound: "blip" },
+];
 
 function capture(event: PointerEvent<HTMLButtonElement>) {
   try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* capture is optional */ }
@@ -37,15 +54,23 @@ type Props = {
 };
 
 export function CompanionStage({ targeting = false, onDropFood, children, compact, showBubble = true }: Props) {
-  const { state, now, run, message, controller, say, clock } = useGame();
+  const { state, now, run, patch, message, controller, say, cue, clock } = useGame();
   const rigRef = useNiumpiController(controller);
   const pointer = useRef<{ at: number; x: number; y: number; distance: number; dir: number; flips: number } | null>(null);
-  const drift = useRef({ x: 0, y: 0 });
+  const lastMoment = useRef<RoomMomentId | null>(null);
+  const latestState = useRef(state);
+  const [roomMoment, setRoomMoment] = useState<AnimState>("idle");
 
   const mood = moodFor(state, now);
   const name = state.niumpi.name || "Niumpi";
   const visualStage = visualStageFor(state.niumpi.careMoments, state.niumpi.stage);
+  const rigAppearance = resolveRigAppearance({
+    ...state,
+    niumpi: { ...state.niumpi, stage: visualStage },
+  });
   const leafInfo = moodTable[mood];
+
+  useEffect(() => { latestState.current = state; }, [state]);
 
   /* The controller owns rest state; React only tells it when sleep flips. */
   useEffect(() => {
@@ -53,23 +78,77 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
   }, [controller, state.niumpi.sleeping]);
 
   useEffect(() => {
+    const behaviorMood: BehaviorMood = state.niumpi.sleeping ? "sleeping" : ({
+      excited: "excited",
+      happy: "happy",
+      tired: "tired",
+      hungry: "sad",
+      curious: "curious",
+      upset: "sad",
+      dreaming: "calm",
+      evolving: "excited",
+    } as const)[mood];
+    controller.setBehaviorContext({
+      mood: behaviorMood,
+      energy: state.stats.energy / 100,
+      joy: state.stats.joy / 100,
+      curiosity: state.stats.curiosity / 100,
+      playfulness: Math.min(1, state.evolution.vectors.playful / 40),
+    });
+  }, [
+    controller, mood, state.niumpi.sleeping, state.stats.energy, state.stats.joy,
+    state.stats.curiosity, state.evolution.vectors.playful,
+  ]);
+
+  useEffect(() => {
     controller.setTargeted(targeting);
   }, [controller, targeting]);
 
-  /* Idle drift: one timer, one controller call — no React state per step. */
+  useEffect(() => {
+    const unsubscribe = controller.subscribeState((next) => {
+      setRoomMoment(next);
+      if (next === "idle") {
+        controller.setPosition(0, 0);
+        controller.setGaze(0, 0);
+      }
+    });
+    // subscribeState hands back Set.delete, which returns a boolean — an effect
+    // cleanup has to return void, so call it rather than hand it straight back.
+    return () => { unsubscribe(); };
+  }, [controller]);
+
+  const playRoomMoment = useCallback((moment: RoomMomentId, announce = true) => {
+    const current = latestState.current;
+    if (current.niumpi.sleeping || controller.getState() !== "idle") return;
+    const scene = ROOM_MOMENTS.find((entry) => entry.state === moment);
+    if (!scene) return;
+    lastMoment.current = moment;
+    controller.setPosition(scene.x, scene.y);
+    controller.setGaze(scene.gazeX, scene.gazeY);
+    controller.request(scene.state);
+    if (moment === "lamp" && !current.niumpi.lampOn) run(toggleLamp(current));
+    if (announce) say(learnedRoomLine(current, clock(), moment, scene.line));
+    cue(scene.sound);
+  }, [clock, controller, cue, run, say]);
+
+  /* The motion director owns autonomous movement. This independent, slower
+   * timer only chooses dialogue, so two schedulers can never fight over pose. */
   useEffect(() => {
     if (state.niumpi.sleeping) return;
-    const timer = window.setInterval(() => {
-      if (controller.getState() !== "idle") return;
-      drift.current = {
-        x: Math.max(-96, Math.min(96, drift.current.x + (Math.random() * 150 - 75))),
-        y: Math.round(Math.random() * 10),
-      };
-      controller.setPosition(drift.current.x, drift.current.y);
-      controller.request("wander");
-    }, WANDER_MS);
-    return () => window.clearInterval(timer);
-  }, [controller, state.niumpi.sleeping]);
+    let timer = 0;
+    const schedule = () => {
+      timer = window.setTimeout(() => {
+        if (controller.getState() === "idle") {
+          const line = chooseLine(latestState.current, clock());
+          patch((current) => rememberLine(current, line.id));
+          say(line.text);
+        }
+        schedule();
+      }, 10_000 + Math.random() * 8_000);
+    };
+    schedule();
+    return () => window.clearTimeout(timer);
+  }, [clock, controller, patch, say, state.niumpi.sleeping]);
 
   const act = useCallback((action: CareActionId) => {
     run(gesture(state, action, clock()));
@@ -144,6 +223,7 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         `weather-${state.weather.key}`,
         state.niumpi.lampOn ? "lamp-on" : "",
         state.niumpi.sleeping ? "is-sleeping" : "",
+        `room-moment-${roomMoment}`,
         compact ? "is-compact" : "",
       ].filter(Boolean).join(" ")}
       onPointerMove={follow}
@@ -171,10 +251,37 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         <span className="room-lamp"><i /><b /></span>
       </div>
 
+      <nav className="room-hotspots" aria-label="Things Niumpi can explore">
+        <button className="room-hotspot hotspot-books" type="button" onClick={() => playRoomMoment("book")}>
+          <Art name="book" size={15} /><span>Books</span>
+        </button>
+        <button className="room-hotspot hotspot-window" type="button" onClick={() => playRoomMoment("window")}>
+          <Art name="window" size={15} /><span>Window</span>
+        </button>
+        <button className="room-hotspot hotspot-lamp" type="button" onClick={() => playRoomMoment("lamp")}>
+          <Art name="lamp" size={15} /><span>Lamp</span>
+        </button>
+        <button className="room-hotspot hotspot-rug" type="button" onClick={() => playRoomMoment("roll")}>
+          <Art name="playful" size={15} /><span>Roll</span>
+        </button>
+      </nav>
+
+      <div className="room-moment-props" aria-hidden="true">
+        <span className="moment-book"><i /><i /></span>
+        <span className="moment-window-spark"><i /></span>
+        <span className="moment-lamp-spark">✦</span>
+        <span className="moment-notes"><i>♪</i><i>♫</i><i>·</i></span>
+        <span className="moment-roll-puff"><i /><i /><i /></span>
+      </div>
+
       {showBubble && (
-        <div className="speech-bubble">
-          <p className="speech-text" aria-live="polite">{message}</p>
-          <Art name="spark" size={13} className="speech-spark" />
+        <div className="speech-bubble" key={message}>
+          <span className="speech-speaker">{name}</span>
+          <span className="speech-message">
+            <p className="speech-text" aria-live="polite" aria-atomic="true">{message}</p>
+            <Art name="spark" size={13} className="speech-spark" />
+          </span>
+          <span className="speech-trail" aria-hidden="true"><i /><i /><i /></span>
         </div>
       )}
 
@@ -184,7 +291,10 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         <NiumpiRenderer
           rigRef={rigRef}
           phenotype={state.phenotype}
+          appearance={rigAppearance}
           stage={visualStage}
+          cleanliness={state.niumpi.cleanliness}
+          washTool={state.niumpi.lastWashTool}
           moodColour={leafInfo.colour}
           petName={name}
           onPartActivate={(bodyPart) => act(partActions[bodyPart])}
@@ -196,8 +306,6 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         />
         <SparkLayer />
       </div>
-
-      <MoodLeafBadge mood={mood} onOpen={() => say(`My leaf is ${leafInfo.label.toLowerCase()} — ${leafInfo.leaf.toLowerCase()}.`)} />
 
       {children && <div className="stage-aside">{children}</div>}
     </div>
@@ -215,24 +323,6 @@ function SparkLayer() {
         </span>
       ))}
     </div>
-  );
-}
-
-export function MoodLeafBadge({ mood, onOpen }: { mood: string; onOpen: () => void }) {
-  const { cue } = useGame();
-  const info = moodTable[mood as keyof typeof moodTable];
-  return (
-    <button
-      className={`mood-badge mood-${info.colour}`}
-      type="button"
-      onClick={() => { cue("blip"); onOpen(); }}
-    >
-      <span className={`mood-leaf motion-${info.motion}`} aria-hidden="true" />
-      <span className="mood-copy">
-        <strong>{info.label}</strong>
-        <span>{info.leaf}</span>
-      </span>
-    </button>
   );
 }
 

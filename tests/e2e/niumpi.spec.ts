@@ -1,25 +1,39 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const SAVE_KEY = "niumpi-save-v5";
+const SAVE_KEY = "niumpi-save-v6";
 const LEGACY_KEYS = ["niumpi-save-v4", "niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
+/** Marks a context as already seeded so reloads read what the game wrote. */
+const SEED_SENTINEL = "__e2e_seeded";
 
 /**
- * Starts the game with no save at all, which lands on the Seed Chamber.
- * The clear happens once, before a reload, so later reloads in a test read the
- * save the game itself wrote rather than a wiped slot.
+ * Seeds the save before any application code runs.
+ *
+ * Writing it with page.evaluate after a first navigation raced the game's own
+ * boot: whichever landed second won, and when the game won it persisted a fresh
+ * state over the fixture. The router then sent the test to the Seed Chamber and
+ * the failure surfaced as a confusing missing-element error.
+ *
+ * The guard is what keeps reloads meaningful — init scripts re-run on every
+ * navigation, so without it a reload would wipe whatever the game had saved.
  */
-async function openFreshGame(page: Page) {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.evaluate(
-    ([save, legacy]) => {
-      window.localStorage.removeItem(save as string);
-      for (const key of legacy as string[]) window.localStorage.removeItem(key);
+async function seedSave(page: Page, save: unknown | null) {
+  await page.addInitScript(
+    ([key, legacy, sentinel, value]) => {
+      if (window.localStorage.getItem(sentinel as string)) return;
+      for (const stale of legacy as string[]) window.localStorage.removeItem(stale);
+      if (value === null) window.localStorage.removeItem(key as string);
+      else window.localStorage.setItem(key as string, JSON.stringify(value));
+      window.localStorage.setItem(sentinel as string, "1");
     },
-    [SAVE_KEY, LEGACY_KEYS],
+    [SAVE_KEY, LEGACY_KEYS, SEED_SENTINEL, save],
   );
-  await page.reload({ waitUntil: "domcontentloaded" });
-  // The dev server compiles the entry on the first visit of a run.
-  await expect(page.getByRole("heading", { name: "Seed Chamber" })).toBeVisible({ timeout: 30_000 });
+}
+
+/** Starts the game with no save at all, which lands on the Seed Chamber. */
+async function openFreshGame(page: Page) {
+  await seedSave(page, null);
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "The First Care" })).toBeVisible({ timeout: 30_000 });
 }
 
 /**
@@ -29,42 +43,25 @@ async function openFreshGame(page: Page) {
  * once, so a later reload exercises real persistence.
  */
 async function openHatchedGame(page: Page, extra: Record<string, unknown> = {}) {
-  await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.evaluate(
-    ([key, legacy, overrides]) => {
-      for (const stale of legacy as string[]) window.localStorage.removeItem(stale);
-      const now = Date.now();
-      window.localStorage.setItem(
-        key as string,
-        JSON.stringify({
-          version: 5,
-          profile: { id: "e2e-save", createdAt: now, lastSeenAt: now },
-          niumpi: {
-            name: "Mango",
-            createdAt: now,
-            hatchedAt: now,
-            seedProgress: 1,
-            stage: 2,
-            stageStartedAt: now,
-            careMoments: 60,
-            bond: 45,
-            lastInteractionAt: now,
-          },
-          // A partial save leaves the pantry empty by design, so the fixture
-          // states the stock it wants to feed from.
-          inventory: {
-            ingredients: { moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3 },
-            items: ["moon-lamp", "cloud-sofa", "garden-pot", "cozy-cushion", "ball-of-yarn"],
-            currencies: { dewdrops: 120, starFragments: 4 },
-          },
-          unlocks: ["seeds", "room", "games", "garden", "cooking", "dreams", "friends", "shop"],
-          ...(overrides as Record<string, unknown>),
-        }),
-      );
+  const now = 1787000000000;
+  await seedSave(page, {
+    version: 5,
+    profile: { id: "e2e-save", createdAt: now, lastSeenAt: now },
+    niumpi: {
+      name: "Mango", createdAt: now, hatchedAt: now, seedProgress: 1, stage: 2,
+      stageStartedAt: now, careMoments: 60, bond: 45, lastInteractionAt: now,
     },
-    [SAVE_KEY, LEGACY_KEYS, extra],
-  );
-  await page.reload({ waitUntil: "domcontentloaded" });
+    // A partial save leaves the pantry empty by design, so the fixture states
+    // the stock it wants to feed from.
+    inventory: {
+      ingredients: { moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3 },
+      items: ["moon-lamp", "cloud-sofa", "garden-pot", "cozy-cushion", "ball-of-yarn"],
+      currencies: { dewdrops: 120, starFragments: 4 },
+    },
+    unlocks: ["seeds", "room", "games", "garden", "cooking", "dreams", "friends", "shop"],
+    ...extra,
+  });
+  await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Pet Mango" })).toBeVisible({ timeout: 30_000 });
   await waitForReconciledSave(page);
 }
@@ -102,8 +99,8 @@ test("loads the game without browser errors", async ({ page }) => {
   await openFreshGame(page);
 
   await expect(page).toHaveTitle(/Niumpi/i);
-  await expect(page.getByRole("heading", { name: "Seed Chamber" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Warm the seed/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The First Care" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Stroke the shell/ }).first()).toBeVisible();
 
   expect(browserErrors).toEqual([]);
 });
@@ -111,7 +108,7 @@ test("loads the game without browser errors", async ({ page }) => {
 test("a care action on the seed is recorded and survives a reload", async ({ page }) => {
   await openFreshGame(page);
 
-  await page.getByRole("button", { name: /Warm the seed/ }).click();
+  await page.getByRole("button", { name: /^Stroke the shell/ }).last().click();
 
   // The action must reach the saved state, not just the screen.
   await expect.poll(async () => (await readSave(page))?.niumpi?.seedProgress ?? 0).toBeGreaterThan(0);
@@ -181,6 +178,18 @@ test("the sidebar moves between real scenes and updates the address", async ({ p
   await expect(page.getByRole("heading", { name: "Your Room" })).toBeVisible({ timeout: 30_000 });
 });
 
+test("the Journey exposes daily, weekly and permanent goals without flooding Home", async ({ page }) => {
+  await openHatchedGame(page);
+
+  await page.getByRole("button", { name: "Open Journey" }).click();
+  await expect(page.getByRole("heading", { name: "Niumpi Journey" })).toBeVisible({ timeout: 30_000 });
+  await expect(page).toHaveURL(/\?scene=journey/);
+  await expect(page.locator(".journey-daily .journey-goal")).toHaveCount(5);
+  await expect(page.locator(".journey-weekly .journey-goal")).toHaveCount(3);
+  await expect(page.locator(".achievement-card")).toHaveCount(16);
+  await expect(page.getByText("64 lasting achievements")).toBeVisible();
+});
+
 test("the game stays usable on a narrow mobile viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openHatchedGame(page);
@@ -194,6 +203,19 @@ test("the game stays usable on a narrow mobile viewport", async ({ page }) => {
     () => document.documentElement.scrollWidth - window.innerWidth,
   );
   expect(horizontalOverflow).toBeLessThanOrEqual(2);
+});
+
+test("Niumpi's caption is anchored to the creature instead of a screen corner", async ({ page }) => {
+  await openHatchedGame(page);
+
+  const stage = await page.locator(".hero-stage .companion-stage").boundingBox();
+  const caption = await page.locator(".hero-stage .speech-bubble").boundingBox();
+  expect(stage).not.toBeNull();
+  expect(caption).not.toBeNull();
+  const stageCentre = stage!.x + stage!.width / 2;
+  const captionCentre = caption!.x + caption!.width / 2;
+  expect(Math.abs(stageCentre - captionCentre)).toBeLessThanOrEqual(2);
+  await expect(page.locator(".hero-stage .speech-trail i")).toHaveCount(3);
 });
 
 test("a Phaser minigame runs its own frame loop and answers user input", async ({ page }) => {
@@ -267,17 +289,27 @@ function hatchedAs(stage: number) {
   };
 }
 
-test("a freshly hatched Niumpi renders small, and grows", async ({ page }) => {
+test("a freshly hatched Niumpi renders small, and grows", async ({ browser }) => {
   // The whole point of the rebuild. The old rig drew one bitmap of a grown
   // creature at one fixed size, so a hatchling and a mature Niumpi were pixel
   // for pixel identical — this test could not have passed before.
+  //
+  // Each stage gets its own context. Init scripts accumulate on a page, so a
+  // second seedSave on the same page never wins: the first registration re-runs
+  // on the next navigation and re-sets the sentinel before the second can.
   const measure = async (stage: number) => {
-    await openHatchedGame(page, { niumpi: hatchedAs(stage) });
-    const body = page.locator(".nb").first();
-    await expect(body).toBeVisible();
-    const box = await body.boundingBox();
-    if (!box) throw new Error(`no box for stage ${stage}`);
-    return box;
+    const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+    try {
+      const page = await context.newPage();
+      await openHatchedGame(page, { niumpi: hatchedAs(stage) });
+      const body = page.locator(".nb").first();
+      await expect(body).toBeVisible();
+      const box = await body.boundingBox();
+      if (!box) throw new Error(`no box for stage ${stage}`);
+      return box;
+    } finally {
+      await context.close();
+    }
   };
 
   const hatchling = await measure(1);
@@ -290,9 +322,34 @@ test("a freshly hatched Niumpi renders small, and grows", async ({ page }) => {
 test("the hatchling wears a single leaf and no arms", async ({ page }) => {
   await openHatchedGame(page, { niumpi: hatchedAs(1) });
   await expect(page.locator(".rig-root")).toHaveClass(/growth-stage-1/);
-  await expect(page.locator(".nb-leaf")).toHaveCount(1);
+  // Evolved Niumpis are now full-frame authored paintings rather than a
+  // collection of independently animated face, body and leaf fragments.
+  await expect(page.locator(".nb-authored-static")).toHaveAttribute("href", "/assets/niumpi/stages/stage-1.webp");
   // Arms grow in later; drawing them on a newborn was part of what made the
   // first stage read as an adult.
   await expect(page.locator(".nb-arm")).toHaveCount(0);
   await expect(page.locator(".rig-root")).toHaveClass(/arms-none/);
+});
+
+test("the five-leaf crown stays attached to a mature Niumpi", async ({ page }) => {
+  await openHatchedGame(page, { niumpi: hatchedAs(4) });
+
+  const rig = page.locator(".rig-root").first();
+  const authoredFrame = page.locator(".nb-authored-static").first();
+  await expect(rig).toHaveClass(/growth-stage-4/);
+  await expect(authoredFrame).toHaveAttribute("href", "/assets/niumpi/stages/stage-4.webp");
+
+  const rigBox = await rig.boundingBox();
+  const frameBox = await authoredFrame.boundingBox();
+  if (!rigBox) throw new Error("mature rig has no box");
+  if (!frameBox) throw new Error("mature authored frame has no box");
+
+  // The crown is baked into the approved full-frame painting. Verifying that
+  // the complete authored frame stays inside the rig replaces the obsolete
+  // fragment-level test that expected five separately animated SVG leaves.
+  expect(frameBox.x).toBeGreaterThanOrEqual(rigBox.x - 1);
+  expect(frameBox.y).toBeGreaterThanOrEqual(rigBox.y - 1);
+  expect(frameBox.x + frameBox.width).toBeLessThanOrEqual(rigBox.x + rigBox.width + 1);
+  expect(frameBox.y + frameBox.height).toBeLessThanOrEqual(rigBox.y + rigBox.height + 1);
+  expect(frameBox.width).toBeGreaterThan(rigBox.width * 0.7);
 });

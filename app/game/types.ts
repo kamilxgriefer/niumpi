@@ -30,17 +30,25 @@ export type MinigameId =
 
 export type SceneId =
   | "home" | "niumpi" | "room" | "memory" | "garden" | "games" | "shop"
-  | "evolution" | "cooking" | "dreams" | "friends" | "about" | "seed";
+  | "journey" | "evolution" | "cooking" | "dreams" | "friends" | "about" | "seed";
 
 export type CurrencyId = "dewdrops" | "starFragments";
 
 export type ItemCategory = "furniture" | "plants" | "toys" | "lights" | "themes" | "accessories" | "music";
 
+export type ItemRarity = "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic";
+
+/** Stable identifiers for the spaces that make up Niumpi's home. */
+export type RoomId = "living-room" | "bedroom" | "play-nook";
+
+/** Contextual activities performed with the room itself, not a placed item. */
+export type RoomActivityId = "read" | "window" | "rest" | "roll" | "dance" | "sing";
+
 /** A gesture or activity that can earn a care moment. */
 export type CareActionId =
   | "pet" | "hug" | "tickle" | "brush" | "leaf" | "dance" | "comfort" | "sing"
   | "feed" | "cook" | "sleep" | "dream" | "minigame" | "seed" | "harvest"
-  | "plant" | "toy" | "explore" | "visit" | "decorate" | "warm" | "dewdrop" | "hum";
+  | "plant" | "toy" | "explore" | "visit" | "decorate" | "warm" | "dewdrop" | "hum" | "wash";
 
 export type Settings = {
   sound: boolean;
@@ -75,6 +83,10 @@ export type NiumpiCore = {
   sleeping: boolean;
   sleepStartedAt: number | null;
   lampOn: boolean;
+  /** 20..100. It declines gently and is restored through hands-on care. */
+  cleanliness: number;
+  lastWashedAt: number | null;
+  lastWashTool: "sponge" | "brush" | null;
 };
 
 export type CareStats = Record<StatId, number> & Record<HiddenStatId, number>;
@@ -93,6 +105,8 @@ export type Phenotype = {
   markings: string[];
   leafType: string;
   eyeType: string;
+  /** Silhouette branch, visible before the route locks and permanent afterwards. */
+  morphology: RouteId | "seedling";
   aura: string | null;
   particles: string | null;
   accessory: string | null;
@@ -125,9 +139,49 @@ export type PlacedItem = {
   layer: number;
 };
 
-export type RoomLayout = {
+export type RoomSpace = {
+  id: RoomId;
   theme: string;
   placed: PlacedItem[];
+  /** Unlocks are permanent once earned. */
+  unlockedAt: number | null;
+  visits: number;
+  lastVisitedAt: number | null;
+  /** Per-activity/item history lets rooms grow more personal over time. */
+  interactions: Record<string, number>;
+};
+
+export type RoomLayout = {
+  activeRoomId: RoomId;
+  rooms: Record<RoomId, RoomSpace>;
+  /**
+   * Compatibility mirror of the active room. Existing UI can keep reading
+   * these fields while the multi-room interface is introduced incrementally.
+   */
+  theme: string;
+  placed: PlacedItem[];
+};
+
+/** Free, relationship-earned furniture discoveries. No currency can buy a roll. */
+export type RoomLootState = {
+  progress: number;
+  claimable: number;
+  opened: number;
+  /** Consecutive discoveries below rare; drives the published pity rule. */
+  rarePity: number;
+  /** Consecutive discoveries below legendary; drives the published pity rule. */
+  legendaryPity: number;
+  /** Consecutive discoveries below mythic. */
+  mythicPity: number;
+  lastDropAt: number | null;
+};
+
+/** Earned-currency discovery history. Paid Star Fragments never feed this roll. */
+export type StarlightShopState = {
+  opened: number;
+  epicPity: number;
+  legendaryPity: number;
+  lastDropAt: number | null;
 };
 
 export type Plot = {
@@ -172,7 +226,15 @@ export type Expedition = {
 export type MissionProgress = {
   dayKey: string;
   daily: Array<{ id: string; progress: number; claimed: boolean }>;
-  weekly: { weekKey: string; days: string[]; claimed: boolean };
+  weekly: {
+    weekKey: string;
+    days: string[];
+    claimed: boolean;
+    entries: Array<{ id: string; progress: number; claimed: boolean }>;
+  };
+  /** Never resets; permanent achievements are calculated from this history. */
+  lifetimeActions: Partial<Record<CareActionId, number>>;
+  achievements: { claimed: string[] };
 };
 
 export type SeedAnswer = { choice: 0 | 1; answeredAt: number };
@@ -196,6 +258,8 @@ export type GameState = {
   personality: PersonalityProfile;
   inventory: Inventory;
   room: RoomLayout;
+  roomLoot: RoomLootState;
+  starlightShop: StarlightShopState;
   garden: { plots: Plot[] };
   memories: MemoryEntry[];
   dream: DreamRun | null;
@@ -225,6 +289,7 @@ export type CareOutcome = {
 
 export type Reward =
   | { kind: "ingredient"; id: string; amount: number }
+  | { kind: "seed"; id: string; amount: number }
   | { kind: "currency"; id: CurrencyId; amount: number }
   | { kind: "item"; id: string }
   | { kind: "recipe"; id: string }

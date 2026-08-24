@@ -7,7 +7,7 @@ import { hashSeed, makeRng, pickWeighted } from "./rng.ts";
 import { seedMap } from "./config/seeds.ts";
 
 /** Recent lines are remembered so the same thing is never said twice running. */
-export const DIALOGUE_MEMORY = 8;
+export const DIALOGUE_MEMORY = 18;
 
 export function chooseLine(state: GameState, now: number): { text: string; id: string } {
   const mood = moodFor(state, now);
@@ -21,11 +21,15 @@ export function chooseLine(state: GameState, now: number): { text: string; id: s
     if (line.trait && !state.personality.traits[line.trait]) return false;
     if (line.seed && !state.seedAnswers[line.seed]) return false;
     for (const [id, limit] of Object.entries(line.below ?? {})) {
-      const value = id === "bond" ? state.niumpi.bond : state.stats[id as "fullness"];
+      const value = id === "bond" ? state.niumpi.bond
+        : id === "cleanliness" ? state.niumpi.cleanliness
+          : state.stats[id as "fullness"];
       if (value >= (limit ?? 0)) return false;
     }
     for (const [id, limit] of Object.entries(line.above ?? {})) {
-      const value = id === "bond" ? state.niumpi.bond : state.stats[id as "fullness"];
+      const value = id === "bond" ? state.niumpi.bond
+        : id === "cleanliness" ? state.niumpi.cleanliness
+          : state.stats[id as "fullness"];
       if (value <= (limit ?? 0)) return false;
     }
     return true;
@@ -74,6 +78,9 @@ export function reactToGesture(state: GameState, action: CareActionId, now: numb
   if (mood === "upset" && action === "comfort") {
     return { text: "Thank you for staying.", behavior: "happy", spark: "♡", sound: "hold" };
   }
+  if (mood === "upset" && (action === "tickle" || action === "dance")) {
+    return { text: "Could we have a gentle moment first?", behavior: "sway", spark: "·", sound: "blip", refused: true };
+  }
   if (mood === "hungry" && action === "pet") {
     return { text: "That's nice… but also, snacks?", behavior: "curious", spark: "♡", sound: "pet" };
   }
@@ -83,7 +90,7 @@ export function reactToGesture(state: GameState, action: CareActionId, now: numb
 
   const behaviorByAction: Record<string, string> = {
     pet: "happy", hug: "happy", tickle: "spin", brush: "curious", leaf: "curious",
-    dance: "spin", comfort: "happy", sing: "float", toy: "happy", wake: "happy",
+    dance: "dancing", comfort: "happy", sing: "singing", toy: "happy", wake: "happy",
   };
   const soundByAction: Record<string, string> = {
     pet: "pet", hug: "hold", tickle: "tap", brush: "leaf", leaf: "leaf",

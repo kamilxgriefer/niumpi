@@ -8,8 +8,8 @@ import type { StageId } from "../types.ts";
  * size — and nothing in the stylesheet even did the shrinking. Growth read as
  * "the same pet, plus leaves".
  *
- * Babyness is a matter of proportion, not size: a large round head, a body that
- * has barely any taper, and big eyes sitting low in the face. None of that
+ * Babyness is a matter of proportion, not size: a large round head, a body made
+ * from barely-separated cloud puffs, and big eyes sitting low in the face. None of that
  * survives uniform scaling of one bitmap, so the body is now a curve generated
  * from the numbers below. Every stage is a set of proportions, which makes a
  * new stage a data change and lets the shape be tested.
@@ -93,7 +93,7 @@ export const growthStages: StageProfile[] = [
     // Half size, almost round, with a nub where the point will grow. This is
     // the stage the player meets first and the one they should want to protect.
     scale: 0.62,
-    body: { rx: 60, ry: 56, baseY: 128, tipY: 58, tipW: 26, shoulder: 0.95, tipLean: 3 },
+    body: { rx: 58, ry: 55, baseY: 128, tipY: 59, tipW: 27, shoulder: 0.95, tipLean: 2 },
     face: { eyeR: 18.5, eyeY: 130, eyeGap: 27, pupil: 0.56, mouthY: 158, mouthW: 13, cheekR: 11, cheekGap: 45 },
     leaves: 1,
     arms: "none",
@@ -107,7 +107,7 @@ export const growthStages: StageProfile[] = [
     careMoments: 62,
     days: 1,
     scale: 0.73,
-    body: { rx: 58, ry: 54, baseY: 130, tipY: 40, tipW: 22, shoulder: 0.86, tipLean: 4 },
+    body: { rx: 60, ry: 56, baseY: 130, tipY: 56, tipW: 28, shoulder: 0.88, tipLean: 3 },
     face: { eyeR: 16, eyeY: 128, eyeGap: 29, pupil: 0.58, mouthY: 155, mouthW: 15, cheekR: 10.5, cheekGap: 45 },
     leaves: 2,
     arms: "buds",
@@ -121,7 +121,7 @@ export const growthStages: StageProfile[] = [
     careMoments: 150,
     days: 4,
     scale: 0.85,
-    body: { rx: 57, ry: 53, baseY: 132, tipY: 32, tipW: 21, shoulder: 0.8, tipLean: 5 },
+    body: { rx: 62, ry: 57, baseY: 132, tipY: 52, tipW: 29, shoulder: 0.82, tipLean: 4 },
     face: { eyeR: 14.6, eyeY: 127, eyeGap: 31, pupil: 0.6, mouthY: 153, mouthW: 17, cheekR: 10, cheekGap: 44 },
     leaves: 3,
     arms: "short",
@@ -135,7 +135,7 @@ export const growthStages: StageProfile[] = [
     careMoments: 300,
     days: 14,
     scale: 0.94,
-    body: { rx: 56, ry: 52, baseY: 134, tipY: 24, tipW: 20, shoulder: 0.73, tipLean: 6 },
+    body: { rx: 64, ry: 58, baseY: 134, tipY: 48, tipW: 30, shoulder: 0.77, tipLean: 5 },
     face: { eyeR: 14, eyeY: 126, eyeGap: 32, pupil: 0.62, mouthY: 152, mouthW: 18, cheekR: 9.6, cheekGap: 43 },
     leaves: 5,
     arms: "full",
@@ -149,7 +149,7 @@ export const growthStages: StageProfile[] = [
     careMoments: 520,
     days: 35,
     scale: 1,
-    body: { rx: 55, ry: 51, baseY: 135, tipY: 18, tipW: 18, shoulder: 0.69, tipLean: 6 },
+    body: { rx: 66, ry: 59, baseY: 135, tipY: 44, tipW: 31, shoulder: 0.72, tipLean: 5 },
     face: { eyeR: 13.6, eyeY: 125, eyeGap: 33, pupil: 0.63, mouthY: 151, mouthW: 19, cheekR: 9.3, cheekGap: 42 },
     leaves: 5,
     arms: "full",
@@ -169,9 +169,10 @@ export function profileFor(stage: number): StageProfile {
 }
 
 /**
- * Builds the silhouette: a round base, then two curves that meet at the tip.
- * `shoulder` decides where the sides stop bulging outward, which is what turns
- * a ball into a droplet.
+ * Builds the silhouette as a living cloud-wisp. Three overlapping crown puffs
+ * replace the old vegetable-like point while keeping one stable centre where
+ * mood leaves can grow. The profile still controls how strongly that crown
+ * emerges at each stage, so growth changes proportion rather than only scale.
  */
 export function bodyPath(g: BodyGeometry): string {
   const cx = 100;
@@ -180,14 +181,22 @@ export function bodyPath(g: BodyGeometry): string {
   const bottom = g.baseY + g.ry;
   const tipX = cx + g.tipLean;
   const k = 0.62;
-  const shoulderY = g.baseY - g.ry * g.shoulder;
-  const tipDrop = g.ry * 0.3;
+  const top = g.baseY - g.ry;
+  const rightCrown = cx + g.rx * 0.64;
+  const leftCrown = cx - g.rx * 0.64;
+  const rightValley = cx + g.rx * 0.31;
+  const leftValley = cx - g.rx * 0.31;
+  const crownDip = top + g.ry * (0.12 + (1 - g.shoulder) * 0.14);
   return [
     `M ${left} ${g.baseY}`,
     `C ${left} ${g.baseY + g.ry * k} ${cx - g.rx * k} ${bottom} ${cx} ${bottom}`,
     `C ${cx + g.rx * k} ${bottom} ${right} ${g.baseY + g.ry * k} ${right} ${g.baseY}`,
-    `C ${right} ${shoulderY} ${tipX + g.tipW} ${g.tipY + tipDrop} ${tipX} ${g.tipY}`,
-    `C ${tipX - g.tipW} ${g.tipY + tipDrop} ${left} ${shoulderY} ${left} ${g.baseY}`,
+    `C ${right} ${g.baseY - g.ry * 0.42} ${rightCrown + g.rx * 0.18} ${top + g.ry * 0.18} ${rightCrown} ${top + g.ry * 0.1}`,
+    `C ${cx + g.rx * 0.56} ${top - g.ry * 0.05} ${rightValley + g.rx * 0.06} ${crownDip - g.ry * 0.04} ${rightValley} ${crownDip}`,
+    `C ${rightValley - g.tipW * 0.16} ${g.tipY + g.ry * 0.18} ${tipX + g.tipW * 0.62} ${g.tipY} ${tipX} ${g.tipY}`,
+    `C ${tipX - g.tipW * 0.62} ${g.tipY} ${leftValley + g.tipW * 0.16} ${g.tipY + g.ry * 0.18} ${leftValley} ${crownDip}`,
+    `C ${leftValley - g.rx * 0.06} ${crownDip - g.ry * 0.04} ${cx - g.rx * 0.56} ${top - g.ry * 0.05} ${leftCrown} ${top + g.ry * 0.1}`,
+    `C ${leftCrown - g.rx * 0.18} ${top + g.ry * 0.18} ${left} ${g.baseY - g.ry * 0.42} ${left} ${g.baseY}`,
     "Z",
   ].join(" ");
 }

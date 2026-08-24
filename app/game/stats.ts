@@ -1,5 +1,6 @@
 import type { CareStats, GameState, HiddenStatId, StatId } from "./types.ts";
 import { DAY_MS, dayKeyFor, weatherFor } from "./time.ts";
+import { cleanlinessAfter } from "./hygiene.ts";
 
 export const STAT_MIN = 0;
 export const STAT_MAX = 100;
@@ -70,6 +71,12 @@ export function applyElapsed(state: GameState, now: number): { state: GameState;
   return {
     state: {
       ...state,
+      niumpi: {
+        ...state.niumpi,
+        cleanliness: state.niumpi.hatchedAt
+          ? cleanlinessAfter(state.niumpi.cleanliness, chargedHours, state.niumpi.sleeping)
+          : state.niumpi.cleanliness,
+      },
       stats,
       weather: weatherChanged ? { key: nextWeather, since: now } : state.weather,
       counters: dayKey === state.counters.dayKey
@@ -87,6 +94,12 @@ export function tick(state: GameState, seconds: number): GameState {
   const rates = state.niumpi.sleeping ? sleepPerHour : decayPerHour;
   return {
     ...state,
+    niumpi: {
+      ...state.niumpi,
+      cleanliness: state.niumpi.hatchedAt
+        ? cleanlinessAfter(state.niumpi.cleanliness, hours, state.niumpi.sleeping)
+        : state.niumpi.cleanliness,
+    },
     stats: {
       ...state.stats,
       fullness: clampStat(state.stats.fullness - rates.fullness * hours),

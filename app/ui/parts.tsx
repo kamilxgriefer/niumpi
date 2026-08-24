@@ -8,6 +8,7 @@ import { Art } from "./Art";
 import { copy } from "../game/config/copy";
 import { LOW_STAT } from "../game/stats";
 import type { StatId } from "../game/types";
+import { CLEANLINESS_LOW, hygieneCondition } from "../game/hygiene";
 
 /* ---------------------------------------------------------------- panels -- */
 
@@ -71,6 +72,38 @@ export function StatRow({ id, value }: { id: StatId; value: number }) {
       </div>
       <span className="stat-value">{rounded}%</span>
       {low && <span className="stat-flag">{lowNote[id]}</span>}
+    </div>
+  );
+}
+
+export function CleanlinessRow({ value }: { value: number }) {
+  const labelId = useId();
+  const rounded = Math.max(0, Math.min(100, Math.round(value)));
+  const condition = hygieneCondition(rounded);
+  const low = rounded < CLEANLINESS_LOW;
+  const conditionLabel = {
+    sparkling: "Sparkling",
+    fresh: "Fresh",
+    dusty: "A little dusty",
+    messy: copy.stats.lowCleanliness,
+  }[condition];
+  return (
+    <div className={`stat stat-cleanliness hygiene-${condition} ${low ? "is-low" : ""}`}>
+      <Art name="drop" size={16} className="stat-icon" />
+      <span className="stat-name" id={labelId}>{copy.stats.cleanliness}</span>
+      <div
+        className="stat-track"
+        role="progressbar"
+        aria-labelledby={labelId}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={rounded}
+        aria-valuetext={`${rounded} percent — ${conditionLabel}`}
+      >
+        <span className="stat-fill" style={{ width: `${rounded}%` }} />
+      </div>
+      <span className="stat-value">{rounded}%</span>
+      {rounded < 74 && <span className="stat-flag">{conditionLabel}</span>}
     </div>
   );
 }
