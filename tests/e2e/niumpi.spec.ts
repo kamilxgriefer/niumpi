@@ -186,8 +186,8 @@ test("the Journey exposes daily, weekly and permanent goals without flooding Hom
   await expect(page).toHaveURL(/\?scene=journey/);
   await expect(page.locator(".journey-daily .journey-goal")).toHaveCount(5);
   await expect(page.locator(".journey-weekly .journey-goal")).toHaveCount(3);
-  await expect(page.locator(".achievement-card")).toHaveCount(15);
-  await expect(page.getByText("60 lasting achievements")).toBeVisible();
+  await expect(page.locator(".achievement-card")).toHaveCount(16);
+  await expect(page.getByText("64 lasting achievements")).toBeVisible();
 });
 
 test("the game stays usable on a narrow mobile viewport", async ({ page }) => {
@@ -322,7 +322,9 @@ test("a freshly hatched Niumpi renders small, and grows", async ({ browser }) =>
 test("the hatchling wears a single leaf and no arms", async ({ page }) => {
   await openHatchedGame(page, { niumpi: hatchedAs(1) });
   await expect(page.locator(".rig-root")).toHaveClass(/growth-stage-1/);
-  await expect(page.locator(".nb-leaf")).toHaveCount(1);
+  // Evolved Niumpis are now full-frame authored paintings rather than a
+  // collection of independently animated face, body and leaf fragments.
+  await expect(page.locator(".nb-authored-static")).toHaveAttribute("href", "/assets/niumpi/stages/stage-1.webp");
   // Arms grow in later; drawing them on a newborn was part of what made the
   // first stage read as an adult.
   await expect(page.locator(".nb-arm")).toHaveCount(0);
@@ -333,28 +335,21 @@ test("the five-leaf crown stays attached to a mature Niumpi", async ({ page }) =
   await openHatchedGame(page, { niumpi: hatchedAs(4) });
 
   const rig = page.locator(".rig-root").first();
-  const leaves = page.locator(".nb-leaf");
+  const authoredFrame = page.locator(".nb-authored-static").first();
   await expect(rig).toHaveClass(/growth-stage-4/);
-  await expect(leaves).toHaveCount(5);
+  await expect(authoredFrame).toHaveAttribute("href", "/assets/niumpi/stages/stage-4.webp");
 
   const rigBox = await rig.boundingBox();
-  const leafBoxes = await leaves.evaluateAll((nodes) => nodes.map((node) => {
-    const box = node.getBoundingClientRect();
-    return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
-  }));
+  const frameBox = await authoredFrame.boundingBox();
   if (!rigBox) throw new Error("mature rig has no box");
+  if (!frameBox) throw new Error("mature authored frame has no box");
 
-  const crownLeft = Math.min(...leafBoxes.map((box) => box.left));
-  const crownRight = Math.max(...leafBoxes.map((box) => box.right));
-  const crownTop = Math.min(...leafBoxes.map((box) => box.top));
-  const crownBottom = Math.max(...leafBoxes.map((box) => box.bottom));
-
-  // A crown belongs in the upper half of the rig, spans a visible fan, and
-  // remains fully inside its creature. This catches the SVG transform bug that
-  // threw individual leaves into unrelated parts of the room.
-  expect(crownLeft).toBeGreaterThanOrEqual(rigBox.x - 1);
-  expect(crownRight).toBeLessThanOrEqual(rigBox.x + rigBox.width + 1);
-  expect(crownTop).toBeGreaterThanOrEqual(rigBox.y - 1);
-  expect(crownBottom).toBeLessThan(rigBox.y + rigBox.height * 0.42);
-  expect(crownRight - crownLeft).toBeGreaterThan(rigBox.width * 0.18);
+  // The crown is baked into the approved full-frame painting. Verifying that
+  // the complete authored frame stays inside the rig replaces the obsolete
+  // fragment-level test that expected five separately animated SVG leaves.
+  expect(frameBox.x).toBeGreaterThanOrEqual(rigBox.x - 1);
+  expect(frameBox.y).toBeGreaterThanOrEqual(rigBox.y - 1);
+  expect(frameBox.x + frameBox.width).toBeLessThanOrEqual(rigBox.x + rigBox.width + 1);
+  expect(frameBox.y + frameBox.height).toBeLessThanOrEqual(rigBox.y + rigBox.height + 1);
+  expect(frameBox.width).toBeGreaterThan(rigBox.width * 0.7);
 });

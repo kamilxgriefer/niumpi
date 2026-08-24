@@ -99,7 +99,7 @@ export function JourneyScene() {
       <section className="journey-intro" aria-label="How goals work">
         <div><Art name="sun" size={23} /><strong>Today</strong><span>5 varied moments</span></div>
         <div><Art name="spark" size={23} /><strong>This week</strong><span>3 longer adventures</span></div>
-        <div><Art name="evolution" size={23} /><strong>Forever</strong><span>60 lasting achievements</span></div>
+        <div><Art name="evolution" size={23} /><strong>Forever</strong><span>64 lasting achievements</span></div>
         <p>No streak anxiety. A missed day removes nothing and Niumpi never feels punished.</p>
       </section>
 
