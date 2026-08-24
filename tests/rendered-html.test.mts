@@ -109,7 +109,10 @@ test("shading is clipped to the silhouette so a route cannot bleed outside it", 
   // clipped to it. Without the clip they spill past the outline at the stages
   // where the silhouette narrows.
   assert.match(body, /<clipPath id=\{id\("nb-silhouette"\)\}>/);
-  assert.match(body, /clipPath=\{`url\(#\$\{id\("nb-silhouette"\)\}\)`\}/);
+  // The filter carries an id too, and a shared literal there would make every
+  // Niumpi on the page blur through one instance's filter.
+  assert.match(body, /<filter id=\{id\("nb-fuzz"\)\}/);
+  assert.match(body, /clipPath=\{ref\("nb-silhouette"\)\}/);
   // Ids are per-instance. SVG ids are document-global, so a shared literal id
   // makes every Niumpi on a page resolve to the first one's gradients — the
   // whole street of neighbours wearing one palette.

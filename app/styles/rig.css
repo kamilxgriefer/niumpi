@@ -31,6 +31,10 @@
   --leaf-vein: #d7fff2;
   --rim: #ffd9b8;
   --foot: #d9421f;
+  /* A lifted tone at the top of the eye, so it reads as a wet sphere rather
+     than a flat hole, and the colour the contact shadow is made of. */
+  --eye-lift: #4a2f6b;
+  --contact: #2a1440;
 }
 
 .rig-root {
