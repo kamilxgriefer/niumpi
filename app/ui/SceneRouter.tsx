@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useSyncExternalStore } from "react";
 import { useGame } from "./GameProvider";
 import { HomeScene } from "../scenes/HomeScene";
 import { SeedChamberScene } from "../scenes/SeedChamberScene";
@@ -9,6 +9,7 @@ import { LockedState } from "./parts";
 import { Brand } from "./Brand";
 import { SceneAtmosphere } from "./SceneAtmosphere";
 import type { SceneId } from "../game/types";
+import { AnimationLab } from "./AnimationLab";
 
 /**
  * Home, Seed and the companion scene load eagerly — they are the first thing
@@ -25,6 +26,14 @@ const CookingScene = lazy(() => import("../scenes/CookingScene").then((m) => ({ 
 const DreamDoorsScene = lazy(() => import("../scenes/DreamDoorsScene").then((m) => ({ default: m.DreamDoorsScene })));
 const FriendsScene = lazy(() => import("../scenes/FriendsScene").then((m) => ({ default: m.FriendsScene })));
 const AboutScene = lazy(() => import("../scenes/AboutScene").then((m) => ({ default: m.AboutScene })));
+
+function subscribeToLocation() {
+  return () => undefined;
+}
+
+function animationLabFromLocation() {
+  return new URLSearchParams(window.location.search).has("animation-lab");
+}
 
 const registry: Record<SceneId, React.ComponentType> = {
   home: HomeScene,
@@ -45,6 +54,9 @@ const registry: Record<SceneId, React.ComponentType> = {
 
 export function SceneRouter() {
   const { scene, state, isOpen, ready } = useGame();
+  const showAnimationLab = useSyncExternalStore(subscribeToLocation, animationLabFromLocation, () => false);
+
+  if (showAnimationLab) return <main className="scene-host"><AnimationLab /></main>;
 
   // Before the save is read the scene is unknown; show the frame, not a guess.
   const active: SceneId = !ready ? "home" : state.niumpi.hatchedAt ? scene : "seed";
