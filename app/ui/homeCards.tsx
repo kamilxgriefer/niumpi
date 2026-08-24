@@ -8,7 +8,7 @@ import { copy } from "../game/config/copy";
 import { seedQuestions } from "../game/config/seeds";
 import { traitMap, traits } from "../game/config/traits";
 import { routeMap } from "../game/config/routes";
-import { missionMap } from "../game/config/missions";
+import { missionMap, weeklyMissionMap } from "../game/config/missions";
 import { answerSeed } from "../game/actions";
 import { claimMission } from "../game/missions";
 import { discoveryLine } from "../game/reactions";
@@ -294,9 +294,14 @@ export function PetStatusStrip() {
 const MISSIONS_ON_HOME = 2;
 
 export function MissionsCard() {
-  const { state, update, showReward, cue, clock } = useGame();
+  const { state, update, showReward, cue, clock, goTo } = useGame();
+  const weeklyDone = state.missions.weekly.entries.filter((entry) => {
+    const template = weeklyMissionMap[entry.id];
+    return template && entry.progress >= template.target;
+  }).length;
   return (
-    <Panel title={copy.home.missions} art="check" className="card-missions">
+    <Panel title={copy.home.missions} note="Five small reasons to come back — never a streak to lose"
+      art="check" className="card-missions" onOpen={() => goTo("journey")} openLabel="Open Journey">
       {/* Home carries today's next steps, not the whole board — three full rows
           cost 301px of a phone page that also has to hold the creature. */}
       <ul className="mission-list">
@@ -334,12 +339,12 @@ export function MissionsCard() {
         })}
       </ul>
       {state.missions.daily.length > MISSIONS_ON_HOME && (
-        <p className="mission-more">
-          {state.missions.daily.length - MISSIONS_ON_HOME} more today
-        </p>
+        <button className="mission-more" type="button" onClick={() => goTo("journey")}>
+          +{state.missions.daily.length - MISSIONS_ON_HOME} more today · see all goals
+        </button>
       )}
       <p className="mission-weekly">
-        Complete activities on 5 of 7 days — {state.missions.weekly.days.length}/5 so far.
+        Weekly journey: {weeklyDone}/{state.missions.weekly.entries.length || 3} challenges · {state.missions.weekly.days.length}/5 active days.
         {" "}Missing a day costs nothing.
       </p>
     </Panel>

@@ -239,6 +239,20 @@ for (const viewport of [LAPTOP, PHONE]) {
   });
 }
 
+for (const viewport of [DESKTOP, PHONE]) {
+  test(`Journey holds its layout at ${viewport.width}x${viewport.height}`, async ({ page }) => {
+    const errors = watchConsole(page);
+    await openScene(page, "journey", viewport);
+
+    await expect(page.getByRole("heading", { name: "Niumpi Journey" })).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator(".journey-daily .journey-goal")).toHaveCount(5);
+    await expect(page.locator(".journey-weekly .journey-goal")).toHaveCount(3);
+    await auditLayout(page, `Journey ${viewport.name}`);
+    await auditBottomNav(page, `Journey ${viewport.name}`);
+    expect(errors).toEqual([]);
+  });
+}
+
 test("Settings stays usable on a phone", async ({ page }) => {
   const errors = watchConsole(page);
   await openScene(page, "home", PHONE);

@@ -30,7 +30,7 @@ export type MinigameId =
 
 export type SceneId =
   | "home" | "niumpi" | "room" | "memory" | "garden" | "games" | "shop"
-  | "evolution" | "cooking" | "dreams" | "friends" | "about" | "seed";
+  | "journey" | "evolution" | "cooking" | "dreams" | "friends" | "about" | "seed";
 
 export type CurrencyId = "dewdrops" | "starFragments";
 
@@ -214,7 +214,15 @@ export type Expedition = {
 export type MissionProgress = {
   dayKey: string;
   daily: Array<{ id: string; progress: number; claimed: boolean }>;
-  weekly: { weekKey: string; days: string[]; claimed: boolean };
+  weekly: {
+    weekKey: string;
+    days: string[];
+    claimed: boolean;
+    entries: Array<{ id: string; progress: number; claimed: boolean }>;
+  };
+  /** Never resets; permanent achievements are calculated from this history. */
+  lifetimeActions: Partial<Record<CareActionId, number>>;
+  achievements: { claimed: string[] };
 };
 
 export type SeedAnswer = { choice: 0 | 1; answeredAt: number };

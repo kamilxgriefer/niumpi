@@ -21,6 +21,7 @@ export const railTabs: NavEntry[] = [
 ];
 
 export const moreTabs: NavEntry[] = [
+  { id: "journey", label: copy.nav.journey, art: "check" },
   { id: "memory", label: copy.nav.memory, art: "memory" },
   { id: "garden", label: copy.nav.garden, art: "garden" },
   { id: "shop", label: copy.nav.shop, art: "shop" },

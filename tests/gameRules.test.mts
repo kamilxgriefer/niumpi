@@ -11,7 +11,10 @@ import { buyItem, canSpend, grant, spendIngredients } from "../app/game/inventor
 import { alreadyClaimed, markClaimed, pruneClaims } from "../app/game/persistence.ts";
 import { claimDream, dreamReady, startDream } from "../app/game/dreams.ts";
 import { harvest, plantSeed, viewPlot, water } from "../app/game/garden.ts";
-import { claimMission, rollMissions } from "../app/game/missions.ts";
+import {
+  achievementProgress, claimAchievement, claimMission, claimWeeklyMission,
+  progressMissions, rollMissions,
+} from "../app/game/missions.ts";
 import { awardMemory } from "../app/game/memories.ts";
 import { feed, gesture, seedAction, hatch, cook } from "../app/game/actions.ts";
 import { moodFor } from "../app/game/mood.ts";
@@ -21,7 +24,10 @@ import { traits } from "../app/game/config/traits.ts";
 import { dialogue } from "../app/game/config/dialogue.ts";
 import { shopItems } from "../app/game/config/items.ts";
 import { plants } from "../app/game/config/plants.ts";
-import { missionTemplates } from "../app/game/config/missions.ts";
+import {
+  achievementMap, achievementTemplates, missionTemplates,
+  weeklyMissionMap, weeklyMissionTemplates,
+} from "../app/game/config/missions.ts";
 import { dreamOutcomes } from "../app/game/config/dreams.ts";
 import { exploreOutcomes } from "../app/game/config/explore.ts";
 import { weathers } from "../app/game/config/weather.ts";
@@ -504,7 +510,7 @@ test("planting requires a seed and an empty plot", () => {
 
 test("daily missions roll once a day and pay out once", () => {
   const state = rollMissions(fresh(), NOW, () => true);
-  assert.equal(state.missions.daily.length, 3);
+  assert.equal(state.missions.daily.length, 5);
   const again = rollMissions(state, NOW, () => true);
   assert.deepEqual(again.missions.daily, state.missions.daily);
 
@@ -516,6 +522,69 @@ test("daily missions roll once a day and pay out once", () => {
   const claimed = claimMission(done, target.id, NOW);
   assert.ok(claimed.rewards.length > 0);
   assert.deepEqual(claimMission(claimed.state, target.id, NOW).rewards, [], "cannot claim twice");
+});
+
+test("journey has a deep authored pool with valid, unique and completable goals", () => {
+  assert.ok(missionTemplates.length >= 45, "daily pool should keep rotating");
+  assert.ok(weeklyMissionTemplates.length >= 15, "weekly pool should feel varied");
+  assert.ok(achievementTemplates.length >= 60, "permanent journey should have long-term depth");
+  const allIds = [...missionTemplates, ...weeklyMissionTemplates, ...achievementTemplates].map((entry) => entry.id);
+  assert.equal(new Set(allIds).size, allIds.length, "every goal id must be globally unique");
+  for (const mission of [...missionTemplates, ...weeklyMissionTemplates]) {
+    assert.ok(mission.label.length >= 5 && mission.note.length >= 5, `${mission.id} needs useful copy`);
+    assert.ok(mission.actions.length > 0 && mission.target > 0, `${mission.id} must be progressable`);
+  }
+});
+
+test("lifetime achievement history grows even before today's board is rolled", () => {
+  const state = progressMissions(fresh(), "hug", NOW);
+  assert.equal(state.missions.lifetimeActions.hug, 1);
+  const gentle = achievementMap["gentle-1"];
+  assert.equal(achievementProgress(state, gentle), 1);
+  const restored = reconcile(JSON.parse(JSON.stringify(state)), NOW + 1);
+  assert.equal(restored.missions.lifetimeActions.hug, 1, "lifetime history survives reload");
+});
+
+test("weekly challenges progress and pay once", () => {
+  let state = rollMissions(fresh(), NOW, () => true);
+  const target = state.missions.weekly.entries[0];
+  const template = weeklyMissionMap[target.id];
+  assert.ok(template);
+  for (let count = 0; count < template.target; count += 1) {
+    state = progressMissions(state, template.actions[0], NOW);
+  }
+  const complete = state.missions.weekly.entries.find((entry) => entry.id === target.id)!;
+  assert.equal(complete.progress, template.target);
+  const claimed = claimWeeklyMission(state, target.id, NOW);
+  assert.ok(claimed.rewards.length > 0);
+  assert.deepEqual(claimWeeklyMission(claimed.state, target.id, NOW).rewards, []);
+});
+
+test("permanent achievements derive progress and cannot be claimed twice", () => {
+  const template = achievementMap["care-1"];
+  const ready = { ...fresh(), niumpi: { ...fresh().niumpi, careMoments: template.target } };
+  assert.equal(achievementProgress(ready, template), template.target);
+  const claimed = claimAchievement(ready, template.id, NOW);
+  assert.ok(claimed.rewards.length > 0);
+  assert.ok(claimed.state.missions.achievements.claimed.includes(template.id));
+  assert.deepEqual(claimAchievement(claimed.state, template.id, NOW).rewards, []);
+});
+
+test("old mission saves receive journey fields without losing daily progress", () => {
+  const current = fresh();
+  const legacy = {
+    ...current,
+    missions: {
+      dayKey: "old-day",
+      daily: [{ id: "hug-once", progress: 1, claimed: false }],
+      weekly: { weekKey: "old-week", days: ["old-day"], claimed: false },
+    },
+  };
+  const restored = reconcile(legacy as never, NOW + 1);
+  assert.equal(restored.missions.daily[0].progress, 1);
+  assert.deepEqual(restored.missions.weekly.entries, []);
+  assert.deepEqual(restored.missions.lifetimeActions, {});
+  assert.deepEqual(restored.missions.achievements.claimed, []);
 });
 
 /* ------------------------------------------------------------- unlocks --- */

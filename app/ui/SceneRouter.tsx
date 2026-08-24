@@ -19,6 +19,7 @@ const MemoryScene = lazy(() => import("../scenes/MemoryScene").then((m) => ({ de
 const GardenScene = lazy(() => import("../scenes/GardenScene").then((m) => ({ default: m.GardenScene })));
 const GamesScene = lazy(() => import("../scenes/GamesScene").then((m) => ({ default: m.GamesScene })));
 const ShopScene = lazy(() => import("../scenes/ShopScene").then((m) => ({ default: m.ShopScene })));
+const JourneyScene = lazy(() => import("../scenes/JourneyScene").then((m) => ({ default: m.JourneyScene })));
 const EvolutionScene = lazy(() => import("../scenes/EvolutionScene").then((m) => ({ default: m.EvolutionScene })));
 const CookingScene = lazy(() => import("../scenes/CookingScene").then((m) => ({ default: m.CookingScene })));
 const DreamDoorsScene = lazy(() => import("../scenes/DreamDoorsScene").then((m) => ({ default: m.DreamDoorsScene })));
@@ -34,6 +35,7 @@ const registry: Record<SceneId, React.ComponentType> = {
   garden: GardenScene,
   games: GamesScene,
   shop: ShopScene,
+  journey: JourneyScene,
   evolution: EvolutionScene,
   cooking: CookingScene,
   dreams: DreamDoorsScene,

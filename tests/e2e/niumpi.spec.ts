@@ -178,6 +178,18 @@ test("the sidebar moves between real scenes and updates the address", async ({ p
   await expect(page.getByRole("heading", { name: "Your Room" })).toBeVisible({ timeout: 30_000 });
 });
 
+test("the Journey exposes daily, weekly and permanent goals without flooding Home", async ({ page }) => {
+  await openHatchedGame(page);
+
+  await page.getByRole("button", { name: "Open Journey" }).click();
+  await expect(page.getByRole("heading", { name: "Niumpi Journey" })).toBeVisible({ timeout: 30_000 });
+  await expect(page).toHaveURL(/\?scene=journey/);
+  await expect(page.locator(".journey-daily .journey-goal")).toHaveCount(5);
+  await expect(page.locator(".journey-weekly .journey-goal")).toHaveCount(3);
+  await expect(page.locator(".achievement-card")).toHaveCount(15);
+  await expect(page.getByText("60 lasting achievements")).toBeVisible();
+});
+
 test("the game stays usable on a narrow mobile viewport", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await openHatchedGame(page);

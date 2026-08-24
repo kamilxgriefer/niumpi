@@ -13,7 +13,7 @@ export const copy = {
   },
   nav: {
     home: "Home", niumpi: BRAND, room: "Room", memory: "Memory", garden: "Garden",
-    games: "Games", shop: "Shop", more: "More", evolution: "Evolution",
+    games: "Games", shop: "Shop", more: "More", journey: "Journey", evolution: "Evolution",
     cooking: "Cooking", dreams: "Dreams", friends: "Friends", about: "About", seed: "Seed",
     settings: "Settings",
   },
