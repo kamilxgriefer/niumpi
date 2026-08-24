@@ -205,6 +205,19 @@ test("the game stays usable on a narrow mobile viewport", async ({ page }) => {
   expect(horizontalOverflow).toBeLessThanOrEqual(2);
 });
 
+test("Niumpi's caption is anchored to the creature instead of a screen corner", async ({ page }) => {
+  await openHatchedGame(page);
+
+  const stage = await page.locator(".hero-stage .companion-stage").boundingBox();
+  const caption = await page.locator(".hero-stage .speech-bubble").boundingBox();
+  expect(stage).not.toBeNull();
+  expect(caption).not.toBeNull();
+  const stageCentre = stage!.x + stage!.width / 2;
+  const captionCentre = caption!.x + caption!.width / 2;
+  expect(Math.abs(stageCentre - captionCentre)).toBeLessThanOrEqual(2);
+  await expect(page.locator(".hero-stage .speech-trail i")).toHaveCount(3);
+});
+
 test("a Phaser minigame runs its own frame loop and answers user input", async ({ page }) => {
   await openHatchedGame(page);
 

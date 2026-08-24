@@ -652,7 +652,8 @@ test("the shipped content meets the minimum the design calls for", () => {
   assert.ok(recipes.length >= 15, "fifteen recipes");
   assert.ok(traits.length >= 20, "twenty traits");
   assert.ok(seedQuestions.length >= 30, "thirty Memory Seed questions");
-  assert.ok(dialogue.length >= 60, "sixty dialogue lines");
+  assert.ok(dialogue.length >= 110, "at least one hundred and ten dialogue lines");
+  assert.equal(new Set(dialogue.map((line) => line.id)).size, dialogue.length, "dialogue ids stay unique");
   assert.ok(minigames.length >= 6, "six minigames");
   assert.ok(shopItems.filter((item) => item.category !== "accessories").length >= 20, "twenty room items");
   assert.ok(plants.length >= 10, "ten plants");

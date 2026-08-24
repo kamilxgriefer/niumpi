@@ -16,6 +16,7 @@ import type { CareActionId } from "../game/types";
 import type { AnimState } from "../anim/NiumpiAnimationController";
 import { chooseLearnedRoomMoment, learnedRoomLine } from "../game/behavior";
 import type { RoomMomentId } from "../game/behavior";
+import { chooseLine, rememberLine } from "../game/reactions";
 
 /** Held longer than this counts as a hug rather than a tap. */
 const HOLD_MS = 620;
@@ -51,7 +52,7 @@ type Props = {
 };
 
 export function CompanionStage({ targeting = false, onDropFood, children, compact, showBubble = true }: Props) {
-  const { state, now, run, message, controller, say, cue, clock } = useGame();
+  const { state, now, run, patch, message, controller, say, cue, clock } = useGame();
   const rigRef = useNiumpiController(controller);
   const pointer = useRef<{ at: number; x: number; y: number; distance: number; dir: number; flips: number } | null>(null);
   const lastMoment = useRef<RoomMomentId | null>(null);
@@ -101,7 +102,11 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     cue(scene.sound);
   }, [clock, controller, cue, run, say]);
 
-  /* One leisurely repertoire replaces the old fixed wander metronome. */
+  /*
+   * Movement and conversation share one unhurried rhythm. Most beats use the
+   * full contextual dialogue library; room-specific lines still appear often
+   * enough that the space feels noticed rather than decorative.
+   */
   useEffect(() => {
     if (state.niumpi.sleeping) return;
     let timer = 0;
@@ -109,14 +114,20 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
       timer = window.setTimeout(() => {
         if (controller.getState() === "idle") {
           const moment = chooseLearnedRoomMoment(latestState.current, clock(), Math.random(), lastMoment.current);
-          playRoomMoment(moment);
+          const spontaneous = Math.random() < 0.68;
+          playRoomMoment(moment, !spontaneous);
+          if (spontaneous) {
+            const line = chooseLine(latestState.current, clock());
+            patch((current) => rememberLine(current, line.id));
+            say(line.text);
+          }
         }
         schedule();
-      }, 8_000 + Math.random() * 9_000);
+      }, 6_500 + Math.random() * 6_500);
     };
     schedule();
     return () => window.clearTimeout(timer);
-  }, [clock, controller, playRoomMoment, state.niumpi.sleeping]);
+  }, [clock, controller, patch, playRoomMoment, say, state.niumpi.sleeping]);
 
   const act = useCallback((action: CareActionId) => {
     run(gesture(state, action, clock()));
@@ -243,16 +254,13 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
       </div>
 
       {showBubble && (
-        <div className="speech-bubble">
-          <MoodLeafBadge
-            mood={mood}
-            petName={name}
-            onOpen={() => say(`My leaf is ${leafInfo.label.toLowerCase()} — ${leafInfo.leaf.toLowerCase()}.`)}
-          />
+        <div className="speech-bubble" key={message}>
+          <span className="speech-speaker">{name}</span>
           <span className="speech-message">
-            <p className="speech-text" aria-live="polite">{message}</p>
+            <p className="speech-text" aria-live="polite" aria-atomic="true">{message}</p>
             <Art name="spark" size={13} className="speech-spark" />
           </span>
+          <span className="speech-trail" aria-hidden="true"><i /><i /><i /></span>
         </div>
       )}
 
@@ -291,25 +299,6 @@ function SparkLayer() {
         </span>
       ))}
     </div>
-  );
-}
-
-export function MoodLeafBadge({ mood, petName, onOpen }: { mood: string; petName: string; onOpen: () => void }) {
-  const { cue } = useGame();
-  const info = moodTable[mood as keyof typeof moodTable];
-  return (
-    <button
-      className={`mood-badge mood-${info.colour}`}
-      type="button"
-      aria-label={`${petName} feels ${info.label.toLowerCase()}. ${info.leaf}.`}
-      onClick={() => { cue("blip"); onOpen(); }}
-    >
-      <span className={`mood-leaf motion-${info.motion}`} aria-hidden="true" />
-      <span className="mood-copy">
-        <strong>{petName}</strong>
-        <span>{info.label} · {info.leaf.toLowerCase()}</span>
-      </span>
-    </button>
   );
 }
 

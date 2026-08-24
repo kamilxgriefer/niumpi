@@ -7,7 +7,7 @@ import { hashSeed, makeRng, pickWeighted } from "./rng.ts";
 import { seedMap } from "./config/seeds.ts";
 
 /** Recent lines are remembered so the same thing is never said twice running. */
-export const DIALOGUE_MEMORY = 8;
+export const DIALOGUE_MEMORY = 18;
 
 export function chooseLine(state: GameState, now: number): { text: string; id: string } {
   const mood = moodFor(state, now);

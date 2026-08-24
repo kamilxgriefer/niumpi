@@ -29,11 +29,7 @@
     grid-template-areas: "bubble" "pet" "stats";
   }
   .stage-aside { justify-self: stretch; width: 100%; }
-  .speech-bubble { max-width: 100%; }
-  .speech-bubble::after {
-    left: 48%; right: auto; bottom: -9px;
-    rotate: 45deg;
-  }
+  .speech-bubble { width: min(420px, calc(100% - 28px)); bottom: 55%; }
   .seed-care-layout { grid-template-columns: minmax(0, 1fr); width: min(700px, 100%); }
 
   /* The room is painted across the whole stage, which is right on desktop
@@ -109,6 +105,9 @@
   .hero-panel { padding: var(--s-3); border-radius: var(--r-xl); }
   .home-side { grid-template-columns: minmax(0, 1fr); }
   .companion-stage { min-height: 300px; padding: var(--s-3); }
+  .speech-bubble { bottom: 57%; padding: 9px 13px 10px; border-radius: 15px; }
+  .speech-speaker { font-size: 9px; }
+  .speech-text { font-size: .88rem; }
   .mood-badge { padding: 6px 12px 6px 8px; }
 
   /* The snack rail scrolls sideways, each treat keeping a deliberate width. */
