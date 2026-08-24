@@ -1,12 +1,10 @@
 "use client";
 
 import { lazy, Suspense } from "react";
-import { motion } from "motion/react";
 import { useGame } from "./GameProvider";
 import { HomeScene } from "../scenes/HomeScene";
 import { SeedChamberScene } from "../scenes/SeedChamberScene";
 import { CompanionScene } from "../scenes/CompanionScene";
-import { easeOut, sceneVariants } from "../anim/transitions";
 import { LockedState } from "./parts";
 import { Brand } from "./Brand";
 import type { SceneId } from "../game/types";
@@ -51,14 +49,18 @@ export function SceneRouter() {
   const Scene = registry[active] ?? HomeScene;
 
   return (
-    <motion.main
-      key={active}
-      className="scene-host"
-      variants={sceneVariants}
-      initial="enter"
-      animate="center"
-      transition={easeOut}
-    >
+    /*
+     * Deliberately not animated.
+     *
+     * A 16px slide on this container moved every control in the scene for
+     * ~300ms after mount — and the router remounts it when `ready` flips and
+     * `active` changes, so the slide replayed just as the first controls became
+     * clickable. Measured: 13.7px of travel still in progress at the moment a
+     * button first appears. That is a button sliding out from under a finger,
+     * which matters more for this audience than the flourish was worth, and it
+     * was the cause of clicks landing on a moving target.
+     */
+    <main key={active} className="scene-host">
       {!ready ? (
         <SceneSkeleton />
       ) : unlock.open ? (
@@ -68,7 +70,7 @@ export function SceneRouter() {
       ) : (
         <div className="scene"><LockedState note={unlock.note} /></div>
       )}
-    </motion.main>
+    </main>
   );
 }
 

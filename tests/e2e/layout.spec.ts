@@ -2,6 +2,8 @@ import { expect, test, type Page } from "@playwright/test";
 
 const SAVE_KEY = "niumpi-save-v5";
 const LEGACY_KEYS = ["niumpi-save-v4", "niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
+/** Marks a context as already seeded so reloads read what the game wrote. */
+const SEED_SENTINEL = "__e2e_seeded";
 
 type Viewport = { name: string; width: number; height: number };
 
@@ -17,7 +19,7 @@ const PHONE: Viewport = { name: "phone", width: 390, height: 844 };
 function fixture() {
   const now = 1787000000000;
   return {
-    version: 4,
+    version: 5,
     profile: {
       id: "layout-audit", createdAt: now, lastSeenAt: now,
       settings: { sound: false, music: false, effects: true, reducedMotion: "on", lowPower: false, seedQuestions: true, shareProfile: false },
@@ -36,19 +38,45 @@ function fixture() {
   };
 }
 
+/**
+ * Seeds the save before any application code runs.
+ *
+ * Writing it with page.evaluate after a first navigation raced the game's own
+ * boot: whichever landed second won, and when the game won it persisted a fresh
+ * unhatched state. The router then sent the test to the Seed Chamber, and the
+ * failure surfaced as a confusing "`.rig-root` not found". An init script runs
+ * ahead of page scripts, so there is no ordering to lose.
+ *
+ * The guard matters as much as the seeding: init scripts re-run on every
+ * navigation, so without it a reload would wipe whatever the game had saved and
+ * the persistence tests would be meaningless.
+ */
+async function seedSave(page: Page, save: unknown | null) {
+  await page.addInitScript(
+    ([key, legacy, sentinel, value]) => {
+      if (window.localStorage.getItem(sentinel as string)) return;
+      for (const stale of legacy as string[]) window.localStorage.removeItem(stale);
+      if (value === null) window.localStorage.removeItem(key as string);
+      else window.localStorage.setItem(key as string, JSON.stringify(value));
+      window.localStorage.setItem(sentinel as string, "1");
+    },
+    [SAVE_KEY, LEGACY_KEYS, SEED_SENTINEL, save],
+  );
+}
+
 async function openScene(page: Page, scene: string, viewport: Viewport) {
   await page.setViewportSize({ width: viewport.width, height: viewport.height });
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.evaluate(
-    ([key, legacy, save]) => {
-      for (const stale of legacy as string[]) window.localStorage.removeItem(stale);
-      window.localStorage.setItem(key as string, JSON.stringify(save));
-    },
-    [SAVE_KEY, LEGACY_KEYS, fixture()],
-  );
+  await seedSave(page, fixture());
   await page.goto(`/?scene=${scene}`, { waitUntil: "domcontentloaded" });
   await expect(page.locator(".scene-host")).toBeVisible({ timeout: 30_000 });
   await expect(page.locator(".scene-skeleton")).toHaveCount(0, { timeout: 30_000 });
+  // The fixture is hatched, so landing on the Seed Chamber means the save did
+  // not take. Say that plainly instead of failing later on a missing element.
+  await expect(
+    page.locator(".scene-seed"),
+    "save fixture did not load — the game fell back to the Seed Chamber",
+  ).toHaveCount(0, { timeout: 30_000 });
 }
 
 /** Every structural guarantee the shell must hold, at any size. */

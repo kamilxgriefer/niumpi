@@ -10,22 +10,17 @@ export const easeSnappy: Transition = { duration: 0.18, ease: [0.22, 0.9, 0.3, 1
 export const spring: Transition = { type: "spring", stiffness: 320, damping: 30, mass: 0.7 };
 
 /**
- * Scene entry animates transform only. Content visibility must never depend on
- * an animation finishing — a throttled or interrupted frame loop would
- * otherwise leave a whole scene stuck at zero opacity.
+ * Kept for reference, no longer applied to the scene container.
+ *
+ * Animating the scene root moved every control inside it for ~300ms after
+ * mount, and the router remounts that container once the save has loaded, so
+ * the movement replayed exactly when the first buttons became clickable.
+ * Scene entry is now instant; per-element motion lives on the elements.
  */
 export const sceneVariants: Variants = {
   enter: { y: 16 },
   center: { y: 0 },
 };
-
-/** Spread onto a motion element for a standard fade-and-lift. */
-export const fadeSlide = {
-  initial: { opacity: 0, y: 10 },
-  animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -6 },
-  transition: easeOut,
-} as const;
 
 /**
  * Enter-only lift. No exit and no opacity, so a view is always visible the
