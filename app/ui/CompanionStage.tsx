@@ -55,12 +55,15 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
   const rigRef = useNiumpiController(controller);
   const pointer = useRef<{ at: number; x: number; y: number; distance: number; dir: number; flips: number } | null>(null);
   const lastMoment = useRef<RoomMoment | null>(null);
+  const latestState = useRef(state);
   const [roomMoment, setRoomMoment] = useState<AnimState>("idle");
 
   const mood = moodFor(state, now);
   const name = state.niumpi.name || "Niumpi";
   const visualStage = visualStageFor(state.niumpi.careMoments, state.niumpi.stage);
   const leafInfo = moodTable[mood];
+
+  useEffect(() => { latestState.current = state; }, [state]);
 
   /* The controller owns rest state; React only tells it when sleep flips. */
   useEffect(() => {
@@ -80,17 +83,18 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
   }), [controller]);
 
   const playRoomMoment = useCallback((moment: RoomMoment, announce = true) => {
-    if (state.niumpi.sleeping || controller.getState() !== "idle") return;
+    const current = latestState.current;
+    if (current.niumpi.sleeping || controller.getState() !== "idle") return;
     const scene = ROOM_MOMENTS.find((entry) => entry.state === moment);
     if (!scene) return;
     lastMoment.current = moment;
     controller.setPosition(scene.x, scene.y);
     controller.setGaze(scene.gazeX, scene.gazeY);
     controller.request(scene.state);
-    if (moment === "lamp" && !state.niumpi.lampOn) run(toggleLamp(state));
+    if (moment === "lamp" && !current.niumpi.lampOn) run(toggleLamp(current));
     if (announce) say(scene.line);
     cue(scene.sound);
-  }, [controller, cue, run, say, state]);
+  }, [controller, cue, run, say]);
 
   /* One leisurely repertoire replaces the old fixed wander metronome. */
   useEffect(() => {
