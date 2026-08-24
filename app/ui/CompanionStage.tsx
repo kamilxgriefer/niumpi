@@ -14,6 +14,8 @@ import { dayPartAt } from "../game/time";
 import { sparkStyle } from "./parts";
 import type { CareActionId } from "../game/types";
 import type { AnimState } from "../anim/NiumpiAnimationController";
+import { chooseLearnedRoomMoment, learnedRoomLine } from "../game/behavior";
+import type { RoomMomentId } from "../game/behavior";
 
 /** Held longer than this counts as a hug rather than a tap. */
 const HOLD_MS = 620;
@@ -21,10 +23,8 @@ const HOLD_MS = 620;
 const PET_DISTANCE = 30;
 /** A fast back-and-forth drag reads as tickling. */
 const TICKLE_REVERSALS = 3;
-type RoomMoment = "wander" | "book" | "window" | "lamp" | "roll" | "dancing" | "singing" | "peek" | "stretch";
-
 const ROOM_MOMENTS: Array<{
-  state: RoomMoment; x: number; y: number; gazeX: number; gazeY: number;
+  state: RoomMomentId; x: number; y: number; gazeX: number; gazeY: number;
   line: string; sound: "blip" | "leaf" | "tap" | "pet" | "chime";
 }> = [
   { state: "book", x: -76, y: 2, gazeX: -12, gazeY: -6, line: "This one has a map inside.", sound: "blip" },
@@ -51,10 +51,10 @@ type Props = {
 };
 
 export function CompanionStage({ targeting = false, onDropFood, children, compact, showBubble = true }: Props) {
-  const { state, now, run, message, controller, say, clock } = useGame();
+  const { state, now, run, message, controller, say, cue, clock } = useGame();
   const rigRef = useNiumpiController(controller);
   const pointer = useRef<{ at: number; x: number; y: number; distance: number; dir: number; flips: number } | null>(null);
-  const lastMoment = useRef<RoomMoment | null>(null);
+  const lastMoment = useRef<RoomMomentId | null>(null);
   const latestState = useRef(state);
   const [roomMoment, setRoomMoment] = useState<AnimState>("idle");
 
@@ -74,15 +74,20 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     controller.setTargeted(targeting);
   }, [controller, targeting]);
 
-  useEffect(() => controller.subscribeState((next) => {
-    setRoomMoment(next);
-    if (next === "idle") {
-      controller.setPosition(0, 0);
-      controller.setGaze(0, 0);
-    }
-  }), [controller]);
+  useEffect(() => {
+    const unsubscribe = controller.subscribeState((next) => {
+      setRoomMoment(next);
+      if (next === "idle") {
+        controller.setPosition(0, 0);
+        controller.setGaze(0, 0);
+      }
+    });
+    // subscribeState hands back Set.delete, which returns a boolean — an effect
+    // cleanup has to return void, so call it rather than hand it straight back.
+    return () => { unsubscribe(); };
+  }, [controller]);
 
-  const playRoomMoment = useCallback((moment: RoomMoment, announce = true) => {
+  const playRoomMoment = useCallback((moment: RoomMomentId, announce = true) => {
     const current = latestState.current;
     if (current.niumpi.sleeping || controller.getState() !== "idle") return;
     const scene = ROOM_MOMENTS.find((entry) => entry.state === moment);
@@ -92,9 +97,9 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     controller.setGaze(scene.gazeX, scene.gazeY);
     controller.request(scene.state);
     if (moment === "lamp" && !current.niumpi.lampOn) run(toggleLamp(current));
-    if (announce) say(scene.line);
+    if (announce) say(learnedRoomLine(current, clock(), moment, scene.line));
     cue(scene.sound);
-  }, [controller, cue, run, say]);
+  }, [clock, controller, cue, run, say]);
 
   /* One leisurely repertoire replaces the old fixed wander metronome. */
   useEffect(() => {
@@ -103,16 +108,15 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     const schedule = () => {
       timer = window.setTimeout(() => {
         if (controller.getState() === "idle") {
-          const pool = ROOM_MOMENTS.filter((entry) => entry.state !== lastMoment.current);
-          const scene = pool[Math.floor(Math.random() * pool.length)];
-          playRoomMoment(scene.state);
+          const moment = chooseLearnedRoomMoment(latestState.current, clock(), Math.random(), lastMoment.current);
+          playRoomMoment(moment);
         }
         schedule();
       }, 8_000 + Math.random() * 9_000);
     };
     schedule();
     return () => window.clearTimeout(timer);
-  }, [controller, playRoomMoment, state.niumpi.sleeping]);
+  }, [clock, controller, playRoomMoment, state.niumpi.sleeping]);
 
   const act = useCallback((action: CareActionId) => {
     run(gesture(state, action, clock()));

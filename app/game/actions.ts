@@ -170,10 +170,22 @@ export function gesture(state: GameState, action: CareActionId, now: number): Ac
   if (signals[action]) next = addSignal(next, signals[action]!);
   if (dayPartAt(now) === "night") next = addSignal(next, "night", 0.34);
 
-  next = {
-    ...next,
-    stats: applyStat(next.stats, "joy", action === "hug" || action === "comfort" ? 5 : 3),
+  const relationshipEffects: Partial<Record<CareActionId, Partial<Record<"joy" | "comfort" | "trust" | "curiosity" | "wellbeing" | "energy", number>>>> = {
+    pet: { joy: 3, comfort: 2, trust: 1 },
+    hug: { joy: 5, comfort: 5, trust: 2, wellbeing: 1 },
+    comfort: { joy: 5, comfort: 7, trust: 3, wellbeing: 2 },
+    brush: { joy: 3, comfort: 3, trust: 1 },
+    leaf: { joy: 2, curiosity: 2, trust: 1 },
+    tickle: { joy: 4, energy: -2 },
+    dance: { joy: 5, energy: -3 },
+    sing: { joy: 4, comfort: 2, trust: 1 },
+    toy: { joy: 4, curiosity: 1 },
   };
+  let learnedStats = next.stats;
+  for (const [id, delta] of Object.entries(relationshipEffects[action] ?? {})) {
+    learnedStats = applyStat(learnedStats, id as "joy" | "comfort" | "trust" | "curiosity" | "wellbeing" | "energy", delta ?? 0);
+  }
+  next = { ...next, stats: learnedStats };
   if (state.niumpi.sleeping) {
     next = { ...next, niumpi: { ...next.niumpi, sleeping: false, sleepStartedAt: null } };
   }

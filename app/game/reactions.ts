@@ -74,6 +74,9 @@ export function reactToGesture(state: GameState, action: CareActionId, now: numb
   if (mood === "upset" && action === "comfort") {
     return { text: "Thank you for staying.", behavior: "happy", spark: "♡", sound: "hold" };
   }
+  if (mood === "upset" && (action === "tickle" || action === "dance")) {
+    return { text: "Could we have a gentle moment first?", behavior: "sway", spark: "·", sound: "blip", refused: true };
+  }
   if (mood === "hungry" && action === "pet") {
     return { text: "That's nice… but also, snacks?", behavior: "curious", spark: "♡", sound: "pet" };
   }
@@ -83,7 +86,7 @@ export function reactToGesture(state: GameState, action: CareActionId, now: numb
 
   const behaviorByAction: Record<string, string> = {
     pet: "happy", hug: "happy", tickle: "spin", brush: "curious", leaf: "curious",
-    dance: "spin", comfort: "happy", sing: "float", toy: "happy", wake: "happy",
+    dance: "dancing", comfort: "happy", sing: "singing", toy: "happy", wake: "happy",
   };
   const soundByAction: Record<string, string> = {
     pet: "pet", hug: "hold", tickle: "tap", brush: "leaf", leaf: "leaf",
