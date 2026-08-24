@@ -328,3 +328,18 @@
 .dev-row button { padding: 5px 9px; color: var(--text); background: rgb(255 255 255 / 10%); border: 0; border-radius: 7px; font-size: 11px; }
 .dev-row input[type="range"] { flex: 1; min-width: 90px; }
 .dev-vectors { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px; color: var(--text-faint); font-size: 11px; }
+
+/* --------------------------------------------------------- the touch floor --
+ *
+ * Measured on the running app: sound toggle 38px, cook 38px, tabs 36px, trait
+ * chips 36px, panel-open 34px. All of them are things a child taps, and the
+ * product sets its own 44px minimum in tokens.css — it just was not applied.
+ */
+.sound-toggle,
+.snack-cook,
+.tab,
+.trait-chip,
+.panel-open,
+.mission-claim {
+  min-height: var(--tap, 44px);
+}

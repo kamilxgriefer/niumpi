@@ -78,13 +78,18 @@ function settle(state: GameState, now: number, toasts: ActionResult["toasts"], r
   return next;
 }
 
-/** Seed Chamber — the three pre-hatch actions. */
+/** Seed Chamber — the four-part pre-hatch care ritual. */
 export function seedAction(state: GameState, id: string, now: number): ActionResult {
   const action = seedActions.find((entry) => entry.id === id);
   if (!action || state.niumpi.hatchedAt) return empty(state);
-  const lastAt = state.niumpi.seedActions[`${id}:at`] ?? 0;
+  // The whole shell needs time to respond. A per-tool cooldown let players
+  // press every card in a burst and complete the supposed ritual in seconds.
+  const lastAt = seedActions.reduce(
+    (latest, entry) => Math.max(latest, state.niumpi.seedActions[`${entry.id}:at`] ?? 0),
+    0,
+  );
   if (now - lastAt < SEED_COOLDOWN_MS) {
-    return { ...empty(state), message: "It needs a moment to settle.", refused: true };
+    return { ...empty(state), message: "Hold still… the shell is answering.", refused: true };
   }
   const care = recordCare(state, id as CareActionId, now, action.vectors);
   const progress = Math.min(1, state.niumpi.seedProgress + SEED_STEP);
@@ -101,9 +106,13 @@ export function seedAction(state: GameState, id: string, now: number): ActionRes
     },
   };
   const messages: Record<string, string> = {
-    warm: "It grows warmer under your hands.",
-    dewdrop: "The drop runs down and disappears inside.",
-    hum: "Something inside hums the note back.",
+    brush: "A tiny pulse follows your hand around the shell.",
+    dewdrop: "The dust lifts away. Something inside leans toward the cool water.",
+    warm: "The blanket rises once, as if something underneath took a breath.",
+    hum: "A second note answers yours from inside.",
+  };
+  const sounds: Record<string, "pet" | "leaf" | "hold" | "chime"> = {
+    brush: "pet", dewdrop: "leaf", warm: "hold", hum: "chime",
   };
   const toasts: ActionResult["toasts"] = [];
   const rewards: Reward[] = [];
@@ -112,7 +121,7 @@ export function seedAction(state: GameState, id: string, now: number): ActionRes
     message: messages[id],
     behavior: "idle",
     spark: "✧",
-    sound: "blip",
+    sound: sounds[id] ?? "blip",
     rewards,
     toasts,
   };

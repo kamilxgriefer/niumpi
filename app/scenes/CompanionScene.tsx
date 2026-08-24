@@ -6,6 +6,7 @@ import { useFoodDrop } from "../ui/useFoodDrop";
 import { SnackBar } from "../ui/SnackBar";
 import { Art } from "../ui/Art";
 import { Modal, StatRow } from "../ui/parts";
+import { PersonalityPanel } from "../ui/homeCards";
 import { useGame } from "../ui/GameProvider";
 import { gesture, sleep, playWithItem, wake } from "../game/actions";
 import { copy } from "../game/config/copy";
@@ -101,6 +102,10 @@ export function CompanionScene() {
           </ul>
         </Modal>
       )}
+
+      {/* Who they are becoming, beside the creature it describes. Home carries
+          only a one-line preview that leads here. */}
+      <PersonalityPanel />
     </div>
   );
 }

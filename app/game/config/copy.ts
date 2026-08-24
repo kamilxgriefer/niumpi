@@ -58,9 +58,9 @@ export const copy = {
     lowFullness: "Hungry", lowEnergy: "Tired", lowJoy: "Needs company",
   },
   seed: {
-    title: "Seed Chamber",
-    lead: "Something is waiting inside.",
-    hatching: "It's opening…",
+    title: "The First Care",
+    lead: "Before Niumpi opens their eyes, the seed learns your touch.",
+    hatching: "Stay close. It is almost here.",
     nameTitle: "What will you call them?",
     nameLead: "You can change this later — nothing is lost.",
   },

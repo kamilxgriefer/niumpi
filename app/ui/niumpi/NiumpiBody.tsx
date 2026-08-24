@@ -49,7 +49,8 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
   const rise = tipRise(body);
   // Short stems on a small creature, longer as the tip grows, but never so long
   // that the leaves float away from the head.
-  const leafH = 26 + rise * 0.24;
+  const leafScale = profile.leaves >= 5 ? 0.84 : profile.leaves >= 3 ? 0.92 : 1;
+  const leafH = (26 + rise * 0.24) * leafScale;
   const leafW = leafH * 0.42;
   const angles = LEAF_FAN[profile.leaves] ?? LEAF_FAN[3];
 
@@ -145,28 +146,39 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
         {angles.map((angle, index) => (
           <g
             key={angle}
-            className={`nb-leaf nb-leaf-${index + 1}`}
-            style={{ ["--leaf-angle" as string]: `${angle}deg`, ["--leaf-delay" as string]: `${index * -0.7}s` }}
+            className={`nb-leaf-anchor nb-leaf-anchor-${index + 1}`}
             transform={`translate(${tipX} ${body.tipY + 4})`}
           >
-            <path d={leafShape(leafW, leafH)} fill={ref("nb-leaf")} />
-            <path
-              d={`M 0 -2 L 0 ${-leafH * 0.82}`}
-              stroke="var(--leaf-vein)"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              opacity="0.5"
-              fill="none"
-            />
-            {/* A sliver of light on the same side as everything else. */}
-            <path
-              d={`M ${-leafW * 0.34} ${-leafH * 0.3} C ${-leafW * 0.5} ${-leafH * 0.62} ${-leafW * 0.2} ${-leafH * 0.84} ${-leafW * 0.06} ${-leafH * 0.86}`}
-              stroke="var(--leaf-vein)"
-              strokeWidth="2"
-              strokeLinecap="round"
-              opacity="0.34"
-              fill="none"
-            />
+            {/*
+             * The anchor owns only the SVG translation to the tip. The inner
+             * group owns rotation and animation. Keeping those transforms on
+             * separate nodes prevents SVG transform-origin from rotating a
+             * leaf around a translated viewport coordinate and visually
+             * throwing mature leaves across the room.
+             */}
+            <g
+              className={`nb-leaf nb-leaf-${index + 1}`}
+              style={{ ["--leaf-angle" as string]: `${angle}deg`, ["--leaf-delay" as string]: `${index * -0.7}s` }}
+            >
+              <path d={leafShape(leafW, leafH)} fill={ref("nb-leaf")} />
+              <path
+                d={`M 0 -2 L 0 ${-leafH * 0.82}`}
+                stroke="var(--leaf-vein)"
+                strokeWidth="1.4"
+                strokeLinecap="round"
+                opacity="0.5"
+                fill="none"
+              />
+              {/* A sliver of light on the same side as everything else. */}
+              <path
+                d={`M ${-leafW * 0.34} ${-leafH * 0.3} C ${-leafW * 0.5} ${-leafH * 0.62} ${-leafW * 0.2} ${-leafH * 0.84} ${-leafW * 0.06} ${-leafH * 0.86}`}
+                stroke="var(--leaf-vein)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.34"
+                fill="none"
+              />
+            </g>
           </g>
         ))}
       </g>

@@ -173,8 +173,15 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
 
       {showBubble && (
         <div className="speech-bubble">
-          <p className="speech-text" aria-live="polite">{message}</p>
-          <Art name="spark" size={13} className="speech-spark" />
+          <MoodLeafBadge
+            mood={mood}
+            petName={name}
+            onOpen={() => say(`My leaf is ${leafInfo.label.toLowerCase()} — ${leafInfo.leaf.toLowerCase()}.`)}
+          />
+          <span className="speech-message">
+            <p className="speech-text" aria-live="polite">{message}</p>
+            <Art name="spark" size={13} className="speech-spark" />
+          </span>
         </div>
       )}
 
@@ -197,8 +204,6 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         <SparkLayer />
       </div>
 
-      <MoodLeafBadge mood={mood} onOpen={() => say(`My leaf is ${leafInfo.label.toLowerCase()} — ${leafInfo.leaf.toLowerCase()}.`)} />
-
       {children && <div className="stage-aside">{children}</div>}
     </div>
   );
@@ -218,19 +223,20 @@ function SparkLayer() {
   );
 }
 
-export function MoodLeafBadge({ mood, onOpen }: { mood: string; onOpen: () => void }) {
+export function MoodLeafBadge({ mood, petName, onOpen }: { mood: string; petName: string; onOpen: () => void }) {
   const { cue } = useGame();
   const info = moodTable[mood as keyof typeof moodTable];
   return (
     <button
       className={`mood-badge mood-${info.colour}`}
       type="button"
+      aria-label={`${petName} feels ${info.label.toLowerCase()}. ${info.leaf}.`}
       onClick={() => { cue("blip"); onOpen(); }}
     >
       <span className={`mood-leaf motion-${info.motion}`} aria-hidden="true" />
       <span className="mood-copy">
-        <strong>{info.label}</strong>
-        <span>{info.leaf}</span>
+        <strong>{petName}</strong>
+        <span>{info.label} · {info.leaf.toLowerCase()}</span>
       </span>
     </button>
   );

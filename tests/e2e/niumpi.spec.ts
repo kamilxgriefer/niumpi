@@ -33,7 +33,7 @@ async function seedSave(page: Page, save: unknown | null) {
 async function openFreshGame(page: Page) {
   await seedSave(page, null);
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("heading", { name: "Seed Chamber" })).toBeVisible({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "The First Care" })).toBeVisible({ timeout: 30_000 });
 }
 
 /**
@@ -99,8 +99,8 @@ test("loads the game without browser errors", async ({ page }) => {
   await openFreshGame(page);
 
   await expect(page).toHaveTitle(/Niumpi/i);
-  await expect(page.getByRole("heading", { name: "Seed Chamber" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Warm the seed/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The First Care" })).toBeVisible();
+  await expect(page.getByRole("button", { name: /Stroke the shell/ }).first()).toBeVisible();
 
   expect(browserErrors).toEqual([]);
 });
@@ -108,7 +108,7 @@ test("loads the game without browser errors", async ({ page }) => {
 test("a care action on the seed is recorded and survives a reload", async ({ page }) => {
   await openFreshGame(page);
 
-  await page.getByRole("button", { name: /Warm the seed/ }).click();
+  await page.getByRole("button", { name: /^Stroke the shell/ }).last().click();
 
   // The action must reach the saved state, not just the screen.
   await expect.poll(async () => (await readSave(page))?.niumpi?.seedProgress ?? 0).toBeGreaterThan(0);
@@ -302,4 +302,34 @@ test("the hatchling wears a single leaf and no arms", async ({ page }) => {
   // first stage read as an adult.
   await expect(page.locator(".nb-arm")).toHaveCount(0);
   await expect(page.locator(".rig-root")).toHaveClass(/arms-none/);
+});
+
+test("the five-leaf crown stays attached to a mature Niumpi", async ({ page }) => {
+  await openHatchedGame(page, { niumpi: hatchedAs(4) });
+
+  const rig = page.locator(".rig-root").first();
+  const leaves = page.locator(".nb-leaf");
+  await expect(rig).toHaveClass(/growth-stage-4/);
+  await expect(leaves).toHaveCount(5);
+
+  const rigBox = await rig.boundingBox();
+  const leafBoxes = await leaves.evaluateAll((nodes) => nodes.map((node) => {
+    const box = node.getBoundingClientRect();
+    return { left: box.left, right: box.right, top: box.top, bottom: box.bottom };
+  }));
+  if (!rigBox) throw new Error("mature rig has no box");
+
+  const crownLeft = Math.min(...leafBoxes.map((box) => box.left));
+  const crownRight = Math.max(...leafBoxes.map((box) => box.right));
+  const crownTop = Math.min(...leafBoxes.map((box) => box.top));
+  const crownBottom = Math.max(...leafBoxes.map((box) => box.bottom));
+
+  // A crown belongs in the upper half of the rig, spans a visible fan, and
+  // remains fully inside its creature. This catches the SVG transform bug that
+  // threw individual leaves into unrelated parts of the room.
+  expect(crownLeft).toBeGreaterThanOrEqual(rigBox.x - 1);
+  expect(crownRight).toBeLessThanOrEqual(rigBox.x + rigBox.width + 1);
+  expect(crownTop).toBeGreaterThanOrEqual(rigBox.y - 1);
+  expect(crownBottom).toBeLessThan(rigBox.y + rigBox.height * 0.42);
+  expect(crownRight - crownLeft).toBeGreaterThan(rigBox.width * 0.18);
 });

@@ -495,7 +495,7 @@ test("features open on care and time, and never close again", () => {
 test("the seed only hatches once it is fully ready", () => {
   let state = fresh();
   assert.equal(hatch(state, NOW).state.niumpi.hatchedAt, null);
-  for (let index = 0; index < 8; index += 1) {
+  for (let index = 0; index < 14; index += 1) {
     state = seedAction(state, "warm", NOW + index * 10_000).state;
   }
   assert.equal(state.niumpi.seedProgress, 1);
@@ -507,7 +507,9 @@ test("the seed only hatches once it is fully ready", () => {
 test("seed actions respect their cooldown", () => {
   const first = seedAction(fresh(), "warm", NOW);
   const tooSoon = seedAction(first.state, "warm", NOW + 500);
+  const switchedTool = seedAction(first.state, "brush", NOW + 500);
   assert.equal(tooSoon.refused, true);
+  assert.equal(switchedTool.refused, true);
   assert.equal(tooSoon.state.niumpi.seedProgress, first.state.niumpi.seedProgress);
 });
 

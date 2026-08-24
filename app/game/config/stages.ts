@@ -24,24 +24,33 @@ export function nextStage(stage: StageId): StageDef | null {
   return stageMap[stage + 1] ?? null;
 }
 
-/** Seed actions available before hatching, and what each one gives. */
+/**
+ * The pre-hatch care ritual. Each tool has a physical reason to exist and a
+ * distinct effect on the shell; it is not a row of interchangeable progress
+ * buttons. The ids intentionally reuse real care actions so the first minutes
+ * already begin shaping Niumpi's personality.
+ */
 export const seedActions = [
-  { id: "warm", label: "Warm the seed", note: "Cup both hands around it", art: "warm", vectors: { loving: 3, calm: 1 } },
-  { id: "dewdrop", label: "Give a dewdrop", note: "One clear drop on the shell", art: "drop", vectors: { curious: 3, nature: 1 } },
-  { id: "hum", label: "Hum to the seed", note: "Any tune, quietly", art: "note", vectors: { creative: 3, dream: 1 } },
+  { id: "brush", label: "Stroke the shell", note: "Slow circles with a warm hand", art: "heart", fx: "stroke", vectors: { loving: 3, calm: 1 } },
+  { id: "dewdrop", label: "Wash with dewdrops", note: "A soft cloth and clear water", art: "drop", fx: "wash", vectors: { curious: 2, nature: 2 } },
+  { id: "warm", label: "Wrap it in a blanket", note: "Keep the little heartbeat warm", art: "warm", fx: "blanket", vectors: { loving: 2, calm: 3 } },
+  { id: "hum", label: "Hum a little melody", note: "Listen for an answer inside", art: "note", fx: "hum", vectors: { creative: 3, dream: 2 } },
 ] as const;
 
-/** How far one seed action moves the shell, and the cooldown between them. */
-export const SEED_STEP = 0.16;
-export const SEED_COOLDOWN_MS = 4_000;
+/**
+ * Thirteen calm interactions, with one shared settling beat between them,
+ * turns hatching into a short relationship rather than a seven-click form.
+ */
+export const SEED_STEP = 0.08;
+export const SEED_COOLDOWN_MS = 3_200;
 
 /** Shell states the Seed Chamber walks through as progress climbs. */
 export const seedPhases = [
-  { at: 0, key: "calm", label: "Still" },
-  { at: 0.2, key: "glowing", label: "Glowing" },
-  { at: 0.4, key: "stirring", label: "Stirring" },
-  { at: 0.6, key: "cracked", label: "First crack" },
-  { at: 0.82, key: "breaking", label: "Breaking open" },
+  { at: 0, key: "calm", label: "Listening" },
+  { at: 0.2, key: "glowing", label: "Finding warmth" },
+  { at: 0.4, key: "stirring", label: "A tiny heartbeat" },
+  { at: 0.6, key: "cracked", label: "The first answer" },
+  { at: 0.82, key: "breaking", label: "Almost ready" },
   { at: 1, key: "hatching", label: "Hatching" },
 ];
 

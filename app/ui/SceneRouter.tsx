@@ -7,6 +7,7 @@ import { SeedChamberScene } from "../scenes/SeedChamberScene";
 import { CompanionScene } from "../scenes/CompanionScene";
 import { LockedState } from "./parts";
 import { Brand } from "./Brand";
+import { SceneAtmosphere } from "./SceneAtmosphere";
 import type { SceneId } from "../game/types";
 
 /**
@@ -59,8 +60,9 @@ export function SceneRouter() {
      * button first appears. That is a button sliding out from under a finger,
      * which matters more for this audience than the flourish was worth, and it
      * was the cause of clicks landing on a moving target.
-     */
+    */
     <main key={active} className="scene-host">
+      <SceneAtmosphere scene={active} />
       {!ready ? (
         <SceneSkeleton />
       ) : unlock.open ? (
