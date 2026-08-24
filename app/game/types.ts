@@ -36,6 +36,12 @@ export type CurrencyId = "dewdrops" | "starFragments";
 
 export type ItemCategory = "furniture" | "plants" | "toys" | "lights" | "themes" | "accessories" | "music";
 
+/** Stable identifiers for the spaces that make up Niumpi's home. */
+export type RoomId = "living-room" | "bedroom" | "play-nook";
+
+/** Contextual activities performed with the room itself, not a placed item. */
+export type RoomActivityId = "read" | "window" | "rest" | "roll" | "dance" | "sing";
+
 /** A gesture or activity that can earn a care moment. */
 export type CareActionId =
   | "pet" | "hug" | "tickle" | "brush" | "leaf" | "dance" | "comfort" | "sing"
@@ -125,7 +131,25 @@ export type PlacedItem = {
   layer: number;
 };
 
+export type RoomSpace = {
+  id: RoomId;
+  theme: string;
+  placed: PlacedItem[];
+  /** Unlocks are permanent once earned. */
+  unlockedAt: number | null;
+  visits: number;
+  lastVisitedAt: number | null;
+  /** Per-activity/item history lets rooms grow more personal over time. */
+  interactions: Record<string, number>;
+};
+
 export type RoomLayout = {
+  activeRoomId: RoomId;
+  rooms: Record<RoomId, RoomSpace>;
+  /**
+   * Compatibility mirror of the active room. Existing UI can keep reading
+   * these fields while the multi-room interface is introduced incrementally.
+   */
   theme: string;
   placed: PlacedItem[];
 };

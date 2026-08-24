@@ -8,7 +8,7 @@ import { weatherMap } from "./config/weather.ts";
 import { stageMap } from "./config/stages.ts";
 import { SEED_COOLDOWN_MS, SEED_STEP, seedActions } from "./config/stages.ts";
 import type {
-  CareActionId, GameState, MinigameId, PlacedItem, Reward, StageId, VectorId,
+  CareActionId, GameState, MinigameId, PlacedItem, Reward, RoomActivityId, RoomId, StageId, VectorId,
 } from "./types.ts";
 import { addSignal, discoverTrait, newlyDiscoveredTraits, recordCare, stageProgress } from "./care.ts";
 import { addTint, lockRoute, phenotypeFor } from "./evolution.ts";
@@ -21,6 +21,10 @@ import { dayPartAt } from "./time.ts";
 import { settleUnlocks } from "./unlocks.ts";
 import { alreadyClaimed, markClaimed } from "./persistence.ts";
 import { hashSeed, makeRng } from "./rng.ts";
+import { roomActivityMap, roomDefinitionMap } from "./config/rooms.ts";
+import {
+  activateRoom, newlyUnlockedRooms, recordRoomInteraction, saveActiveRoomLayout, settleRoomUnlocks,
+} from "./rooms.ts";
 
 export type ActionResult = {
   state: GameState;
@@ -53,6 +57,11 @@ function settle(state: GameState, now: number, toasts: ActionResult["toasts"], r
   next = settleUnlocks(next, now);
   for (const id of next.unlocks.filter((entry) => !before.unlocks.includes(entry))) {
     toasts.push({ text: `${id.charAt(0).toUpperCase()}${id.slice(1)} is open`, icon: "✦" });
+  }
+  const beforeRooms = next;
+  next = settleRoomUnlocks(next, now);
+  for (const id of newlyUnlockedRooms(beforeRooms, next)) {
+    toasts.push({ text: `${roomDefinitionMap[id].name} is open`, icon: "⌂" });
   }
   next = { ...next, phenotype: phenotypeFor(next) };
 
@@ -433,24 +442,24 @@ export function finishMinigame(
 
 export function placeItem(state: GameState, item: PlacedItem): GameState {
   const existing = state.room.placed.some((entry) => entry.uid === item.uid);
-  return {
-    ...state,
-    room: {
-      ...state.room,
-      placed: existing
-        ? state.room.placed.map((entry) => (entry.uid === item.uid ? item : entry))
-        : [...state.room.placed, item],
-    },
-  };
+  const placed = existing
+    ? state.room.placed.map((entry) => (entry.uid === item.uid ? item : entry))
+    : [...state.room.placed, item];
+  return saveActiveRoomLayout(state, placed, state.room.theme);
 }
 
 export function removeItem(state: GameState, uid: string): GameState {
-  return { ...state, room: { ...state.room, placed: state.room.placed.filter((entry) => entry.uid !== uid) } };
+  return saveActiveRoomLayout(
+    state,
+    state.room.placed.filter((entry) => entry.uid !== uid),
+    state.room.theme,
+  );
 }
 
 export function saveRoom(state: GameState, placed: PlacedItem[], theme: string, now: number): ActionResult {
   const care = recordCare(state, "decorate", now, { creative: 2 });
-  let next: GameState = { ...care.state, room: { theme, placed } };
+  let next = saveActiveRoomLayout(care.state, placed, theme);
+  next = recordRoomInteraction(next, "decorate", now);
   next = addSignal(next, "items", 0.5);
   next = progressMissions(next, "decorate", now);
   const toasts: ActionResult["toasts"] = [];
@@ -467,13 +476,95 @@ export function playWithItem(state: GameState, itemId: string, now: number): Act
   const care = recordCare(state, "toy", now, item.vectors);
   let next = care.state;
   next = { ...next, stats: applyStat(next.stats, "joy", 4) };
+  next = recordRoomInteraction(next, `item:${itemId}`, now);
   if (itemId === "telescope") next = addSignal(next, "stars", 1);
   if (itemId === "music-radio" || itemId === "wind-chimes") next = addSignal(next, "music", 1);
   if (itemId === "toy-chest" || itemId === "ball-of-yarn") next = addSignal(next, "items", 1);
   next = progressMissions(next, "toy", now);
   const toasts: ActionResult["toasts"] = [];
   const rewards: Reward[] = [];
-  return { state: settle(next, now, toasts, rewards), message: item.reaction, behavior: "happy", spark: "✦", sound: "blip", rewards, toasts };
+  const interaction = itemInteractionFor(itemId, item.category);
+  return {
+    state: settle(next, now, toasts, rewards),
+    message: item.reaction,
+    behavior: interaction.behavior,
+    spark: interaction.spark,
+    sound: interaction.sound,
+    rewards,
+    toasts,
+  };
+}
+
+/** Furniture keeps its own movement vocabulary instead of every object causing
+ * the same generic happy bounce. */
+function itemInteractionFor(itemId: string, category: string) {
+  if (["music-radio", "wind-chimes"].includes(itemId)) return { behavior: "singing", sound: "chime", spark: "♪" };
+  if (["star-rug"].includes(itemId)) return { behavior: "dancing", sound: "tap", spark: "♪" };
+  if (["ball-of-yarn", "toy-chest", "leaf-mobile"].includes(itemId)) return { behavior: "roll", sound: "tap", spark: "✦" };
+  if (["memory-shelf", "map-table"].includes(itemId)) return { behavior: "book", sound: "blip", spark: "✧" };
+  if (["telescope", "aurora-window"].includes(itemId)) return { behavior: "window", sound: "chime", spark: "✧" };
+  if (["moon-lamp", "paper-lanterns", "star-projector"].includes(itemId)) return { behavior: "lamp", sound: "chime", spark: "✦" };
+  if (["cloud-sofa", "cozy-cushion", "moon-bed", "dream-tent"].includes(itemId)) return { behavior: "sway", sound: "hold", spark: "♡" };
+  if (itemId === "little-mirror") return { behavior: "peek", sound: "blip", spark: "✦" };
+  if (category === "plants") return { behavior: "sway", sound: "leaf", spark: "✧" };
+  return { behavior: "happy", sound: "blip", spark: "✦" };
+}
+
+/** Changes rooms without leaking room-specific state into the navigation UI. */
+export function switchRoom(state: GameState, roomId: RoomId, now: number): ActionResult {
+  const switched = activateRoom(state, roomId, now);
+  if (switched.reason) {
+    return {
+      ...empty(state),
+      message: `${roomDefinitionMap[roomId].name} is still growing with you. ${switched.reason}.`,
+      refused: true,
+      sound: "blip",
+    };
+  }
+  if (!switched.changed) return empty(switched.state);
+  return {
+    ...empty(switched.state),
+    message: `Let's go to the ${roomDefinitionMap[roomId].name}.`,
+    behavior: "wander",
+    sound: "blip",
+  };
+}
+
+/**
+ * Performs an authored room activity as a pure game action. The UI only asks
+ * for an activity; eligibility, learning and progression all remain here.
+ */
+export function roomActivity(state: GameState, activityId: RoomActivityId, now: number): ActionResult {
+  const activity = roomActivityMap[activityId];
+  if (!activity || !activity.rooms.includes(state.room.activeRoomId)) {
+    return { ...empty(state), message: "That activity belongs in another room.", refused: true };
+  }
+  if (state.niumpi.sleeping && activityId !== "rest") {
+    return { ...empty(state), message: "Nium… after this nap.", behavior: "asleep", refused: true, sound: "sleep" };
+  }
+
+  const care = recordCare(state, activity.careAction, now, activity.vectors);
+  let next = care.state;
+  for (const [stat, amount] of Object.entries(activity.stats)) {
+    next = { ...next, stats: applyStat(next.stats, stat as keyof typeof next.stats, amount ?? 0) };
+  }
+  next = recordRoomInteraction(next, `activity:${activityId}`, now);
+  next = progressMissions(next, activity.careAction, now);
+  if (activityId === "dance" || activityId === "roll") next = addSignal(next, "dance", 0.75);
+  if (activityId === "sing") next = addSignal(next, "music", 1);
+  if (activityId === "read" || activityId === "window") next = addSignal(next, "explore", 0.75);
+
+  const toasts: ActionResult["toasts"] = [];
+  const rewards: Reward[] = [];
+  return {
+    state: settle(next, now, toasts, rewards),
+    message: activity.message,
+    behavior: activity.behavior,
+    sound: activity.sound,
+    spark: activityId === "sing" || activityId === "dance" ? "♪" : "✦",
+    rewards,
+    toasts,
+  };
 }
 
 export function recordWeatherDay(state: GameState, now: number): GameState {

@@ -5,6 +5,7 @@ import type {
   CareStats, GameState, PlacedItem, Plot, Settings, VectorId,
 } from "./types.ts";
 import { dayKeyFor, weekKeyFor } from "./time.ts";
+import { createRoomLayout, reconcileRoomLayout } from "./rooms.ts";
 
 export const SAVE_VERSION = 5;
 export const STORAGE_KEY = "niumpi-save-v5";
@@ -85,7 +86,7 @@ export function createGameState(now: number, id: string): GameState {
       items: [...starterItems],
       currencies: { dewdrops: 40, starFragments: 0 },
     },
-    room: { theme: "cozy", placed: starterLayout() },
+    room: createRoomLayout(now, starterLayout()),
     garden: { plots: starterPlots() },
     memories: [],
     dream: null,
@@ -187,7 +188,7 @@ export function reconcile(saved: Partial<GameState>, now: number): GameState {
       items: saved.inventory?.items ?? base.inventory.items,
       currencies: { ...base.inventory.currencies, ...saved.inventory?.currencies },
     },
-    room: { ...base.room, ...saved.room, placed: saved.room?.placed ?? base.room.placed },
+    room: reconcileRoomLayout(saved.room, base.room),
     garden: { plots: normalisePlots(saved.garden?.plots) },
     memories: saved.memories ?? [],
     missions: saved.missions ?? base.missions,
