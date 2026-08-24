@@ -12,6 +12,8 @@ import { onMotionChange, prefersReducedMotion } from "./motionPrefs.ts";
 
 export type AnimState =
   | "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep"
+  | "peek" | "sway" | "shimmy" | "stretch" | "ponder"
+  | "book" | "window" | "lamp" | "roll" | "singing"
   | "eating" | "hugging" | "petting" | "tickle" | "brushing" | "dancing"
   | "waking" | "hatching" | "evolving" | "gift" | "cooking" | "gardening" | "playing" | "returning";
 
@@ -26,6 +28,16 @@ const STATES: Record<AnimState, StateDef> = {
   idle: { priority: 0, duration: null },
   wander: { priority: 1, duration: 2_600 },
   float: { priority: 1, duration: 2_800 },
+  peek: { priority: 1, duration: 2_200 },
+  sway: { priority: 1, duration: 2_400 },
+  shimmy: { priority: 1, duration: 2_200 },
+  stretch: { priority: 1, duration: 1_900 },
+  ponder: { priority: 1, duration: 3_200 },
+  book: { priority: 1, duration: 5_200 },
+  window: { priority: 1, duration: 4_800 },
+  lamp: { priority: 1, duration: 3_200 },
+  roll: { priority: 2, duration: 2_600 },
+  singing: { priority: 2, duration: 4_000 },
   curious: { priority: 1, duration: 4_600 },
   sleepy: { priority: 1, duration: 3_400 },
   petting: { priority: 2, duration: 900 },
@@ -71,6 +83,7 @@ export class NiumpiAnimationController {
   private queue: AnimState[] = [];
   private reduced = false;
   private options: Options;
+  private listeners = new Set<(state: AnimState) => void>();
 
   private target = { x: 0, y: 0, gazeX: 0, gazeY: 0 };
   private value = { x: 0, y: 0, vx: 0, vy: 0, gazeX: 0, gazeY: 0, vgx: 0, vgy: 0 };
@@ -147,6 +160,13 @@ export class NiumpiAnimationController {
     return this.state;
   }
 
+  /** Room scenery listens only to state changes, never to animation frames. */
+  subscribeState(listener: (state: AnimState) => void) {
+    this.listeners.add(listener);
+    listener(this.state);
+    return () => this.listeners.delete(listener);
+  }
+
   /* ------------------------------------------------------------------ */
 
   private setState(next: AnimState) {
@@ -154,6 +174,7 @@ export class NiumpiAnimationController {
     this.state = next;
     this.applyState();
     this.options.onStateChange?.(next);
+    this.listeners.forEach((listener) => listener(next));
     window.clearTimeout(this.stateTimer);
     const { duration } = STATES[next];
     if (duration === null) return;

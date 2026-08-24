@@ -8,11 +8,12 @@
 .scene-head-tools { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 
 /* ------------------------------------------------------------- branding --- */
-.brand { display: grid; gap: 6px; }
+.brand { display: grid; gap: 8px; }
 .brand-eyebrow { display: flex; align-items: center; gap: 6px; color: var(--pink); font-size: var(--t-2xs); font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
 .brand-spark { --art-1: var(--gold); animation: logo-sparkle 3.4s ease-in-out infinite; }
 .brand-name {
   position: relative; width: fit-content;
+  margin-top: 3px;
   font-family: var(--font-head); font-size: clamp(2.2rem, 4.6vw, 3.3rem); font-weight: 620;
   letter-spacing: -.05em; line-height: .94;
   /* A gradient here would need background-clip:text, which clips the decorative
@@ -24,8 +25,10 @@
 .logo-i { position: relative; display: inline-block; }
 .logo-i::after {
   --leaf-angle: 22deg;
-  content: ""; position: absolute; z-index: 2; top: .17em; left: 50%;
-  width: .29em; height: .45em; translate: -42% -100%;
+  /* A leaf replaces the dot, so it must live inside the wordmark's own line
+     box. The old 0.45em leaf was tall enough to reach the eyebrow above. */
+  content: ""; position: absolute; z-index: 2; top: .12em; left: 50%;
+  width: .22em; height: .33em; translate: -42% -72%;
   background: linear-gradient(145deg, #AAF0E6, #36AAA9);
   border: 1px solid #298D92; border-radius: 78% 35% 74% 38%;
   transform-origin: 50% 88%; animation: logo-leaf-sway 2.15s ease-in-out infinite;
@@ -713,7 +716,7 @@
    smaller hero. Anchored to dvh so a phone's browser chrome cannot squeeze it. */
 /* Sized so the stage, the snack bar and the care buttons all fit the first
    view at 1440x900 — feeding must not require a scroll. */
-.hero-stage .companion-stage { min-height: clamp(260px, 34dvh, 420px); }
+.hero-stage .companion-stage { min-height: clamp(250px, 31dvh, 400px); }
 .hero-stage .rig-root { width: clamp(200px, 74cqw, 400px); }
 .companion-hero .rig-root { width: clamp(220px, 32vw, 420px); }
 .companion-stats {
@@ -1194,7 +1197,36 @@
 @keyframes seed-warmth { 0%, 100% { filter: brightness(1); } 45%, 76% { filter: brightness(1.13) saturate(1.08); box-shadow: inset -10px -14px 28px rgb(120 70 40 / 24%), 0 0 42px rgb(255 190 115 / 54%); } }
 @keyframes seed-listen { 0%, 100% { rotate: 0; } 28% { rotate: -2deg; } 48% { rotate: 2deg; } 68% { rotate: -1deg; } }
 .hatch-halo { position: absolute; inset: -10%; background: radial-gradient(circle, rgb(255 216 212 / 40%), transparent 62%); filter: blur(24px); animation: aura-breathe 3s ease-in-out infinite; }
-.hatch-baby { position: relative; z-index: 2; --art-1: #FF7A5C; --art-2: var(--turquoise); --art-3: #33213F; animation: rig-hatch 2s cubic-bezier(.3,.7,.2,1) both; }
+/* The reveal, in one place: the creature arrives, takes a first blink, then
+   looks at whoever is watching. Every beat is a CSS animation, so an
+   interrupted or refreshed page lands on the settled pose rather than a
+   half-finished state. */
+.hatch-baby {
+  position: relative; z-index: 2;
+  width: clamp(150px, 40vw, 230px); aspect-ratio: 1;
+  animation: rig-hatch 2s cubic-bezier(.3, .7, .2, 1) both;
+}
+.hatch-baby .nb-lid {
+  transform-box: fill-box; transform-origin: 50% 0%;
+  scale: 1 1;
+  animation: hatch-first-blink 2.6s ease-in-out 1.9s both;
+}
+@keyframes hatch-first-blink {
+  0% { scale: 1 1; }
+  22% { scale: 1 0; }
+  30% { scale: 1 .7; }
+  38% { scale: 1 0; }
+  100% { scale: 1 0; }
+}
+/* Then the eyes find the player and hold. */
+.hatch-baby .nb-gaze { animation: hatch-first-look 3.4s ease-in-out 3.1s both; }
+@keyframes hatch-first-look {
+  0% { translate: 0 6px; }
+  34% { translate: -5px 2px; }
+  62% { translate: 4px 0; }
+  100% { translate: 0 0; }
+}
+.hatch-baby .nb-torso { animation: nb-breathe 4.6s ease-in-out 3s infinite; }
 .name-card { display: grid; gap: var(--s-3); width: min(430px, 100%); padding: var(--s-5); text-align: left; background: linear-gradient(168deg, rgb(67 33 116 / 92%), rgb(28 13 60 / 96%)); border: 1px solid var(--glass-line); border-radius: var(--r-2xl); box-shadow: var(--shadow-lg); }
 .name-card h2 { font-family: var(--font-head); font-size: var(--t-xl); font-weight: 620; }
 .field { display: grid; gap: 6px; }
@@ -1540,3 +1572,39 @@
   font-size: var(--t-2xs); font-weight: 700; line-height: 1.2;
   overflow: hidden; text-overflow: ellipsis;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  /* Land on the settled pose: present, eyes open, looking ahead. */
+  .hatch-baby,
+  .hatch-baby .nb-lid,
+  .hatch-baby .nb-gaze,
+  .hatch-baby .nb-torso { animation: none !important; }
+  .hatch-baby .nb-lid { scale: 1 0; }
+}
+
+/* ----------------------------------------------------- the first meeting ----
+ *
+ * The naming screen is the emotional peak of the whole product, and it was
+ * rendering a small creature adrift in a 350px room with a 24px-blurred halo
+ * spread across it. This is the one moment that should feel close.
+ */
+
+.scene-seed.is-naming {
+  display: grid;
+  align-content: center;
+  gap: var(--s-4);
+  min-height: min(100dvh, 900px);
+}
+.scene-seed.is-naming .seed-room {
+  min-height: 0;
+  padding: var(--s-4);
+  /* Sized to the creature rather than to the page. */
+  max-width: 420px;
+}
+.scene-seed.is-naming .hatch-halo {
+  inset: 6%;
+  background: radial-gradient(circle at 50% 56%, rgb(255 206 170 / 46%), transparent 64%);
+  filter: blur(18px);
+}
+.scene-seed.is-naming .hatch-baby { width: clamp(190px, 26vw, 280px); }
+.scene-seed.is-naming .name-card { max-width: 460px; margin: 0 auto; }

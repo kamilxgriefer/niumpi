@@ -62,7 +62,7 @@
 
 /* ----------------------------------------------------- phone < 768px ----- */
 @media (max-width: 767px) {
-  .scene-atmosphere { inset: -32px -16px -54px; border-radius: 28px; opacity: .72; }
+  .scene-atmosphere { inset: -32px 0 -54px; border-radius: 28px; opacity: .72; }
   .atmosphere-orbit { width: 82vw; right: -38%; top: 4%; }
   .atmosphere-horizon { left: -18%; right: -18%; height: 26%; }
   .atmosphere-motes i:nth-child(n + 6) { display: none; }

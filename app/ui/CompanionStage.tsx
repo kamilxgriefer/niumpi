@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { CSSProperties, MouseEvent, PointerEvent, ReactNode } from "react";
 import { NiumpiRenderer } from "./NiumpiRenderer";
 import { visualStageFor } from "../game/config/growth.ts";
@@ -8,11 +8,12 @@ import type { BodyPart } from "./NiumpiRenderer";
 import { Art } from "./Art";
 import { useGame } from "./GameProvider";
 import { useNiumpiController } from "../anim/useNiumpiController";
-import { gesture, wake } from "../game/actions";
+import { gesture, toggleLamp, wake } from "../game/actions";
 import { moodFor, moodTable } from "../game/mood";
 import { dayPartAt } from "../game/time";
 import { sparkStyle } from "./parts";
 import type { CareActionId } from "../game/types";
+import type { AnimState } from "../anim/NiumpiAnimationController";
 
 /** Held longer than this counts as a hug rather than a tap. */
 const HOLD_MS = 620;
@@ -20,8 +21,21 @@ const HOLD_MS = 620;
 const PET_DISTANCE = 30;
 /** A fast back-and-forth drag reads as tickling. */
 const TICKLE_REVERSALS = 3;
-/** How often the creature drifts to a new spot while nothing else happens. */
-const WANDER_MS = 6_500;
+type RoomMoment = "wander" | "book" | "window" | "lamp" | "roll" | "dancing" | "singing" | "peek" | "stretch";
+
+const ROOM_MOMENTS: Array<{
+  state: RoomMoment; x: number; y: number; gazeX: number; gazeY: number;
+  line: string; sound: "blip" | "leaf" | "tap" | "pet" | "chime";
+}> = [
+  { state: "book", x: -76, y: 2, gazeX: -12, gazeY: -6, line: "This one has a map inside.", sound: "blip" },
+  { state: "window", x: 76, y: -3, gazeX: 14, gazeY: -8, line: "Something moved past the window…", sound: "leaf" },
+  { state: "lamp", x: 84, y: 5, gazeX: 12, gazeY: 5, line: "A little warmer. That's better.", sound: "tap" },
+  { state: "roll", x: 0, y: 8, gazeX: 0, gazeY: 5, line: "Wheee— I meant to do that!", sound: "pet" },
+  { state: "dancing", x: 0, y: 0, gazeX: 0, gazeY: -2, line: "One, two… leaf turn!", sound: "chime" },
+  { state: "singing", x: 0, y: -2, gazeX: 0, gazeY: -4, line: "Nium… niuuum…", sound: "chime" },
+  { state: "peek", x: 34, y: 0, gazeX: 9, gazeY: -2, line: "Just checking what you're doing.", sound: "blip" },
+  { state: "stretch", x: 0, y: -2, gazeX: 0, gazeY: -5, line: "Tiny stretch. Big day.", sound: "blip" },
+];
 
 function capture(event: PointerEvent<HTMLButtonElement>) {
   try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* capture is optional */ }
@@ -40,7 +54,8 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
   const { state, now, run, message, controller, say, clock } = useGame();
   const rigRef = useNiumpiController(controller);
   const pointer = useRef<{ at: number; x: number; y: number; distance: number; dir: number; flips: number } | null>(null);
-  const drift = useRef({ x: 0, y: 0 });
+  const lastMoment = useRef<RoomMoment | null>(null);
+  const [roomMoment, setRoomMoment] = useState<AnimState>("idle");
 
   const mood = moodFor(state, now);
   const name = state.niumpi.name || "Niumpi";
@@ -56,20 +71,44 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     controller.setTargeted(targeting);
   }, [controller, targeting]);
 
-  /* Idle drift: one timer, one controller call — no React state per step. */
+  useEffect(() => controller.subscribeState((next) => {
+    setRoomMoment(next);
+    if (next === "idle") {
+      controller.setPosition(0, 0);
+      controller.setGaze(0, 0);
+    }
+  }), [controller]);
+
+  const playRoomMoment = useCallback((moment: RoomMoment, announce = true) => {
+    if (state.niumpi.sleeping || controller.getState() !== "idle") return;
+    const scene = ROOM_MOMENTS.find((entry) => entry.state === moment);
+    if (!scene) return;
+    lastMoment.current = moment;
+    controller.setPosition(scene.x, scene.y);
+    controller.setGaze(scene.gazeX, scene.gazeY);
+    controller.request(scene.state);
+    if (moment === "lamp" && !state.niumpi.lampOn) run(toggleLamp(state));
+    if (announce) say(scene.line);
+    cue(scene.sound);
+  }, [controller, cue, run, say, state]);
+
+  /* One leisurely repertoire replaces the old fixed wander metronome. */
   useEffect(() => {
     if (state.niumpi.sleeping) return;
-    const timer = window.setInterval(() => {
-      if (controller.getState() !== "idle") return;
-      drift.current = {
-        x: Math.max(-96, Math.min(96, drift.current.x + (Math.random() * 150 - 75))),
-        y: Math.round(Math.random() * 10),
-      };
-      controller.setPosition(drift.current.x, drift.current.y);
-      controller.request("wander");
-    }, WANDER_MS);
-    return () => window.clearInterval(timer);
-  }, [controller, state.niumpi.sleeping]);
+    let timer = 0;
+    const schedule = () => {
+      timer = window.setTimeout(() => {
+        if (controller.getState() === "idle") {
+          const pool = ROOM_MOMENTS.filter((entry) => entry.state !== lastMoment.current);
+          const scene = pool[Math.floor(Math.random() * pool.length)];
+          playRoomMoment(scene.state);
+        }
+        schedule();
+      }, 8_000 + Math.random() * 9_000);
+    };
+    schedule();
+    return () => window.clearTimeout(timer);
+  }, [controller, playRoomMoment, state.niumpi.sleeping]);
 
   const act = useCallback((action: CareActionId) => {
     run(gesture(state, action, clock()));
@@ -144,6 +183,7 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         `weather-${state.weather.key}`,
         state.niumpi.lampOn ? "lamp-on" : "",
         state.niumpi.sleeping ? "is-sleeping" : "",
+        `room-moment-${roomMoment}`,
         compact ? "is-compact" : "",
       ].filter(Boolean).join(" ")}
       onPointerMove={follow}
@@ -169,6 +209,29 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         <span className="room-cushion" />
         <span className="room-plant"><i /><i /><i /><b /></span>
         <span className="room-lamp"><i /><b /></span>
+      </div>
+
+      <nav className="room-hotspots" aria-label="Things Niumpi can explore">
+        <button className="room-hotspot hotspot-books" type="button" onClick={() => playRoomMoment("book")}>
+          <Art name="book" size={15} /><span>Books</span>
+        </button>
+        <button className="room-hotspot hotspot-window" type="button" onClick={() => playRoomMoment("window")}>
+          <Art name="window" size={15} /><span>Window</span>
+        </button>
+        <button className="room-hotspot hotspot-lamp" type="button" onClick={() => playRoomMoment("lamp")}>
+          <Art name="lamp" size={15} /><span>Lamp</span>
+        </button>
+        <button className="room-hotspot hotspot-rug" type="button" onClick={() => playRoomMoment("roll")}>
+          <Art name="playful" size={15} /><span>Roll</span>
+        </button>
+      </nav>
+
+      <div className="room-moment-props" aria-hidden="true">
+        <span className="moment-book"><i /><i /></span>
+        <span className="moment-window-spark"><i /></span>
+        <span className="moment-lamp-spark">✦</span>
+        <span className="moment-notes"><i>♪</i><i>♫</i><i>·</i></span>
+        <span className="moment-roll-puff"><i /><i /><i /></span>
       </div>
 
       {showBubble && (

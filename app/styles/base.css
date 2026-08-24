@@ -100,7 +100,10 @@ img { max-width: 100%; }
   --atmo-b: 73 212 208;
   --atmo-c: 255 95 168;
   position: absolute; z-index: -1;
-  inset: -58px -42px -80px;
+  /* Vertical bleed is harmless; horizontal negative insets enlarge the page's
+     scroll area even when the layer itself clips its contents. Keep the world
+     exactly as wide as the scene host and let its internal shapes do the bleed. */
+  inset: -58px 0 -80px;
   min-height: calc(100dvh - var(--shell-pad) * 2);
   overflow: hidden; pointer-events: none;
   border-radius: 46px;

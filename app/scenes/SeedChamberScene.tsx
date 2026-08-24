@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Art } from "../ui/Art";
+import { NiumpiBody } from "../ui/niumpi/NiumpiBody";
+import { profileFor } from "../game/config/growth";
 import { useGame } from "../ui/GameProvider";
 import { hatch, nameNiumpi, seedAction } from "../game/actions";
 import { SEED_COOLDOWN_MS, SEED_STEP, seedActions, seedPhaseFor } from "../game/config/stages";
@@ -85,7 +87,19 @@ export function SeedChamberScene() {
       <div className="scene scene-seed is-naming">
         <div className="seed-room">
           <div className="hatch-halo" aria-hidden="true" />
-          <Art name="niumpi" size={140} className="hatch-baby" />
+          {/*
+            * The real creature, at the stage it actually hatched into. This was
+            * a flat 140px sprite — the one moment the whole product is built
+            * around was introducing a different character from the one the
+            * player then spends every session with.
+            *
+            * The reveal, the first blink and the first look are CSS animations
+            * on this wrapper: no frame loop, nothing to interrupt, and a
+            * refresh mid-sequence simply lands on the settled pose.
+            */}
+          <div className={`hatch-baby body-${state.phenotype.bodyPalette} leaf-${state.phenotype.leafType}`}>
+            <NiumpiBody profile={profileFor(1)} />
+          </div>
         </div>
         <form
           className="name-card"
