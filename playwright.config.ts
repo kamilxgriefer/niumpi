@@ -1,5 +1,13 @@
 import { defineConfig, devices } from "@playwright/test";
 
+/*
+ * Port 3000 is not always ours — a tunnel or another project can hold it, and
+ * a suite that can only run on one hardcoded port simply refuses to start.
+ * PW_PORT moves the whole harness together.
+ */
+const PORT = process.env.PW_PORT ?? "3000";
+const ORIGIN = `http://localhost:${PORT}`;
+
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: true,
@@ -10,15 +18,15 @@ export default defineConfig({
     ? [["github"], ["html", { open: "never" }]]
     : [["list"], ["html", { open: "never" }]],
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: ORIGIN,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
     actionTimeout: 10_000,
   },
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
+    command: `npm run dev -- --port ${PORT}`,
+    url: ORIGIN,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     stdout: "pipe",

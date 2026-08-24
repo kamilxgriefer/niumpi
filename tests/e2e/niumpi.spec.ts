@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const SAVE_KEY = "niumpi-save-v4";
-const LEGACY_KEYS = ["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
+const SAVE_KEY = "niumpi-save-v5";
+const LEGACY_KEYS = ["niumpi-save-v4", "niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
 
 /**
  * Starts the game with no save at all, which lands on the Seed Chamber.
@@ -37,7 +37,7 @@ async function openHatchedGame(page: Page, extra: Record<string, unknown> = {}) 
       window.localStorage.setItem(
         key as string,
         JSON.stringify({
-          version: 4,
+          version: 5,
           profile: { id: "e2e-save", createdAt: now, lastSeenAt: now },
           niumpi: {
             name: "Mango",
@@ -246,4 +246,53 @@ test("a Phaser minigame runs its own frame loop and answers user input", async (
   } else {
     expect(Number(await scoreText.innerText())).toBeGreaterThan(0);
   }
+});
+
+/** Care moments that sit inside each stage rather than past its threshold. */
+const CARE_IN_STAGE: Record<number, number> = { 1: 10, 2: 70, 3: 160, 4: 320, 5: 600 };
+
+/** A complete niumpi block at a chosen stage, since the fixture spreads at the top level. */
+function hatchedAs(stage: number) {
+  const now = Date.now();
+  return {
+    name: "Mango",
+    createdAt: now,
+    hatchedAt: now,
+    seedProgress: 1,
+    stage,
+    stageStartedAt: now,
+    careMoments: CARE_IN_STAGE[stage] ?? 10,
+    bond: 45,
+    lastInteractionAt: now,
+  };
+}
+
+test("a freshly hatched Niumpi renders small, and grows", async ({ page }) => {
+  // The whole point of the rebuild. The old rig drew one bitmap of a grown
+  // creature at one fixed size, so a hatchling and a mature Niumpi were pixel
+  // for pixel identical — this test could not have passed before.
+  const measure = async (stage: number) => {
+    await openHatchedGame(page, { niumpi: hatchedAs(stage) });
+    const body = page.locator(".nb").first();
+    await expect(body).toBeVisible();
+    const box = await body.boundingBox();
+    if (!box) throw new Error(`no box for stage ${stage}`);
+    return box;
+  };
+
+  const hatchling = await measure(1);
+  const grown = await measure(5);
+
+  expect(hatchling.width).toBeGreaterThan(0);
+  expect(hatchling.width).toBeLessThan(grown.width * 0.72);
+});
+
+test("the hatchling wears a single leaf and no arms", async ({ page }) => {
+  await openHatchedGame(page, { niumpi: hatchedAs(1) });
+  await expect(page.locator(".rig-root")).toHaveClass(/growth-stage-1/);
+  await expect(page.locator(".nb-leaf")).toHaveCount(1);
+  // Arms grow in later; drawing them on a newborn was part of what made the
+  // first stage read as an adult.
+  await expect(page.locator(".nb-arm")).toHaveCount(0);
+  await expect(page.locator(".rig-root")).toHaveClass(/arms-none/);
 });

@@ -37,9 +37,15 @@ export const enterLift = {
   transition: easeOut,
 } as const;
 
+/*
+ * Scale only on the way in. Fading from `opacity: 0` means a modal is invisible
+ * until a frame loop runs, and a throttled or stalled rAF leaves it there —
+ * present in the DOM, clickable by a test, and blank to a person. Scale
+ * degrades safely: the worst case is content that arrives at full size.
+ */
 export const popIn = {
-  initial: { opacity: 0, scale: 0.94 },
-  animate: { opacity: 1, scale: 1 },
+  initial: { scale: 0.94 },
+  animate: { scale: 1 },
   exit: { opacity: 0, scale: 0.97 },
   transition: spring,
 } as const;

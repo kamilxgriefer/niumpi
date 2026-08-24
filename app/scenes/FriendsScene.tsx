@@ -6,6 +6,8 @@ import { Modal, Panel } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
 import { SOCIAL_BACKEND, canGift, markVisited, sendGift } from "../game/friends";
 import { routeMap } from "../game/config/routes";
+import { NiumpiBody } from "../ui/niumpi/NiumpiBody";
+import { profileFor } from "../game/config/growth";
 import { recordCare } from "../game/care";
 import { progressMissions } from "../game/missions";
 import { addSignal } from "../game/care";
@@ -15,6 +17,13 @@ import { copy } from "../game/config/copy";
 const statusCopy: Record<string, string> = {
   online: "Online", dreaming: "In a dream", playing: "Playing", exploring: "Exploring", away: "Away",
 };
+
+/** A stable stage per neighbour, so the street is not all the same age. */
+function friendStage(id: string): number {
+  let hash = 0;
+  for (let i = 0; i < id.length; i += 1) hash = (hash * 31 + id.charCodeAt(i)) % 997;
+  return 2 + (hash % 4);
+}
 
 export function FriendsScene() {
   const { state, update, now, cue, toast, clock} = useGame();
@@ -58,8 +67,12 @@ export function FriendsScene() {
           const giftable = canGift(entry, now) && state.inventory.currencies.dewdrops >= 5;
           return (
             <li key={entry.id} className="friend-card">
-              <span className="friend-avatar" style={{ background: route.palette.body }} aria-hidden="true">
-                <Art name="niumpi" size={30} />
+              {/* A real Niumpi in the neighbour's own route palette. This was
+                  one flat glyph recoloured three times, so every neighbour was
+                  the same creature — the thing that makes a world feel
+                  inhabited is that the others are recognisably different. */}
+              <span className={`friend-avatar body-${entry.route}`} aria-hidden="true">
+                <NiumpiBody profile={profileFor(friendStage(entry.id))} />
               </span>
               <div className="friend-copy">
                 <strong>{entry.name}</strong>

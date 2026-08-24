@@ -75,7 +75,9 @@
 
 .icon-button {
   display: grid; place-items: center;
-  width: 36px; height: 36px;
+  /* Was 36px, under the 44px floor this product sets for itself — and this is
+     the dismiss control on every modal, aimed at small fingers. */
+  width: var(--tap, 44px); height: var(--tap, 44px);
   color: var(--text-faint);
   background: rgb(255 255 255 / 7%);
   border: 1px solid var(--glass-line-soft); border-radius: 50%;

@@ -6,10 +6,11 @@ import type {
 } from "./types.ts";
 import { dayKeyFor, weekKeyFor } from "./time.ts";
 
-export const SAVE_VERSION = 4;
-export const STORAGE_KEY = "niumpi-save-v4";
+export const SAVE_VERSION = 5;
+export const STORAGE_KEY = "niumpi-save-v5";
 /** Read in order when the current key is missing, then migrated forward. */
 export const LEGACY_KEYS = ["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
+export const PRIOR_SAVE_KEYS = ["niumpi-save-v4"];
 
 export const vectorIds: VectorId[] = [
   "calm", "playful", "loving", "curious", "brave",
@@ -74,7 +75,13 @@ export function createGameState(now: number, id: string): GameState {
       talents: { cooking: 0, music: 0, gardening: 0, agility: 0, exploration: 0, storytelling: 0 },
     },
     inventory: {
-      ingredients: { moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3 },
+      // Three starter seeds. plantSeed() requires a `seed:<plantId>` key, and
+      // without one the garden opened onto a grid of disabled cards with no
+      // way to obtain the thing it was asking for.
+      ingredients: {
+        moonberry: 6, cloudpuff: 5, dewdrop: 8, sunseed: 3,
+        "seed:dewdrop-lily": 2, "seed:sunseed-flower": 1,
+      },
       items: [...starterItems],
       currencies: { dewdrops: 40, starFragments: 0 },
     },

@@ -97,7 +97,7 @@
     "mood   mood";
   align-items: start;
   gap: var(--s-3);
-  min-height: clamp(320px, 40vh, 440px);
+  min-height: clamp(300px, 34vh, 390px);
   padding: var(--s-4);
   overflow: hidden;
   border-radius: var(--r-xl);
@@ -608,7 +608,7 @@
 .item-card small, .plant-card small, .toy-tile small, .recipe-card small { color: var(--text-faint); font-size: var(--t-2xs); font-weight: 620; }
 .plant-meta, .recipe-count { color: var(--gold); font-size: var(--t-2xs); font-weight: 800; }
 .plant-boost { color: var(--green); font-size: var(--t-2xs); font-weight: 800; }
-.toy-tile.is-locked, .plant-card:disabled, .recipe-card:disabled { opacity: .42; cursor: not-allowed; }
+.toy-tile.is-locked, .plant-card:disabled, .recipe-card:disabled { opacity: .62; cursor: not-allowed; }
 .theme-row { display: flex; flex-wrap: wrap; gap: var(--s-2); }
 .theme-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 8px 14px; color: var(--text-muted); background: rgb(255 255 255 / 7%); border: 1px solid var(--glass-line-soft); border-radius: var(--r-pill); font-size: var(--t-xs); font-weight: 750; }
 .theme-chip.is-active { color: white; border-color: var(--turquoise); background: rgb(73 212 208 / 18%); }
@@ -621,7 +621,10 @@
 .reaction-row .art { --art-1: var(--coral); --art-2: var(--turquoise); }
 
 /* ------------------------------------------------------------ activity --- */
-.activity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: var(--s-3); }
+/* 170px never fits twice on a 375px phone, so four tiles became four full
+   rows — 660px of a locked grid, which is the wall of padlocks this redesign
+   set out to remove. Two-up is the point. */
+.activity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(138px, 1fr)); gap: var(--s-3); }
 .activity-tile {
   display: grid; justify-items: center; gap: 6px;
   width: 100%; min-height: 156px; padding: var(--s-4);
@@ -632,7 +635,28 @@
   transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
 }
 .activity-tile:hover:not(.is-locked) { transform: translateY(-4px); box-shadow: var(--shadow-lg), var(--glow-violet); }
-.activity-tile.is-locked { opacity: .5; cursor: not-allowed; }
+/*
+ * A place you cannot go yet should not take the same room as one you can.
+ * Locked tiles collapse to a single line stating when they open, so the open
+ * destinations are what the eye lands on. Opacity alone left four padlocks
+ * dominating the screen at full size.
+ */
+.activity-tile.is-locked {
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-items: start;
+  align-items: center;
+  gap: 4px var(--s-3);
+  min-height: var(--tap, 44px);
+  padding: var(--s-3);
+  text-align: left;
+  opacity: .62;
+  cursor: not-allowed;
+  background: rgb(33 16 68 / 54%);
+  box-shadow: none;
+}
+.activity-tile.is-locked .activity-art { grid-row: span 2; }
+.activity-tile.is-locked strong { font-size: var(--t-sm); }
+.activity-tile.is-locked small { font-size: var(--t-2xs); }
 .activity-tile strong { font-family: var(--font-head); font-size: var(--t-md); font-weight: 620; }
 .activity-tile small { color: var(--text-faint); font-size: var(--t-xs); font-weight: 620; }
 .activity-art .art { --art-1: var(--turquoise); --art-2: var(--gold); --art-3: white; }
@@ -657,6 +681,12 @@
 .scene-companion { gap: var(--s-4); }
 .companion-hero { position: relative; }
 .companion-hero .companion-stage { min-height: clamp(340px, 54vh, 560px); border-radius: var(--r-2xl); }
+
+/* The home stage is the product's front door, and it was rendering the
+   creature smaller than the secondary tab does — a hero screen with the
+   smaller hero. Anchored to dvh so a phone's browser chrome cannot squeeze it. */
+.hero-stage .companion-stage { min-height: clamp(330px, 46dvh, 520px); }
+.hero-stage .rig-root { width: clamp(200px, 74cqw, 400px); }
 .companion-hero .rig-root { width: clamp(220px, 32vw, 420px); }
 .companion-stats {
   position: relative; z-index: 6;
@@ -719,7 +749,7 @@
 .seed-answer .art { --art-1: var(--turquoise); --art-2: var(--gold); }
 
 /* ------------------------------------------------------------- garden ---- */
-.garden-bed { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: var(--s-4); }
+.garden-bed { display: grid; grid-template-columns: repeat(auto-fit, minmax(138px, 1fr)); gap: var(--s-3); }
 .plot {
   position: relative; display: grid; gap: var(--s-2); justify-items: center;
   min-height: 208px; padding: var(--s-4) var(--s-3) var(--s-3);
@@ -767,14 +797,23 @@
 .cook-actions { display: flex; gap: var(--s-2); }
 .cook-chef { position: relative; display: grid; place-items: center; }
 .cook-chef .art { --art-1: var(--coral); --art-2: var(--turquoise); --art-3: #33213F; }
-.chef-hat { position: absolute; top: -16px; left: 50%; width: 46px; height: 34px; translate: -50% 0; background: white; border-radius: 60% 60% 20% 20%; box-shadow: 0 4px 10px rgb(16 7 43 / 30%); }
+.chef-hat { position: absolute; top: -20px; left: 50%; z-index: 2; width: 48px; height: 32px; translate: -50% 0; background: linear-gradient(170deg, #fff, #ece4f6); border-radius: 62% 62% 22% 22%; box-shadow: 0 4px 10px rgb(16 7 43 / 30%); }
+.cook-chef-body { display: block; width: 118px; height: 118px; }
+.cook-chef { padding-top: var(--s-4); }
 .cook-result { display: flex; align-items: center; gap: var(--s-3); padding: var(--s-4); background: linear-gradient(140deg, rgb(255 200 87 / 22%), rgb(255 95 168 / 16%)); border: 1px solid rgb(255 200 87 / 40%); border-radius: var(--r-xl); }
 .cook-result div { display: grid; margin-right: auto; }
 .cook-result strong { font-family: var(--font-head); font-size: var(--t-lg); font-weight: 620; }
 .cook-result small { color: var(--text-faint); font-size: var(--t-xs); }
 .cook-result .art { --art-1: var(--gold); --art-2: var(--coral); }
 .pantry-card span { color: var(--gold); font-size: var(--t-2xs); font-weight: 800; }
-.recipe-grid li.is-unknown { opacity: .55; }
+/* Undiscovered recipes read as undiscovered through their surface, not by
+   being faded on top of an already-faded card — stacking the two put them at
+   23% opacity, well under readable. */
+.recipe-grid li.is-unknown .recipe-card {
+  background: rgb(255 255 255 / 4%);
+  border-style: dashed;
+  border-color: var(--glass-line-soft);
+}
 
 /* ------------------------------------------------------------- dreams ---- */
 .door-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: var(--s-4); }
@@ -814,9 +853,30 @@
 
 /* ------------------------------------------------------------ friends ---- */
 .friend-list { display: grid; gap: var(--s-3); }
-.friend-card { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-3); padding: var(--s-3) var(--s-4); background: rgb(255 255 255 / 5%); border: 1px solid var(--glass-line-soft); border-radius: var(--r-xl); }
-.friend-avatar { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; box-shadow: var(--shadow-sm); }
-.friend-avatar .art { --art-1: rgb(255 255 255 / 84%); --art-2: white; --art-3: #33213F; }
+/* A 5% white wash on the cosmic background left these as near-invisible
+   outlines, with a developer note as the brightest element on the screen.
+   They are neighbours — they should look like somewhere worth visiting. */
+.friend-card {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: var(--s-3); padding: var(--s-3) var(--s-4);
+  background: linear-gradient(160deg, rgb(88 46 142 / 62%), rgb(40 20 78 / 76%));
+  border: 1px solid var(--glass-line); border-radius: var(--r-xl);
+  box-shadow: var(--shadow-md);
+  transition: transform var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
+.friend-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg), var(--glow-violet); }
+.friend-avatar {
+  display: grid; place-items: center;
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 10%);
+  box-shadow: var(--shadow-sm), inset 0 0 0 1px rgb(255 255 255 / 14%);
+  overflow: hidden;
+}
+/* The neighbour is a real Niumpi drawn from the same geometry as the player's,
+   not the full rig — no container query, no growth scale, no hit area. The
+   palette comes from the .body-<route> class on this element. */
+.friend-avatar .nb { width: 112%; height: 112%; translate: 0 6%; }
 .friend-copy { display: grid; flex: 1; min-width: 140px; }
 .friend-copy strong { font-size: var(--t-md); font-weight: 750; }
 .friend-copy small { color: var(--text-faint); font-size: var(--t-xs); font-weight: 650; }
@@ -945,3 +1005,202 @@
 .dice { flex: none; width: 52px; min-height: 52px; color: var(--gold); background: rgb(255 255 255 / 8%); border: 2px solid var(--glass-line); border-radius: var(--r-md); }
 .dice .art { --art-1: var(--gold); }
 .dice:hover { background: rgb(255 255 255 / 16%); transform: rotate(12deg); }
+
+/* ---------------------------------------------------------------- room depth
+ *
+ * Three layers the room was missing, in the order light actually works: a warm
+ * pool cast where the creature stands, a vignette that closes the corners, and
+ * a floor that catches the pool instead of sitting at the same value as the
+ * wall. Together they turn flat bands of colour into somewhere to be.
+ */
+
+.room-back::before {
+  /* The lit pool. Sits above the wall and below the props. */
+  content: "";
+  position: absolute; inset: 0; z-index: 1;
+  background: radial-gradient(52% 40% at 50% 74%, rgb(255 214 168 / 30%), transparent 72%);
+  transition: background 900ms var(--ease), opacity 600ms var(--ease);
+  pointer-events: none;
+}
+.daypart-night .room-back::before { background: radial-gradient(54% 42% at 50% 74%, rgb(255 198 138 / 20%), transparent 74%); }
+.lamp-on .room-back::before { background: radial-gradient(62% 50% at 50% 72%, rgb(255 210 150 / 44%), transparent 76%); }
+
+.room-back::after {
+  /* Vignette. Corners a little deeper so the eye lands on the creature. */
+  content: "";
+  position: absolute; inset: 0; z-index: 6;
+  background: radial-gradient(78% 68% at 50% 56%, transparent 46%, rgb(58 30 74 / 26%) 100%);
+  pointer-events: none;
+}
+.daypart-night .room-back::after { background: radial-gradient(76% 66% at 50% 56%, transparent 42%, rgb(22 12 44 / 46%) 100%); }
+
+/* The floor picks up the pool and drops away at the back, which is most of
+   what reads as a room having a depth at all. */
+.room-floor::after {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgb(58 30 74 / 22%) 0%, transparent 34%),
+    radial-gradient(44% 76% at 50% 24%, rgb(255 214 168 / 26%), transparent 72%);
+}
+.daypart-night .room-floor::after {
+  background:
+    linear-gradient(180deg, rgb(16 8 34 / 40%) 0%, transparent 38%),
+    radial-gradient(46% 78% at 50% 24%, rgb(255 198 138 / 18%), transparent 74%);
+}
+
+/* A contact shadow rather than a soft blob: tight and dark where the creature
+   meets the floor, fading fast. Without it a small hatchling floats. */
+.pet-shadow {
+  bottom: 5%;
+  width: 34%; height: 6.5%;
+  background:
+    radial-gradient(ellipse 52% 100% at 50% 50%, rgb(52 24 68 / 44%), transparent 72%),
+    radial-gradient(ellipse, rgb(52 24 68 / 20%), transparent 74%);
+  filter: blur(3px);
+}
+.daypart-night .pet-shadow {
+  background:
+    radial-gradient(ellipse 52% 100% at 50% 50%, rgb(12 6 30 / 56%), transparent 72%),
+    radial-gradient(ellipse, rgb(12 6 30 / 26%), transparent 74%);
+}
+
+/* Lamplight should spill onto the wall, not stop at the shade. */
+.lamp-on .room-lamp::before {
+  content: "";
+  position: absolute; left: 50%; top: -18px;
+  width: 190px; height: 190px; translate: -50% 0;
+  background: radial-gradient(circle, rgb(255 206 140 / 32%), transparent 66%);
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------- status strip ----
+ *
+ * Replaces four stacked full-width cards that sat between the creature and its
+ * controls. Same information, read as a group rather than as four competing
+ * announcements, and placed after the care loop instead of interrupting it.
+ */
+
+.status-strip {
+  display: grid;
+  gap: var(--s-3);
+  padding: var(--s-3);
+  background: rgb(255 255 255 / 46%);
+  border: 1px solid rgb(255 255 255 / 62%);
+  border-radius: var(--r-xl);
+}
+
+.status-vibe { display: flex; align-items: center; flex-wrap: wrap; gap: var(--s-2); }
+.status-vibe-label {
+  color: var(--ink-soft);
+  font-size: var(--t-xs); font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+}
+.status-vibe-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Four tiles that fit a phone two-up and a desktop four-up, without a
+   breakpoint doing the deciding. */
+.status-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: var(--s-2);
+}
+
+.status-tile {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-height: 44px;
+  padding: var(--s-3);
+  text-align: left;
+  background: rgb(255 255 255 / 82%);
+  border: 1px solid rgb(120 84 130 / 12%);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms var(--ease);
+}
+.status-tile:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); background: rgb(255 255 255 / 94%); }
+.status-tile:focus-visible { outline: 3px solid var(--focus, #7de3dc); outline-offset: 3px; }
+
+.status-icon { display: flex; margin-bottom: 2px; }
+.status-kicker {
+  color: var(--ink-soft);
+  font-size: var(--t-xs); font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+}
+.status-title {
+  color: var(--ink);
+  font-family: var(--font-head); font-size: var(--t-md); font-weight: 620;
+  line-height: 1.25;
+}
+.status-note { color: var(--ink-soft); font-size: var(--t-xs); line-height: 1.35; }
+
+.status-meter {
+  display: block; height: 6px; margin: 5px 0 3px;
+  background: rgb(120 84 130 / 14%); border-radius: 999px; overflow: hidden;
+}
+.status-meter i {
+  display: block; height: 100%;
+  background: linear-gradient(90deg, var(--coral, #f8703f), var(--pink, #ff90bd));
+  border-radius: 999px;
+  transition: width 700ms var(--ease);
+}
+
+/* The growth tile is the one that answers "what is happening to my pet", so it
+   carries slightly more weight than the three beside it. */
+.status-tile.tile-growth {
+  background: linear-gradient(155deg, rgb(255 255 255 / 94%), rgb(255 240 246 / 88%));
+  border-color: rgb(255 144 189 / 30%);
+}
+
+/* Used by .morning-motes and .seed-dust, which were both animating a keyframe
+   set that had never been written — two effects rendering as frozen dots. */
+@keyframes mote-rise {
+  0% { opacity: 0; translate: 0 0; scale: .5; }
+  25% { opacity: 1; }
+  100% { opacity: 0; translate: 0 -68px; scale: 1.1; }
+}
+
+/* Both belong to the Seed Chamber's hatch reveal, and both were lost when the
+   rig stylesheet was rewritten around the generated body — the moment the
+   shell opens and the hatchling appears had been running with no animation at
+   all. They live beside the elements that use them now. */
+@keyframes rig-hatch {
+  0% { opacity: 0; transform: scale(.3) translateY(30px); }
+  40% { opacity: 1; transform: scale(1.18) translateY(-16px); }
+  62% { transform: scale(.94) translateY(4px); }
+  100% { transform: none; }
+}
+@keyframes aura-breathe {
+  0%, 100% { transform: scale(1); opacity: .42; }
+  50% { transform: scale(1.12); opacity: .62; }
+}
+
+/* ------------------------------------------------------- cooking pantry ----
+ *
+ * The ingredient source used to be a panel of its own, measured 500px below
+ * the mixing slots on a phone. A scene whose whole rule is "combine two or
+ * three things" cannot teach that when the things and the combining are never
+ * on screen together. The rail sits inside the kitchen, under the slots.
+ */
+
+.cook-pantry { display: grid; gap: var(--s-2); }
+.cook-pantry-label {
+  color: var(--text-faint);
+  font-size: var(--t-xs); font-weight: 700;
+  letter-spacing: .09em; text-transform: uppercase;
+}
+
+/* Scrolls inside itself, so a long pantry never widens the page. */
+.cook-rail {
+  display: flex; gap: var(--s-2);
+  margin: 0; padding: 2px 2px var(--s-2);
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  overscroll-behavior-x: contain;
+}
+.cook-rail > li { flex: 0 0 auto; scroll-snap-align: start; }
+.cook-rail .pantry-card { width: 96px; min-height: var(--tap, 44px); }

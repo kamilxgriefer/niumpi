@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { Art } from "../ui/Art";
-import { EmptyState, Panel } from "../ui/parts";
+import { Panel } from "../ui/parts";
+import { NiumpiBody } from "../ui/niumpi/NiumpiBody";
+import { profileFor, visualStageFor } from "../game/config/growth";
 import { useGame } from "../ui/GameProvider";
 import { ingredients, ingredientMap } from "../game/config/foods";
 import { matchRecipe, recipes } from "../game/config/recipes";
@@ -20,7 +22,7 @@ export function CookingScene() {
   const owned = ingredients.filter((item) => (state.inventory.ingredients[item.id] ?? 0) > 0);
 
   function add(id: string) {
-    if (slots.length >= MAX_SLOTS) return;
+    if (slots.length >= MAX_SLOTS) { toast("The bench is full — tap a slot to take one off", "✕"); return; }
     const used = slots.filter((entry) => entry === id).length;
     if ((state.inventory.ingredients[id] ?? 0) <= used) { toast("You need more of that", "✕"); return; }
     setSlots([...slots, id]);
@@ -85,15 +87,40 @@ export function CookingScene() {
             )}
           </div>
 
+          <div className="cook-pantry">
+            <span className="cook-pantry-label">Pantry</span>
+            {owned.length === 0 ? (
+              <p className="soft-note">Grow or find ingredients first.</p>
+            ) : (
+              <ul className="cook-rail">
+                {owned.map((item) => (
+                  <li key={item.id}>
+                    <button className="pantry-card" type="button" onClick={() => add(item.id)}>
+                      <Art name={item.art} size={28} />
+                      <strong>{item.name}</strong>
+                      <span>×{state.inventory.ingredients[item.id]}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           <div className="cook-actions">
             <button className="ghost-button" type="button" disabled={!slots.length} onClick={() => setSlots([])}>Clear</button>
             <button className="primary-button" type="button" disabled={slots.length < 2} onClick={makeIt}>Cook it</button>
           </div>
         </div>
 
+        {/* The player's actual Niumpi, at whatever stage it has reached. This
+            was a flat 24px sprite under a white CSS blob, which read as a
+            rendering fault rather than a cook — and it contradicted the
+            creature standing on every other screen. */}
         <div className="cook-chef" aria-hidden="true">
           <span className="chef-hat" />
-          <Art name="niumpi" size={80} />
+          <span className={`cook-chef-body body-${state.phenotype.bodyPalette} leaf-${state.phenotype.leafType}`}>
+            <NiumpiBody profile={profileFor(visualStageFor(state.niumpi.careMoments, state.niumpi.stage))} />
+          </span>
         </div>
       </div>
 
@@ -106,24 +133,6 @@ export function CookingScene() {
           </button>
         </div>
       )}
-
-      <Panel title="Pantry" art="collect" note="Everything you can cook with">
-        {owned.length === 0 ? (
-          <EmptyState art="garden" title="The pantry is empty" note="Grow or find ingredients first." />
-        ) : (
-          <ul className="pantry-grid">
-            {owned.map((item) => (
-              <li key={item.id}>
-                <button className="pantry-card" type="button" onClick={() => add(item.id)}>
-                  <Art name={item.art} size={30} />
-                  <strong>{item.name}</strong>
-                  <span>×{state.inventory.ingredients[item.id]}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-      </Panel>
 
       <Panel title="Recipe book" art="book" note={`${state.cooking.known.length} of ${recipes.length} discovered`}>
         <ul className="recipe-grid">

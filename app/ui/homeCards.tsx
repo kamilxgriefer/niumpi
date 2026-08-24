@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { Art } from "./Art";
 import { RoutePortrait } from "./RoutePortrait";
-import { Chip, DotPath, EmptyState, Meter, Panel, TabBar } from "./parts";
+import { Chip, EmptyState, Meter, Panel, TabBar } from "./parts";
 import { useGame } from "./GameProvider";
 import { copy } from "../game/config/copy";
 import { seedQuestions } from "../game/config/seeds";
@@ -11,7 +11,7 @@ import { traitMap, traits } from "../game/config/traits";
 import { routeMap, routes } from "../game/config/routes";
 import { itemMap } from "../game/config/items";
 import { missionMap } from "../game/config/missions";
-import { stageMap } from "../game/config/stages";
+import { stages } from "../game/config/stages";
 import { answerSeed } from "../game/actions";
 import { claimMission } from "../game/missions";
 import { discoveryLine } from "../game/reactions";
@@ -134,79 +134,72 @@ export function PersonalityPanel() {
 
 /* ----------------------------------------------------------- discovery ---- */
 
-export function DiscoveryBanner() {
-  const { state, goTo } = useGame();
-  const line = discoveryLine(state);
-  return (
-    <button className="discovery" type="button" onClick={() => goTo("memory")}>
-      <span className="discovery-leaf" aria-hidden="true"><Art name="leaf" size={22} /></span>
-      <span className="discovery-copy">
-        <strong>{line ? line.title : copy.home.discoveryEmpty}</strong>
-        <span>{line ? line.note : copy.home.discoveryEmptyNote}</span>
-      </span>
-      <span className="discovery-foliage" aria-hidden="true"><i /><i /><i /></span>
-    </button>
-  );
-}
+/* ---------------------------------------------------------- status strip ----
+ *
+ * Growth, shared moments, the latest discovery and today's vibe used to be four
+ * full-width cards stacked between the creature and the controls you use on it
+ * — 515px of reading measured on a real viewport, sitting between looking at
+ * your pet and doing something with it. They are all readouts that link
+ * somewhere else, not actions on the creature, so they belong after the care
+ * loop rather than inside it. Same information, one compact strip.
+ */
 
-export function TodayVibe() {
-  const { state, now } = useGame();
-  const chips = vibeChips(state, now);
-  return (
-    <div className="vibe-row">
-      <span className="vibe-label">{copy.home.vibe}</span>
-      <div className="vibe-chips">
-        {chips.map((chip) => <Chip key={chip.id} label={chip.label} art={chip.art} />)}
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------ shared moments ---- */
-
-export function SharedMomentsCard() {
-  const { state, goTo } = useGame();
-  const moments = state.memories.length;
-  const relationship = relationshipFor(state.niumpi.bond, moments);
-  return (
-    <div className="moments-row">
-      <button className="moment-card" type="button" onClick={() => goTo("memory")}>
-        <Art name="star" size={22} />
-        <span>
-          <strong>{moments} {copy.home.sharedMoments}</strong>
-          <small>{moments ? copy.home.sharedMomentsNote : "Your story starts here"}</small>
-        </span>
-      </button>
-      <button className="moment-card is-bond" type="button" onClick={() => goTo("evolution")}>
-        <Art name="bond" size={22} />
-        <span>
-          <strong>{relationship.name}</strong>
-          <small>Bond is growing</small>
-        </span>
-      </button>
-    </div>
-  );
-}
-
-/* -------------------------------------------------------------- growth ---- */
-
-export function GrowthCard() {
+export function PetStatusStrip() {
   const { state, now, goTo } = useGame();
   const progress = stageProgress(state, now);
-  const next = stageMap[state.niumpi.stage + 1];
+  const moments = state.memories.length;
+  const relationship = relationshipFor(state.niumpi.bond, moments);
+  const discovery = discoveryLine(state);
+  const chips = vibeChips(state, now);
+
   return (
-    <button className="growth-card" type="button" onClick={() => goTo("evolution")}>
-      <div className="growth-copy">
-        <span className="growth-stage">Stage {progress.stage}</span>
-        <strong className="growth-name">{progress.name}</strong>
-        <span className="growth-next">
-          {progress.careTarget
-            ? `${progress.careMoments} / ${progress.careTarget} care moments`
-            : "Fully grown together"}
-        </span>
+    <section className="status-strip" aria-label="How Niumpi is doing">
+      <div className="status-vibe">
+        <span className="status-vibe-label">{copy.home.vibe}</span>
+        <div className="status-vibe-chips">
+          {chips.map((chip) => <Chip key={chip.id} label={chip.label} art={chip.art} />)}
+        </div>
       </div>
-      <DotPath percent={progress.percent} from={stageMap[progress.stage].art} to={next?.art ?? "legacy"} />
-    </button>
+
+      <div className="status-tiles">
+        <button className="status-tile tile-growth" type="button" onClick={() => goTo("evolution")}>
+          <span className="status-kicker">Stage {progress.stage}</span>
+          <strong className="status-title">{progress.name}</strong>
+          <span className="status-meter" aria-hidden="true">
+            <i style={{ width: `${progress.percent}%` }} />
+          </span>
+          <small className="status-note">
+            {progress.careTarget
+              ? `${progress.careMoments} / ${progress.careTarget} care moments`
+              : "Fully grown together"}
+          </small>
+        </button>
+
+        <button className="status-tile tile-moments" type="button" onClick={() => goTo("memory")}>
+          <span className="status-icon"><Art name="star" size={20} /></span>
+          <strong className="status-title">{moments} {copy.home.sharedMoments}</strong>
+          <small className="status-note">
+            {moments ? copy.home.sharedMomentsNote : "Your story starts here"}
+          </small>
+        </button>
+
+        <button className="status-tile tile-bond" type="button" onClick={() => goTo("evolution")}>
+          <span className="status-icon"><Art name="bond" size={20} /></span>
+          <strong className="status-title">{relationship.name}</strong>
+          <small className="status-note">Bond is growing</small>
+        </button>
+
+        <button className="status-tile tile-discovery" type="button" onClick={() => goTo("memory")}>
+          <span className="status-icon"><Art name="leaf" size={20} /></span>
+          <strong className="status-title">
+            {discovery ? discovery.title : copy.home.discoveryEmpty}
+          </strong>
+          <small className="status-note">
+            {discovery ? discovery.note : copy.home.discoveryEmptyNote}
+          </small>
+        </button>
+      </div>
+    </section>
   );
 }
 
@@ -222,10 +215,14 @@ export function EvolutionPreview() {
       className="card-evolution" onOpen={unlock.open ? () => goTo("evolution") : undefined}
     >
       <ol className="evo-line">
-        {[0, 1, 2, 3].map((stage) => (
-          <li key={stage} className={state.niumpi.stage >= stage ? "is-done" : ""}>
-            <Art name={stageMap[stage].art} size={22} />
-            <span>{stageMap[stage].name}</span>
+        {/* Driven from the stage table, not a literal — a hardcoded [0,1,2,3]
+            here quietly dropped the last two stages when the hatchling was
+            inserted, and showed the egg as a milestone the player had passed.
+            The egg is the state before the journey, so the line starts after it. */}
+        {stages.filter((stage) => stage.id > 0).map((stage) => (
+          <li key={stage.id} className={state.niumpi.stage >= stage.id ? "is-done" : ""}>
+            <Art name={stage.art} size={22} />
+            <span>{stage.name}</span>
           </li>
         ))}
       </ol>
