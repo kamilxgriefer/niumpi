@@ -58,6 +58,20 @@ test("the gameplay tap requests the protected full-frame reaction clip", async (
   await page.getByRole("button", { name: "Pet Mango" }).click();
   await expect(canvas).toHaveAttribute("data-clip", "tap_reaction", { timeout: 5_000 });
   await expect.poll(async () => Number(await canvas.getAttribute("data-frame"))).toBeGreaterThan(0);
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 3_000 }).toBe("idle");
+  // The controller still moves through recovery after the one-second drawing
+  // completes. A phase-only mutation must not replay the reaction.
+  await page.waitForTimeout(800);
+  await expect(canvas).toHaveAttribute("data-clip", "idle");
+});
+
+test("reduced motion keeps the approved portrait in standalone views", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/?animation-lab=1", { waitUntil: "domcontentloaded" });
+  const player = page.locator(".animation-lab-stage .nb-frame-player");
+  await expect(player).toHaveClass(/is-reduced/);
+  await expect(player.locator(".nb-frame-fallback")).toBeVisible();
+  await expect(player.locator(".nb-frame-canvas")).toBeHidden();
 });
 
 test("the first post-hatch appearance plays enter before settling into idle", async ({ page }) => {

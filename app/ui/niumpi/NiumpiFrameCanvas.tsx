@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { loadFrameManifest, preloadFrameAtlas } from "../../anim/NiumpiFrameAssets.ts";
+import { onMotionChange, prefersReducedMotion } from "../../anim/motionPrefs.ts";
 import {
   frameIndexAtTime,
   frameStateForRoot,
@@ -32,6 +33,13 @@ const STATE_FOR_CLIP: Record<FrameClip, FrameState> = {
 export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedClip, onFrame }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const applyPreference = () => setReducedMotion(prefersReducedMotion());
+    applyPreference();
+    return onMotionChange(applyPreference);
+  }, []);
 
   useEffect(() => {
     let disposed = false;
@@ -44,6 +52,8 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     let lastFrame = -1;
     const canvas = canvasRef.current;
     if (!canvas) return;
+    setReady(false);
+    if (reducedMotion) return;
     const context = canvas.getContext("2d", { alpha: true });
     if (!context) return;
     context.imageSmoothingEnabled = true;
@@ -65,14 +75,18 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
         setReady(true);
 
         const root = canvas.closest<HTMLElement>(".rig-root");
+        let lastRootToken = "";
         const requestFromRoot = () => {
           if (!root || forcedClip || entrance) return;
+          const rootToken = root.dataset.motionToken ?? `state:${root.dataset.anim ?? "idle"}`;
+          if (rootToken === lastRootToken) return;
+          lastRootToken = rootToken;
           const next = frameStateForRoot(root);
           machine.request(next, performance.now());
         };
         if (root) {
           observer = new MutationObserver(requestFromRoot);
-          observer.observe(root, { attributes: true, attributeFilter: ["class", "data-anim", "data-phase"] });
+          observer.observe(root, { attributes: true, attributeFilter: ["data-anim", "data-motion-token"] });
           requestFromRoot();
         }
 
@@ -111,10 +125,13 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
       observer?.disconnect();
       if (frameRequest) window.cancelAnimationFrame(frameRequest);
     };
-  }, [entrance, forcedClip, onFrame, variant]);
+  }, [entrance, forcedClip, onFrame, reducedMotion, variant]);
 
   return (
-    <span className={`nb-frame-player ${ready ? "is-ready" : "is-loading"}`} data-variant={variant}>
+    <span
+      className={`nb-frame-player ${ready ? "is-ready" : "is-loading"} ${reducedMotion ? "is-reduced" : ""}`}
+      data-variant={variant}
+    >
       <Image className="nb-frame-fallback" src={fallback} alt="" fill sizes="330px" unoptimized draggable={false} />
       <canvas ref={canvasRef} className="nb-frame-canvas" width={224} height={224} aria-hidden="true" />
     </span>

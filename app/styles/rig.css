@@ -106,6 +106,8 @@
 }
 .nb-frame-player.is-ready .nb-frame-canvas { opacity: 1; }
 .nb-frame-player.is-ready .nb-frame-fallback { visibility: hidden; }
+.nb-frame-player.is-reduced .nb-frame-canvas { display: none; }
+.nb-frame-player.is-reduced .nb-frame-fallback { visibility: visible; }
 .nb-frame-care { pointer-events: none; overflow: visible; }
 .uses-frame-animation .rig-leaf-touch {
   left: 14%;
