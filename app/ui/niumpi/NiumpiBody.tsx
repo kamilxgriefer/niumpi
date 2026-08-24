@@ -1,7 +1,9 @@
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 import type { StageProfile } from "../../game/config/growth.ts";
 import type { Phenotype } from "../../game/types.ts";
 import { bellyPath, bodyPath, tipRise } from "../../game/config/growth.ts";
+import { variantFor } from "../../anim/NiumpiFrameMachine.ts";
+import { NiumpiFrameCanvas } from "./NiumpiFrameCanvas.tsx";
 
 /**
  * The creature's whole visible form, generated from one stage profile.
@@ -62,59 +64,6 @@ function CareSurface() {
   );
 }
 
-/** Converts the model's uniform key colour to real alpha once, client-side.
- * The generated sheet stays lossless in the repository and the original
- * character remains visible until the transparent texture is ready. */
-function ChromaSpriteImage({ href, className }: { href: string; className: string }) {
-  const [processed, setProcessed] = useState<string | null>(null);
-
-  useEffect(() => {
-    let disposed = false;
-    let objectUrl = "";
-    const source = new Image();
-    source.decoding = "async";
-    source.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = source.naturalWidth;
-      canvas.height = source.naturalHeight;
-      const context = canvas.getContext("2d", { willReadFrequently: true });
-      if (!context) return;
-      context.drawImage(source, 0, 0);
-      const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
-      for (let index = 0; index < pixels.data.length; index += 4) {
-        const red = pixels.data[index];
-        const green = pixels.data[index + 1];
-        const blue = pixels.data[index + 2];
-        const dominance = green - Math.max(red, blue);
-        if (green < 135 || dominance < 32) continue;
-        const removal = Math.max(0, Math.min(1, (dominance - 32) / 145));
-        pixels.data[index + 3] = Math.round(pixels.data[index + 3] * (1 - removal));
-      }
-      context.putImageData(pixels, 0, 0);
-      canvas.toBlob((blob) => {
-        if (!blob || disposed) return;
-        objectUrl = URL.createObjectURL(blob);
-        setProcessed(objectUrl);
-      }, "image/png");
-    };
-    source.src = href;
-    return () => {
-      disposed = true;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [href]);
-
-  if (!processed) return null;
-  return (
-    <image
-      className={className}
-      href={processed}
-      x="0" y="0" width="600" height="600"
-      preserveAspectRatio="none"
-    />
-  );
-}
-
 function MorphFeatures({ morphology, profile }: { morphology: Phenotype["morphology"]; profile: StageProfile }) {
   if (morphology === "seedling") return null;
   const reveal = Math.max(0.28, Math.min(1, profile.id / 5));
@@ -171,11 +120,12 @@ function MorphFeatures({ morphology, profile }: { morphology: Phenotype["morphol
 }
 
 export function NiumpiBody({
-  profile, phenotype, morphology,
+  profile, phenotype, morphology, animation = "idle",
 }: {
   profile: StageProfile;
   phenotype?: Pick<Phenotype, "morphology" | "markings">;
   morphology?: Phenotype["morphology"];
+  animation?: "idle" | "hatch";
 }) {
   const { body, face } = profile;
   const look = phenotype ?? { morphology: morphology ?? "seedling", markings: [] };
@@ -206,49 +156,22 @@ export function NiumpiBody({
 
   const silhouette = bodyPath(body);
 
-  /* The approved painting is the identity of the character. Until an authored
-   * full-frame animation clip is available, gameplay renders that painting
-   * intact. No procedural face or cut masks may alter it. */
+  /* The approved painting is the identity of the character.  Every living
+   * stage is now rendered from flattened, full-character atlas frames — never
+   * assembled from live DOM puppet pieces. */
   if (profile.id > 0) {
     const finalForm = profile.id >= 5 && look.morphology !== "seedling";
     const art = finalForm
       ? `/assets/niumpi/forms/${look.morphology}.webp`
       : `/assets/niumpi/stages/stage-${profile.id}.webp`;
-    const authoredIdle = profile.id === 4 && !finalForm;
+    const variant = variantFor(profile.id, look.morphology);
     return (
-      <svg className="nb nb-sprite nb-authored-art" viewBox="0 0 200 200" role="img" aria-hidden="true" focusable="false">
-        <g className="nb-torso nb-sprite-torso">
-          <image
-            className="nb-authored-image nb-authored-static"
-            href={art}
-            x="0" y="0" width="200" height="200"
-            preserveAspectRatio="xMidYMid meet"
-          />
-          {authoredIdle && (
-            <>
-              <svg className="nb-generated-clip nb-generated-idle" x="25" y="0" width="150" height="200" viewBox="0 0 150 200" overflow="hidden">
-                <ChromaSpriteImage
-                  href="/assets/niumpi/animations/stage-4-idle-v1.png"
-                  className="nb-authored-sheet nb-stage4-idle-sheet"
-                />
-              </svg>
-              <svg className="nb-generated-clip nb-generated-look" x="25" y="0" width="150" height="200" viewBox="0 0 150 200" overflow="hidden">
-                <ChromaSpriteImage
-                  href="/assets/niumpi/animations/stage-4-look-v1.png"
-                  className="nb-authored-sheet nb-stage4-look-sheet"
-                />
-              </svg>
-              <svg className="nb-generated-clip nb-generated-pet" x="25" y="0" width="150" height="200" viewBox="0 0 150 200" overflow="hidden">
-                <ChromaSpriteImage
-                  href="/assets/niumpi/animations/stage-4-pet-v1.png"
-                  className="nb-authored-sheet nb-stage4-pet-sheet"
-                />
-              </svg>
-            </>
-          )}
+      <span className="nb nb-frame-art" role="img" aria-label="Niumpi" data-animation-variant={variant}>
+        <NiumpiFrameCanvas variant={variant} fallback={art} entrance={animation === "hatch"} />
+        <svg className="nb-frame-care" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
           <CareSurface />
-        </g>
-      </svg>
+        </svg>
+      </span>
     );
   }
 

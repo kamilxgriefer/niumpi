@@ -72,97 +72,53 @@
   transition: scale .9s cubic-bezier(.22, 1, .36, 1);
 }
 
-/* Living stages preserve the approved painting intact. Authored full-frame
-   clips replace it only after their chroma texture has finished processing;
-   the character is never split into puppet pieces and never shows two faces. */
-.nb-sprite { overflow: visible; animation: nb-cloud-reveal .9s cubic-bezier(.22, 1, .36, 1); }
-.nb-sprite-torso { filter: drop-shadow(0 10px 8px rgb(49 31 77 / 20%)); }
-.nb-authored-image,
-.nb-generated-clip {
-  /* Never cross-fade two complete character paintings: even a short blend
-     produces duplicate eyes and leaves. Clip boundaries are frame cuts. */
-  transition: none;
-}
-.nb-generated-clip {
-  opacity: 0;
-  pointer-events: none;
-}
-.rig-root:not(.is-reduced).growth-stage-4.behavior-idle .nb-authored-art:has(.nb-stage4-idle-sheet) .nb-authored-static {
-  opacity: 0;
-}
-.rig-root:not(.is-reduced).growth-stage-4.behavior-idle .nb-authored-art:has(.nb-stage4-idle-sheet) .nb-generated-idle {
-  opacity: 1;
-}
-.rig-root:not(.is-reduced).growth-stage-4.behavior-semantic-look .nb-authored-art:has(.nb-stage4-look-sheet) .nb-authored-static {
-  opacity: 0;
-}
-.rig-root:not(.is-reduced).growth-stage-4.behavior-semantic-look .nb-authored-art:has(.nb-stage4-look-sheet) .nb-generated-look {
-  opacity: 1;
-}
-.rig-root:not(.is-reduced).growth-stage-4.behavior-semantic-pet .nb-authored-art:has(.nb-stage4-pet-sheet) .nb-authored-static {
-  opacity: 0;
-}
-.rig-root:not(.is-reduced).growth-stage-4.behavior-semantic-pet .nb-authored-art:has(.nb-stage4-pet-sheet) .nb-generated-pet {
-  opacity: 1;
-}
-.rig-root:not(.is-reduced).growth-stage-4:is(.behavior-idle, .behavior-semantic-look, .behavior-semantic-pet) .nb-authored-art:has(.nb-authored-sheet) .nb-torso {
+/* Full-frame game renderer -------------------------------------------------
+   The canvas displays one flattened character painting at a time.  No live
+   eye, arm, leaf or cloud layer can leak through and create the old puppet or
+   duplicate-face look. */
+.nb-frame-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: visible;
   animation: none !important;
+  filter: drop-shadow(0 10px 8px rgb(49 31 77 / 20%));
 }
-.nb-authored-sheet {
-  will-change: translate;
+.nb-frame-player,
+.nb-frame-fallback,
+.nb-frame-canvas,
+.nb-frame-care {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-.nb-stage4-idle-sheet {
-  animation: nb-stage4-idle-frames 2.8s linear infinite;
+.nb-frame-player { display: block; }
+.nb-frame-fallback,
+.nb-frame-canvas {
+  object-fit: contain;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-.nb-stage4-look-sheet {
-  animation: nb-stage4-look-frames 2.3s linear both;
+.nb-frame-canvas {
+  opacity: 0;
+  transition: opacity 80ms linear;
 }
-.nb-stage4-pet-sheet {
-  animation: nb-stage4-pet-frames 1.85s linear both;
+.nb-frame-player.is-ready .nb-frame-canvas { opacity: 1; }
+.nb-frame-player.is-ready .nb-frame-fallback { visibility: hidden; }
+.nb-frame-care { pointer-events: none; overflow: visible; }
+.uses-frame-animation .rig-leaf-touch {
+  left: 14%;
+  top: 0;
+  width: 72%;
+  height: 42%;
+  translate: 0 0;
+  border-radius: 48% 48% 38% 38%;
 }
-@keyframes nb-stage4-idle-frames {
-  0%, 8.32% { translate: 0 0; }
-  8.33%, 16.65% { translate: -150px 0; }
-  16.66%, 24.99% { translate: -300px 0; }
-  25%, 33.32% { translate: -450px 0; }
-  33.33%, 41.65% { translate: 0 -200px; }
-  41.66%, 49.99% { translate: -150px -200px; }
-  50%, 58.32% { translate: -300px -200px; }
-  58.33%, 66.65% { translate: -450px -200px; }
-  66.66%, 74.99% { translate: 0 -400px; }
-  75%, 83.32% { translate: -150px -400px; }
-  83.33%, 91.65% { translate: -300px -400px; }
-  91.66%, 99.99% { translate: -450px -400px; }
-  100% { translate: 0 0; }
-}
-@keyframes nb-stage4-look-frames {
-  0%, 8.32% { translate: 0 0; }
-  8.33%, 16.65% { translate: -150px 0; }
-  16.66%, 24.99% { translate: -300px 0; }
-  25%, 33.32% { translate: -450px 0; }
-  33.33%, 41.65% { translate: 0 -200px; }
-  41.66%, 49.99% { translate: -150px -200px; }
-  50%, 58.32% { translate: -300px -200px; }
-  58.33%, 66.65% { translate: -450px -200px; }
-  66.66%, 74.99% { translate: 0 -400px; }
-  75%, 83.32% { translate: -150px -400px; }
-  83.33%, 91.65% { translate: -300px -400px; }
-  91.66%, 100% { translate: -450px -400px; }
-}
-@keyframes nb-stage4-pet-frames {
-  0%, 8.32% { translate: 0 0; }
-  8.33%, 16.65% { translate: -150px 0; }
-  16.66%, 24.99% { translate: -300px 0; }
-  25%, 33.32% { translate: -450px 0; }
-  33.33%, 41.65% { translate: 0 -200px; }
-  41.66%, 49.99% { translate: -150px -200px; }
-  50%, 58.32% { translate: -300px -200px; }
-  58.33%, 66.65% { translate: -450px -200px; }
-  66.66%, 74.99% { translate: 0 -400px; }
-  75%, 83.32% { translate: -150px -400px; }
-  83.33%, 91.65% { translate: -300px -400px; }
-  91.66%, 100% { translate: -450px -400px; }
-}
+.uses-frame-animation .nb-frame-art,
+.uses-frame-animation .nb-frame-player,
+.uses-frame-animation .nb-frame-canvas { animation: none !important; }
+
 .nb-cloud-reference {
   opacity: calc(.07 + var(--diet-strength, 0) * .06);
   mix-blend-mode: soft-light;
@@ -401,7 +357,6 @@
   z-index: 4;
   border-radius: 50%;
 }
-.uses-layered-rig .rig-leaf-touch { left: 12%; top: 0; width: 76%; height: 42%; translate: 0 0; border-radius: 48% 48% 38% 38%; }
 .rig-leaf-touch:focus-visible { outline: 3px solid var(--focus, #7de3dc); outline-offset: 2px; }
 
 /* --------------------------------------------------------------------- arms */
@@ -745,6 +700,8 @@
 .rig-root.is-reduced .layer-aura,
 .rig-root.is-reduced .sleep-wisp,
 .rig-root.is-reduced .layer-particles i { animation: none !important; }
+.rig-root.is-reduced .nb-frame-canvas { display: none; }
+.rig-root.is-reduced .nb-frame-fallback { visibility: visible; }
 .rig-root.is-reduced .nb { transition: none; }
 .rig-root.is-reduced .nb-gaze { transition: none; }
 

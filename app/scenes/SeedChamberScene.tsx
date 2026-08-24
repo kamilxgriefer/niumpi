@@ -101,6 +101,7 @@ export function SeedChamberScene() {
             <NiumpiBody
               profile={profileFor(1)}
               phenotype={{ ...state.phenotype, morphology: "seedling", markings: [] }}
+              animation="hatch"
             />
           </div>
         </div>

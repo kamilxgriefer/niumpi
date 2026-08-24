@@ -322,9 +322,12 @@ test("a freshly hatched Niumpi renders small, and grows", async ({ browser }) =>
 test("the hatchling wears a single leaf and no arms", async ({ page }) => {
   await openHatchedGame(page, { niumpi: hatchedAs(1) });
   await expect(page.locator(".rig-root")).toHaveClass(/growth-stage-1/);
-  // Evolved Niumpis are now full-frame authored paintings rather than a
+  // Living Niumpis are now complete 24 FPS atlas frames rather than a
   // collection of independently animated face, body and leaf fragments.
-  await expect(page.locator(".nb-authored-static")).toHaveAttribute("href", "/assets/niumpi/stages/stage-1.webp");
+  const player = page.locator('.nb-frame-player[data-variant="stage-1"]');
+  await expect(player).toBeVisible();
+  await expect(player.locator(".nb-frame-fallback")).toHaveAttribute("src", "/assets/niumpi/stages/stage-1.webp");
+  await expect(player.locator(".nb-frame-canvas")).toHaveAttribute("data-clip", "idle");
   // Arms grow in later; drawing them on a newborn was part of what made the
   // first stage read as an adult.
   await expect(page.locator(".nb-arm")).toHaveCount(0);
@@ -335,18 +338,20 @@ test("the five-leaf crown stays attached to a mature Niumpi", async ({ page }) =
   await openHatchedGame(page, { niumpi: hatchedAs(4) });
 
   const rig = page.locator(".rig-root").first();
-  const authoredFrame = page.locator(".nb-authored-static").first();
+  const framePlayer = page.locator('.nb-frame-player[data-variant="stage-4"]').first();
+  const authoredFrame = framePlayer.locator(".nb-frame-canvas");
   await expect(rig).toHaveClass(/growth-stage-4/);
-  await expect(authoredFrame).toHaveAttribute("href", "/assets/niumpi/stages/stage-4.webp");
+  await expect(framePlayer.locator(".nb-frame-fallback")).toHaveAttribute("src", "/assets/niumpi/stages/stage-4.webp");
+  await expect(authoredFrame).toHaveAttribute("data-fps", "24");
 
   const rigBox = await rig.boundingBox();
   const frameBox = await authoredFrame.boundingBox();
   if (!rigBox) throw new Error("mature rig has no box");
   if (!frameBox) throw new Error("mature authored frame has no box");
 
-  // The crown is baked into the approved full-frame painting. Verifying that
-  // the complete authored frame stays inside the rig replaces the obsolete
-  // fragment-level test that expected five separately animated SVG leaves.
+  // The crown is painted in every full-character frame. Verifying that the
+  // complete Canvas stays inside the rig replaces the obsolete fragment-level
+  // test that expected five separately animated SVG leaves.
   expect(frameBox.x).toBeGreaterThanOrEqual(rigBox.x - 1);
   expect(frameBox.y).toBeGreaterThanOrEqual(rigBox.y - 1);
   expect(frameBox.x + frameBox.width).toBeLessThanOrEqual(rigBox.x + rigBox.width + 1);

@@ -1151,6 +1151,100 @@
 .shop-owned { display: inline-flex; align-items: center; gap: 5px; min-height: var(--tap); margin-top: auto; color: var(--green); font-size: var(--t-xs); font-weight: 800; }
 .shop-owned .art { --art-1: var(--green); }
 .shop-preview { display: grid; gap: var(--s-4); }
+
+/* ------------------------------------------------------ animation lab ---- */
+.animation-lab {
+  --lab-ink: #fffaf7;
+  min-height: 100vh;
+  padding: clamp(20px, 4vw, 56px);
+  color: var(--lab-ink);
+  background:
+    radial-gradient(circle at 24% 18%, rgb(120 230 224 / 18%), transparent 34%),
+    radial-gradient(circle at 78% 70%, rgb(245 99 190 / 17%), transparent 36%),
+    #160d2e;
+}
+.animation-lab.is-light {
+  --lab-ink: #392350;
+  background:
+    radial-gradient(circle at 24% 18%, rgb(120 230 224 / 28%), transparent 34%),
+    radial-gradient(circle at 78% 70%, rgb(245 99 190 / 18%), transparent 36%),
+    #fff7f1;
+}
+.animation-lab-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1080px;
+  margin: 0 auto 24px;
+}
+.animation-lab-head h1 { margin: 4px 0; font-size: clamp(32px, 5vw, 58px); }
+.animation-lab-head p { margin: 0; color: color-mix(in srgb, var(--lab-ink) 68%, transparent); }
+.animation-lab-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(86vw, 620px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  border: 1px solid color-mix(in srgb, var(--lab-ink) 16%, transparent);
+  border-radius: 42px;
+  background:
+    linear-gradient(45deg, rgb(255 255 255 / 4%) 25%, transparent 25% 75%, rgb(255 255 255 / 4%) 75%),
+    linear-gradient(45deg, rgb(255 255 255 / 4%) 25%, transparent 25% 75%, rgb(255 255 255 / 4%) 75%);
+  background-size: 32px 32px;
+  background-position: 0 0, 16px 16px;
+  box-shadow: 0 28px 90px rgb(12 6 31 / 28%);
+  overflow: hidden;
+}
+.animation-lab-stage .nb-frame-player { inset: 8%; }
+.animation-lab-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  max-width: 720px;
+  margin: 18px auto;
+}
+.animation-lab-stats div {
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--lab-ink) 14%, transparent);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--lab-ink) 7%, transparent);
+}
+.animation-lab-stats dt { color: color-mix(in srgb, var(--lab-ink) 58%, transparent); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.animation-lab-stats dd { margin: 3px 0 0; font-weight: 800; }
+.animation-lab-controls {
+  display: grid;
+  gap: 14px;
+  max-width: 920px;
+  margin: 0 auto;
+}
+.animation-lab-controls label { display: grid; gap: 6px; font-weight: 800; }
+.animation-lab-controls select {
+  min-height: 46px;
+  padding: 0 14px;
+  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--lab-ink) 22%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--lab-ink) 8%, transparent);
+}
+.animation-lab-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.animation-lab-buttons button {
+  min-height: 44px;
+  padding: 0 14px;
+  color: inherit;
+  border: 1px solid color-mix(in srgb, var(--lab-ink) 18%, transparent);
+  border-radius: 999px;
+  background: transparent;
+  font-weight: 800;
+}
+.animation-lab-buttons button.is-active { color: white; background: linear-gradient(135deg, #9b5cff, #f25fb8); border-color: transparent; }
+@media (max-width: 640px) {
+  .animation-lab { padding: 18px 14px 36px; }
+  .animation-lab-head { align-items: stretch; flex-direction: column; }
+  .animation-lab-stage { width: 100%; border-radius: 28px; }
+  .animation-lab-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 .preview-piece img { width: 118px; height: 112px; object-fit: contain; filter: drop-shadow(0 9px 8px rgb(65 31 81 / 24%)); }
 .preview-room { position: relative; height: 200px; overflow: hidden; background: linear-gradient(178deg, #FFE7DC 0 64%, #DDBBAD 64% 100%); border-radius: var(--r-xl); }
 .preview-piece { position: absolute; bottom: 14%; left: 22%; }
