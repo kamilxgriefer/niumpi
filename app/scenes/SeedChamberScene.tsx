@@ -97,8 +97,8 @@ export function SeedChamberScene() {
             * on this wrapper: no frame loop, nothing to interrupt, and a
             * refresh mid-sequence simply lands on the settled pose.
             */}
-          <div className={`hatch-baby body-${state.phenotype.bodyPalette} leaf-${state.phenotype.leafType}`}>
-            <NiumpiBody profile={profileFor(1)} />
+          <div className={`hatch-baby body-${state.phenotype.bodyPalette} leaf-${state.phenotype.leafType} morph-${state.phenotype.morphology}`}>
+            <NiumpiBody profile={profileFor(1)} phenotype={state.phenotype} />
           </div>
         </div>
         <form

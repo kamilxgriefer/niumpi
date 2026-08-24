@@ -118,8 +118,8 @@ export function CookingScene() {
             creature standing on every other screen. */}
         <div className="cook-chef" aria-hidden="true">
           <span className="chef-hat" />
-          <span className={`cook-chef-body body-${state.phenotype.bodyPalette} leaf-${state.phenotype.leafType}`}>
-            <NiumpiBody profile={profileFor(visualStageFor(state.niumpi.careMoments, state.niumpi.stage))} />
+          <span className={`cook-chef-body body-${state.phenotype.bodyPalette} leaf-${state.phenotype.leafType} morph-${state.phenotype.morphology}`}>
+            <NiumpiBody profile={profileFor(visualStageFor(state.niumpi.careMoments, state.niumpi.stage))} phenotype={state.phenotype} />
           </span>
         </div>
       </div>

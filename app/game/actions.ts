@@ -25,6 +25,8 @@ import { roomActivityMap, roomDefinitionMap } from "./config/rooms.ts";
 import {
   activateRoom, newlyUnlockedRooms, recordRoomInteraction, saveActiveRoomLayout, settleRoomUnlocks,
 } from "./rooms.ts";
+import { claimRoomDrop, earnRoomDiscovery } from "./roomLoot.ts";
+import { rarityMap } from "./config/rarities.ts";
 
 export type ActionResult = {
   state: GameState;
@@ -73,7 +75,7 @@ function settle(state: GameState, now: number, toasts: ActionResult["toasts"], r
       next = markClaimed({ ...next, niumpi: { ...next.niumpi, stage, stageStartedAt: now } }, key, now);
       toasts.push({ text: `${next.niumpi.name || "Niumpi"} grew — ${stageMap[stage].name}`, icon: "✦" });
       rewards.push({ kind: "stage", stage, name: stageMap[stage].name });
-      if (stage >= 3 && !next.evolution.lockedRoute) {
+      if (stage >= 4 && !next.evolution.lockedRoute) {
         const locked = lockRoute(next, now);
         next = locked.state;
         rewards.push({ kind: "route", id: locked.route, name: locked.route });
@@ -460,6 +462,7 @@ export function saveRoom(state: GameState, placed: PlacedItem[], theme: string, 
   const care = recordCare(state, "decorate", now, { creative: 2 });
   let next = saveActiveRoomLayout(care.state, placed, theme);
   next = recordRoomInteraction(next, "decorate", now);
+  if (care.careMoment) next = earnRoomDiscovery(next);
   next = addSignal(next, "items", 0.5);
   next = progressMissions(next, "decorate", now);
   const toasts: ActionResult["toasts"] = [];
@@ -477,6 +480,7 @@ export function playWithItem(state: GameState, itemId: string, now: number): Act
   let next = care.state;
   next = { ...next, stats: applyStat(next.stats, "joy", 4) };
   next = recordRoomInteraction(next, `item:${itemId}`, now);
+  if (care.careMoment) next = earnRoomDiscovery(next);
   if (itemId === "telescope") next = addSignal(next, "stars", 1);
   if (itemId === "music-radio" || itemId === "wind-chimes") next = addSignal(next, "music", 1);
   if (itemId === "toy-chest" || itemId === "ball-of-yarn") next = addSignal(next, "items", 1);
@@ -501,10 +505,10 @@ function itemInteractionFor(itemId: string, category: string) {
   if (["music-radio", "wind-chimes"].includes(itemId)) return { behavior: "singing", sound: "chime", spark: "♪" };
   if (["star-rug"].includes(itemId)) return { behavior: "dancing", sound: "tap", spark: "♪" };
   if (["ball-of-yarn", "toy-chest", "leaf-mobile"].includes(itemId)) return { behavior: "roll", sound: "tap", spark: "✦" };
-  if (["memory-shelf", "map-table"].includes(itemId)) return { behavior: "book", sound: "blip", spark: "✧" };
-  if (["telescope", "aurora-window"].includes(itemId)) return { behavior: "window", sound: "chime", spark: "✧" };
+  if (["memory-shelf", "map-table", "cloud-bookshelf"].includes(itemId)) return { behavior: "book", sound: "blip", spark: "✧" };
+  if (["telescope", "aurora-window", "crystal-terrarium", "star-fountain"].includes(itemId)) return { behavior: "window", sound: "chime", spark: "✧" };
   if (["moon-lamp", "paper-lanterns", "star-projector"].includes(itemId)) return { behavior: "lamp", sound: "chime", spark: "✦" };
-  if (["cloud-sofa", "cozy-cushion", "moon-bed", "dream-tent"].includes(itemId)) return { behavior: "sway", sound: "hold", spark: "♡" };
+  if (["cloud-sofa", "cozy-cushion", "moon-bed", "dream-tent", "rainbow-beanbag"].includes(itemId)) return { behavior: "sway", sound: "hold", spark: "♡" };
   if (itemId === "little-mirror") return { behavior: "peek", sound: "blip", spark: "✦" };
   if (category === "plants") return { behavior: "sway", sound: "leaf", spark: "✧" };
   return { behavior: "happy", sound: "blip", spark: "✦" };
@@ -549,6 +553,7 @@ export function roomActivity(state: GameState, activityId: RoomActivityId, now: 
     next = { ...next, stats: applyStat(next.stats, stat as keyof typeof next.stats, amount ?? 0) };
   }
   next = recordRoomInteraction(next, `activity:${activityId}`, now);
+  if (care.careMoment) next = earnRoomDiscovery(next);
   next = progressMissions(next, activity.careAction, now);
   if (activityId === "dance" || activityId === "roll") next = addSignal(next, "dance", 0.75);
   if (activityId === "sing") next = addSignal(next, "music", 1);
@@ -564,6 +569,25 @@ export function roomActivity(state: GameState, activityId: RoomActivityId, now: 
     spark: activityId === "sing" || activityId === "dance" ? "♪" : "✦",
     rewards,
     toasts,
+  };
+}
+
+/** Opens an earned discovery bloom. Rolls are free, odds are visible, and duplicates are impossible. */
+export function claimRoomDiscovery(state: GameState, now: number): ActionResult {
+  const drop = claimRoomDrop(state, now);
+  if (drop.refused || !drop.reward) {
+    return { ...empty(state), message: "Share a few more room moments first.", refused: true, sound: "blip" };
+  }
+  const item = drop.reward.kind === "item" ? itemMap[drop.reward.id] : null;
+  const rarity = drop.rarity ? rarityMap[drop.rarity] : null;
+  return {
+    state: drop.state,
+    message: item ? `${item.name} found a home with you.` : "Your complete collection became dewdrops.",
+    behavior: "excited",
+    spark: drop.rarity === "mythic" ? "✦" : "✧",
+    sound: "reward",
+    rewards: [drop.reward],
+    toasts: [{ text: item && rarity ? `${rarity.name} discovery — ${item.name}` : "Collection bonus", icon: "✦" }],
   };
 }
 

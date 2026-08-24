@@ -1,5 +1,6 @@
 import { useId } from "react";
 import type { StageProfile } from "../../game/config/growth.ts";
+import type { Phenotype } from "../../game/types.ts";
 import { bellyPath, bodyPath, tipRise } from "../../game/config/growth.ts";
 
 /**
@@ -32,8 +33,70 @@ function leafShape(w: number, h: number): string {
   return `M 0 0 C ${-w} ${-h * 0.34} ${-w * 0.56} ${-h} 0 ${-h} C ${w * 0.56} ${-h} ${w} ${-h * 0.34} 0 0 Z`;
 }
 
-export function NiumpiBody({ profile }: { profile: StageProfile }) {
+function MorphFeatures({ morphology, profile }: { morphology: Phenotype["morphology"]; profile: StageProfile }) {
+  if (morphology === "seedling") return null;
+  const reveal = Math.max(0.28, Math.min(1, profile.id / 5));
+  const sideY = profile.body.baseY - profile.body.ry * 0.18;
+  const sideX = profile.body.rx * (0.88 + reveal * 0.08);
+  return (
+    <g className={`nb-morph-features nb-morph-${morphology}`} style={{ opacity: 0.48 + reveal * 0.52 }}>
+      {morphology === "moonveil" && (
+        <>
+          <path className="nb-morph-soft" d={`M ${100 - sideX} ${sideY} C ${72 - reveal * 7} ${66 - reveal * 7} ${54 - reveal * 10} ${52 - reveal * 8} ${56} ${106} C 65 98 72 101 ${100 - sideX} ${sideY} Z`} />
+          <path className="nb-morph-soft" d={`M ${100 + sideX} ${sideY} C ${128 + reveal * 7} ${66 - reveal * 7} ${146 + reveal * 10} ${52 - reveal * 8} ${144} ${106} C 135 98 128 101 ${100 + sideX} ${sideY} Z`} />
+          <path className="nb-morph-symbol" d="M 100 70 C 88 77 89 92 103 96 C 96 89 98 79 108 74 C 105 72 102 70 100 70 Z" />
+        </>
+      )}
+      {morphology === "bloomheart" && (
+        <>
+          {[-1, 1].map((side) => (
+            <g key={side} transform={`translate(${100 + side * sideX} ${sideY + 6}) scale(${side} 1)`}>
+              <ellipse className="nb-morph-soft" cx="0" cy="-13" rx={8 + reveal * 3} ry={17 + reveal * 4} rotate="-30" />
+              <ellipse className="nb-morph-soft" cx="5" cy="4" rx={8 + reveal * 3} ry={16 + reveal * 4} rotate="-72" />
+              <ellipse className="nb-morph-soft" cx="-2" cy="16" rx={7 + reveal * 3} ry={14 + reveal * 3} rotate="-105" />
+            </g>
+          ))}
+          <path className="nb-morph-symbol" d="M 100 82 C 91 72 79 80 82 91 C 84 100 100 109 100 109 C 100 109 116 100 118 91 C 121 80 109 72 100 82 Z" />
+        </>
+      )}
+      {morphology === "sparkleap" && (
+        <>
+          <path className="nb-morph-wing" d={`M ${100 - sideX + 4} ${sideY + 8} C ${65 - reveal * 10} 105 ${50 - reveal * 10} 114 ${39 - reveal * 12} 100 C 53 91 67 88 ${100 - sideX + 4} ${sideY + 8} Z`} />
+          <path className="nb-morph-wing" d={`M ${100 + sideX - 4} ${sideY + 8} C ${135 + reveal * 10} 105 ${150 + reveal * 10} 114 ${161 + reveal * 12} 100 C 147 91 133 88 ${100 + sideX - 4} ${sideY + 8} Z`} />
+          <path className="nb-morph-symbol" d="M 100 69 L 105 80 L 117 81 L 108 89 L 111 101 L 100 95 L 89 101 L 92 89 L 83 81 L 95 80 Z" />
+        </>
+      )}
+      {morphology === "mistwander" && (
+        <>
+          <path className="nb-morph-tail" d={`M ${100 + sideX - 8} ${sideY + 22} C ${153 + reveal * 18} 124 ${164 + reveal * 18} 155 141 170 C 158 158 171 170 158 184 C 142 201 110 185 116 164`} />
+          <path className="nb-morph-symbol" d="M 100 72 C 89 84 90 96 100 101 C 110 96 111 84 100 72 Z" />
+        </>
+      )}
+      {morphology === "prismatic" && (
+        <>
+          {[-1, 1].map((side) => (
+            <g key={side} transform={`translate(${100 + side * sideX} ${sideY}) scale(${side} 1)`}>
+              <path className="nb-morph-crystal" d={`M 0 4 L ${-20 - reveal * 11} -15 L ${-15 - reveal * 8} 12 Z`} />
+              <path className="nb-morph-crystal" d={`M -2 9 L ${-26 - reveal * 14} 6 L ${-13 - reveal * 8} 25 Z`} />
+              <path className="nb-morph-crystal" d={`M -1 -2 L ${-12 - reveal * 7} -28 L ${-5 - reveal * 3} 10 Z`} />
+            </g>
+          ))}
+          <path className="nb-morph-symbol" d="M 100 68 L 109 83 L 103 101 L 91 92 L 92 77 Z" />
+        </>
+      )}
+    </g>
+  );
+}
+
+export function NiumpiBody({
+  profile, phenotype, morphology,
+}: {
+  profile: StageProfile;
+  phenotype?: Pick<Phenotype, "morphology" | "markings">;
+  morphology?: Phenotype["morphology"];
+}) {
   const { body, face } = profile;
+  const look = phenotype ?? { morphology: morphology ?? "seedling", markings: [] };
   /*
    * Gradient, filter and clip ids must be unique per instance. SVG ids are
    * document-global, so two Niumpis on one page — the player and a neighbour,
@@ -60,6 +123,83 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
   const footX = body.rx * 0.46;
 
   const silhouette = bodyPath(body);
+
+  /* Production character art is stage-specific rather than one adult image
+   * scaled five ways. The procedural body below remains as a safe seed/fallback
+   * and as geometry documentation, while every living stage uses the approved
+   * cloud-wisp sprites. At the final stage the locked care morphology becomes
+   * the full authored route form. */
+  if (profile.id > 0) {
+    const finalForm = profile.id >= 5 && look.morphology !== "seedling";
+    const sprite = finalForm
+      ? `/assets/niumpi/forms/${look.morphology}.webp`
+      : `/assets/niumpi/stages/stage-${profile.id}.webp`;
+    const spriteEyeY = 113;
+    const spriteEyeGap = 24;
+    return (
+      <svg className="nb nb-sprite" viewBox="0 0 200 200" role="img" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id={id("nb-sprite-leaf")} x1="0.18" y1="1" x2="0.82" y2="0">
+            <stop offset="0%" stopColor="var(--leaf-deep)" />
+            <stop offset="100%" stopColor="var(--leaf-light)" />
+          </linearGradient>
+        </defs>
+        <g className="nb-torso nb-sprite-torso">
+          <g className="nb-face nb-sprite-face">
+            <image className="nb-sprite-image" href={sprite} x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid meet" />
+            <image className="nb-sprite-diet" href={sprite} x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid meet" />
+            <g className="nb-leaves nb-sprite-leaves">
+              {angles.map((angle, index) => (
+                <g key={angle} className={`nb-leaf-anchor nb-leaf-anchor-${index + 1}`} transform={`translate(${tipX} ${body.tipY + 4})`}>
+                  <g
+                    className={`nb-leaf nb-leaf-${index + 1}`}
+                    style={{ ["--leaf-angle" as string]: `${angle}deg`, ["--leaf-delay" as string]: `${index * -0.7}s` }}
+                  >
+                    <path d={leafShape(leafW, leafH)} fill={ref("nb-sprite-leaf")} />
+                    <path d={`M 0 -2 L 0 ${-leafH * 0.82}`} stroke="var(--leaf-vein)" strokeWidth="1.4" strokeLinecap="round" opacity="0.62" fill="none" />
+                  </g>
+                </g>
+              ))}
+            </g>
+            {!finalForm && <MorphFeatures morphology={look.morphology} profile={profile} />}
+            <g className="nb-sprite-live-parts">
+              {armLength > 0 && (
+                <>
+                  <ellipse className="nb-arm nb-arm-left nb-sprite-arm" cx="47" cy="139" rx={7 + armLength * .22} ry="6" />
+                  <ellipse className="nb-arm nb-arm-right nb-sprite-arm" cx="153" cy="139" rx={7 + armLength * .22} ry="6" />
+                </>
+              )}
+              <ellipse className="nb-cheek nb-sprite-cheek" cx="66" cy="132" rx="9" ry="5" />
+              <ellipse className="nb-cheek nb-sprite-cheek" cx="134" cy="132" rx="9" ry="5" />
+              <ellipse className="nb-mouth nb-sprite-mouth" cx="100" cy="139" rx="5" ry="3.5" />
+            </g>
+            <g className="nb-sprite-marks" fill="var(--marking, var(--morph-deep))">
+              {look.markings.includes("violet-flecks") && <><circle cx="62" cy="139" r="2.8" /><circle cx="139" cy="132" r="2.2" /></>}
+              {look.markings.includes("teal-spots") && <><ellipse cx="65" cy="142" rx="5" ry="3" /><ellipse cx="137" cy="137" rx="3" ry="5" /></>}
+              {look.markings.includes("gold-sparks") && <><path d="M 66 130 l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" /><path d="M 139 141 l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5Z" /></>}
+              {look.markings.includes("rose-hearts") && <path d="M 100 137 C 94 130 86 136 89 143 C 91 149 100 154 100 154 C 100 154 109 149 111 143 C 114 136 106 130 100 137 Z" />}
+              {look.markings.includes("pastel-swirl") && <path className="nb-mark-stroke" d="M 76 150 C 78 134 99 128 110 138 C 119 148 108 158 98 154 C 91 151 92 144 98 143" />}
+              {look.markings.includes("leaf-bud") && <path d="M 129 137 C 119 132 116 145 127 149 C 136 146 138 137 129 137 Z" />}
+            </g>
+            <g className="nb-eyes nb-sprite-eyes">
+              {[-1, 1].map((side) => {
+                const ex = 100 + side * spriteEyeGap;
+                return (
+                  <g key={side} className={`nb-eye ${side < 0 ? "nb-eye-left" : "nb-eye-right"}`}>
+                    <g className="nb-gaze">
+                      <circle cx={ex - 4} cy={spriteEyeY - 5} r="2.6" fill="white" opacity=".9" />
+                      <circle cx={ex + 4} cy={spriteEyeY + 4} r="1.1" fill="white" opacity=".55" />
+                    </g>
+                    <ellipse className="nb-lid nb-sprite-lid" cx={ex} cy={spriteEyeY} rx="13" ry="15" fill="#f8f3ff" />
+                  </g>
+                );
+              })}
+            </g>
+          </g>
+        </g>
+      </svg>
+    );
+  }
 
   return (
     <svg className="nb" viewBox="0 0 200 200" role="img" aria-hidden="true" focusable="false">
@@ -183,6 +323,8 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
         ))}
       </g>
 
+      <MorphFeatures morphology={look.morphology} profile={profile} />
+
       {profile.arms !== "none" && (
         <g className="nb-arms">
           {[-1, 1].map((side) => (
@@ -221,6 +363,20 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
 
         <g clipPath={ref("nb-silhouette")}>
           <path d={bellyPath(body)} fill={ref("nb-belly")} />
+          <path className="nb-diet-wash" d={silhouette} fill="var(--diet-tint, transparent)" />
+          <g className="nb-cloud-texture" fill="var(--rim)">
+            <circle cx="62" cy="103" r="19" /><circle cx="92" cy="88" r="23" /><circle cx="128" cy="94" r="21" />
+            <circle cx="148" cy="125" r="18" /><circle cx="116" cy="145" r="24" /><circle cx="74" cy="142" r="22" />
+          </g>
+          <g className="nb-markings">
+            {look.markings.includes("violet-flecks") && <><circle cx="66" cy="117" r="4" /><circle cx="142" cy="132" r="3" /><circle cx="122" cy="92" r="2.5" /></>}
+            {look.markings.includes("teal-spots") && <><ellipse cx="64" cy="135" rx="7" ry="4" /><ellipse cx="137" cy="112" rx="5" ry="8" /></>}
+            {look.markings.includes("gold-sparks") && <><path d="M 65 108 l3 7 7 3-7 3-3 7-3-7-7-3 7-3Z" /><path d="M 139 131 l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" /></>}
+            {look.markings.includes("rose-hearts") && <path d="M 100 111 C 91 101 80 110 84 120 C 87 128 100 136 100 136 C 100 136 113 128 116 120 C 120 110 109 101 100 111 Z" />}
+            {look.markings.includes("pastel-swirl") && <path className="nb-mark-stroke" d="M 72 137 C 75 112 105 105 119 120 C 132 134 116 151 100 145 C 89 141 91 130 100 129" />}
+            {look.markings.includes("leaf-bud") && <path d="M 132 119 C 116 111 113 130 129 136 C 142 132 145 119 132 119 Z" />}
+            {look.markings.includes("prism-edge") && <path className="nb-mark-stroke" d={silhouette} />}
+          </g>
           <path d={silhouette} fill={ref("nb-shade")} />
           <path d={silhouette} fill={ref("nb-sheen")} />
           {/* Rim light: the outline redrawn thick, nudged toward the light, and
@@ -293,12 +449,11 @@ export function NiumpiBody({ profile }: { profile: StageProfile }) {
         <path
           className="nb-mouth"
           d={`M ${100 - face.mouthW / 2} ${face.mouthY}
-              q ${face.mouthW / 2} ${face.mouthW * 0.8} ${face.mouthW} 0`}
-          fill="none"
-          stroke="var(--eye)"
-          strokeWidth={face.mouthW * 0.22}
-          strokeLinecap="round"
+              Q 100 ${face.mouthY + face.mouthW * 0.72} ${100 + face.mouthW / 2} ${face.mouthY}
+              Q 100 ${face.mouthY + face.mouthW * 1.02} ${100 - face.mouthW / 2} ${face.mouthY} Z`}
+          fill="var(--eye)"
         />
+        <ellipse className="nb-tongue" cx="100" cy={face.mouthY + face.mouthW * 0.56} rx={face.mouthW * 0.25} ry={face.mouthW * 0.13} fill="var(--cheek)" opacity="0.9" />
       </g>
     </svg>
   );

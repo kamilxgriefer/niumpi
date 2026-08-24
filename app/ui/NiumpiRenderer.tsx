@@ -34,6 +34,7 @@ export function NiumpiRenderer({
   onPartActivate, onLeafTouch, onActivate, onPointerDown, onPointerMove, onPointerUp,
 }: Props) {
   const profile = profileFor(stage);
+  const diet = Object.entries(phenotype.tints).sort((a, b) => b[1] - a[1])[0];
 
   const style = {
     "--mood-colour": `var(--mood-${moodColour})`,
@@ -42,6 +43,7 @@ export function NiumpiRenderer({
     "--stage-scale": profile.scale,
     // Places the leaf touch target over wherever the leaves ended up.
     "--tip-top": `${(profile.body.tipY / 200) * 100}%`,
+    "--diet-strength": Math.min(1, (diet?.[1] ?? 0) / 8),
   } as CSSProperties;
 
   return (
@@ -54,6 +56,11 @@ export function NiumpiRenderer({
         `body-${phenotype.bodyPalette}`,
         `leaf-${phenotype.leafType}`,
         `eyes-${phenotype.eyeType}`,
+        `morph-${phenotype.morphology}`,
+        profile.id > 0 ? "uses-sprite" : "",
+        phenotype.morphology !== "seedling" && profile.id < 5 ? "branch-hint" : "",
+        diet ? `diet-${diet[0]}` : "",
+        ...phenotype.markings.map((marking) => `marking-${marking}`),
         phenotype.aura ? `aura-on aura-${phenotype.aura}` : "",
         phenotype.particles ? `particles-${phenotype.particles}` : "",
         "behavior-idle",
@@ -76,7 +83,7 @@ export function NiumpiRenderer({
         onClick={onActivate}
         onContextMenu={(event) => event.preventDefault()}
       >
-        <NiumpiBody profile={profile} />
+        <NiumpiBody key={profile.id} profile={profile} phenotype={phenotype} />
       </button>
 
       {profile.leaves > 0 && (

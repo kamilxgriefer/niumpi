@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Art } from "../ui/Art";
 import { CurrencyPill, Modal, TabBar } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
 import { shopCategories, shopItems, itemMap } from "../game/config/items";
 import { buyItem } from "../game/inventory";
 import { copy } from "../game/config/copy";
+import { rarityMap } from "../game/config/rarities";
 
 export function ShopScene() {
   const { state, update, cue, toast } = useGame();
@@ -29,7 +31,7 @@ export function ShopScene() {
       <header className="scene-head">
         <div>
           <h1>{copy.nav.shop}</h1>
-          <p>Every price is shown up front. No surprise boxes, no random chances.</p>
+          <p>Buy favourites directly, or earn free Room Blooms through play. Mystery rewards are never sold.</p>
         </div>
         <div className="wallet">
           <CurrencyPill id="dewdrops" amount={state.inventory.currencies.dewdrops} />
@@ -45,11 +47,12 @@ export function ShopScene() {
           const affordable = state.inventory.currencies[item.currency] >= item.price;
           return (
             <li key={item.id}>
-              <div className={`shop-card ${owned ? "is-owned" : ""}`}>
+              <div className={`shop-card rarity-${item.rarity} ${owned ? "is-owned" : ""}`}>
                 <button className="shop-art" type="button" onClick={() => setPreview(item.id)}
                   aria-label={`Preview ${item.name}`}>
-                  <Art name={item.art} size={44} />
+                  {item.image ? <Image src={item.image} alt="" width={192} height={164} unoptimized /> : <Art name={item.art} size={44} />}
                 </button>
+                <span className="shop-rarity">{rarityMap[item.rarity].name}</span>
                 <strong>{item.name}</strong>
                 <small>{item.note}</small>
                 {item.reaction && <em className="shop-reaction">{item.reaction}</em>}
@@ -74,11 +77,14 @@ export function ShopScene() {
             <div className="preview-room">
               <span className="preview-window" />
               <span className="preview-floor" />
-              <span className="preview-piece"><Art name={itemMap[preview].art} size={70} /></span>
+              <span className="preview-piece">{itemMap[preview].image
+                ? <Image src={itemMap[preview].image} alt="" width={236} height={224} unoptimized />
+                : <Art name={itemMap[preview].art} size={70} />}</span>
               <span className="preview-pet"><Art name="niumpi" size={54} /></span>
             </div>
             <dl className="preview-facts">
               <dt>Category</dt><dd>{itemMap[preview].category}</dd>
+              <dt>Rarity</dt><dd style={{ color: rarityMap[itemMap[preview].rarity].colour }}>{rarityMap[itemMap[preview].rarity].name}</dd>
               <dt>In the room</dt><dd>{itemMap[preview].reaction ?? "Purely decorative"}</dd>
               <dt>Price</dt><dd>{itemMap[preview].price} {itemMap[preview].currency === "dewdrops" ? "dewdrops" : "star fragments"}</dd>
             </dl>

@@ -36,6 +36,8 @@ export type CurrencyId = "dewdrops" | "starFragments";
 
 export type ItemCategory = "furniture" | "plants" | "toys" | "lights" | "themes" | "accessories" | "music";
 
+export type ItemRarity = "common" | "uncommon" | "rare" | "epic" | "legendary" | "mythic";
+
 /** Stable identifiers for the spaces that make up Niumpi's home. */
 export type RoomId = "living-room" | "bedroom" | "play-nook";
 
@@ -99,6 +101,8 @@ export type Phenotype = {
   markings: string[];
   leafType: string;
   eyeType: string;
+  /** Silhouette branch, visible before the route locks and permanent afterwards. */
+  morphology: RouteId | "seedling";
   aura: string | null;
   particles: string | null;
   accessory: string | null;
@@ -152,6 +156,20 @@ export type RoomLayout = {
    */
   theme: string;
   placed: PlacedItem[];
+};
+
+/** Free, relationship-earned furniture discoveries. No currency can buy a roll. */
+export type RoomLootState = {
+  progress: number;
+  claimable: number;
+  opened: number;
+  /** Consecutive discoveries below rare; drives the published pity rule. */
+  rarePity: number;
+  /** Consecutive discoveries below legendary; drives the published pity rule. */
+  legendaryPity: number;
+  /** Consecutive discoveries below mythic. */
+  mythicPity: number;
+  lastDropAt: number | null;
 };
 
 export type Plot = {
@@ -220,6 +238,7 @@ export type GameState = {
   personality: PersonalityProfile;
   inventory: Inventory;
   room: RoomLayout;
+  roomLoot: RoomLootState;
   garden: { plots: Plot[] };
   memories: MemoryEntry[];
   dream: DreamRun | null;

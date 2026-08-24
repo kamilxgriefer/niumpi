@@ -71,8 +71,8 @@ export function FriendsScene() {
                   one flat glyph recoloured three times, so every neighbour was
                   the same creature — the thing that makes a world feel
                   inhabited is that the others are recognisably different. */}
-              <span className={`friend-avatar body-${entry.route}`} aria-hidden="true">
-                <NiumpiBody profile={profileFor(friendStage(entry.id))} />
+              <span className={`friend-avatar body-${entry.route} morph-${entry.route}`} aria-hidden="true">
+                <NiumpiBody profile={profileFor(friendStage(entry.id))} morphology={entry.route} />
               </span>
               <div className="friend-copy">
                 <strong>{entry.name}</strong>

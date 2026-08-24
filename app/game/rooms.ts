@@ -75,6 +75,23 @@ function validPlaced(value: unknown, fallback: PlacedItem[]): PlacedItem[] {
     }));
 }
 
+/** Repairs only a legacy single-room save. Once the canonical rooms object
+ * exists, these coordinates belong to the player and are never rewritten. */
+function repairFirstEditionStarterLayout(placed: PlacedItem[]): PlacedItem[] {
+  const old: Record<string, [number, number, number, number]> = {
+    "start-cloud-sofa": [1, 2, 0, 0],
+    "start-cozy-cushion": [4, 3, 4, 0],
+    "start-garden-pot": [6, 1, 6, 0],
+    "start-moon-lamp": [0, 1, 7, 0],
+  };
+  return placed.map((item) => {
+    const repair = old[item.uid];
+    return repair && item.x === repair[0] && item.y === repair[1]
+      ? { ...item, x: repair[2], y: repair[3] }
+      : item;
+  });
+}
+
 function validCount(value: unknown): number {
   const count = Number(value);
   return Number.isFinite(count) && count > 0 ? Math.floor(count) : 0;
@@ -135,7 +152,7 @@ export function reconcileRoomLayout(
     rooms["living-room"] = {
       ...rooms["living-room"],
       theme: typeof saved?.theme === "string" && saved.theme ? saved.theme : rooms["living-room"].theme,
-      placed: validPlaced(saved?.placed, rooms["living-room"].placed),
+      placed: repairFirstEditionStarterLayout(validPlaced(saved?.placed, rooms["living-room"].placed)),
     };
   }
   removeCrossRoomDuplicates(rooms);

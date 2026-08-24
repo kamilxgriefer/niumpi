@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { existsSync } from "node:fs";
 import test from "node:test";
 
 import { createGameState, migrateLegacy, reconcile, SAVE_VERSION, vectorIds } from "../app/game/state.ts";
@@ -201,12 +202,55 @@ test("diet tints only show once they pass the threshold, and stay on a safe pale
   assert.ok(phenotypeFor(state).markings.every((marking) => marking !== undefined));
 });
 
-test("a locked route repaints the body and the leaves", () => {
+test("a locked route selects the authored body, leaf and final morphology", () => {
   const state = fresh();
   const locked = { ...state, evolution: { ...state.evolution, lockedRoute: "moonveil" as const } };
   const look = phenotypeFor(locked);
   assert.equal(look.bodyPalette, "moonveil");
-  assert.equal(look.leafType, "moonveil-leaf");
+  assert.equal(look.leafType, "moon");
+  assert.equal(look.morphology, "moonveil");
+});
+
+test("an untouched care profile stays visually unbranched", () => {
+  assert.equal(phenotypeFor(fresh()).morphology, "seedling");
+});
+
+test("reconcile restores the canonical final form for an older locked save", () => {
+  const legacy = fresh();
+  legacy.evolution.lockedRoute = "moonveil";
+  legacy.phenotype = {
+    ...legacy.phenotype,
+    bodyPalette: "coral",
+    bellyPalette: "cream",
+    leafType: "moonveil-leaf",
+  };
+  delete (legacy.phenotype as Partial<typeof legacy.phenotype>).morphology;
+  const restored = reconcile(legacy, NOW + 1);
+  assert.equal(restored.phenotype.bodyPalette, "moonveil");
+  assert.equal(restored.phenotype.bellyPalette, "moonveil-belly");
+  assert.equal(restored.phenotype.leafType, "moon");
+  assert.equal(restored.phenotype.morphology, "moonveil");
+});
+
+test("a stable care direction changes the visible morphology from stage two", () => {
+  const expectations = {
+    dream: "moonveil",
+    loving: "bloomheart",
+    playful: "sparkleap",
+    curious: "mistwander",
+  } as const;
+  for (const [vector, morphology] of Object.entries(expectations)) {
+    const state = fresh();
+    const shaped = {
+      ...state,
+      niumpi: { ...state.niumpi, stage: 2 as const },
+      evolution: {
+        ...state.evolution,
+        vectors: { ...state.evolution.vectors, [vector]: 12 },
+      },
+    };
+    assert.equal(phenotypeFor(shaped).morphology, morphology, `${vector} should visibly hint ${morphology}`);
+  }
 });
 
 test("vector helpers agree with each other", () => {
@@ -559,6 +603,19 @@ test("no content entry is missing an id or a name", () => {
   }
   const ids = ingredients.map((item) => item.id);
   assert.equal(new Set(ids).size, ids.length, "ingredient ids must be unique");
+});
+
+test("every room collectible and evolution stage ships its production artwork", () => {
+  for (const item of shopItems.filter((entry) => entry.category !== "accessories")) {
+    assert.ok(item.image, `${item.id} falls back to prototype icon art`);
+    assert.ok(existsSync(`./public${item.image}`), `${item.id} points to missing artwork ${item.image}`);
+  }
+  for (let stage = 1; stage <= 5; stage += 1) {
+    assert.ok(existsSync(`./public/assets/niumpi/stages/stage-${stage}.webp`), `stage ${stage} art is missing`);
+  }
+  for (const route of routes) {
+    assert.ok(existsSync(`./public/assets/niumpi/forms/${route.id}.webp`), `${route.id} final art is missing`);
+  }
 });
 
 test("every recipe is made only from real ingredients", () => {

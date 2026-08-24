@@ -51,7 +51,7 @@ test("babyness is proportion, not size: eyes shrink relative to the body", () =>
   }
 });
 
-test("the silhouette draws out from a nub into a point", () => {
+test("the cloud crown becomes more expressive at every stage", () => {
   const rises = grown.map((stage) => tipRise(stage.body) / stage.body.ry);
   for (let i = 1; i < rises.length; i += 1) {
     assert.ok(
@@ -59,7 +59,7 @@ test("the silhouette draws out from a nub into a point", () => {
       `stage ${grown[i].id} tip ${rises[i].toFixed(2)} is not longer than ${rises[i - 1].toFixed(2)}`,
     );
   }
-  // The hatchling keeps barely a bump, which is what makes it round.
+  // The hatchling keeps barely a crown, which is what makes it round.
   assert.ok(rises[0] < 0.4, "the hatchling should be almost round");
 });
 

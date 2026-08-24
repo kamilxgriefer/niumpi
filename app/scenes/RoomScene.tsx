@@ -3,15 +3,18 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { motion } from "motion/react";
+import Image from "next/image";
 import type { PanInfo } from "motion/react";
 import { Art } from "../ui/Art";
 import { TabBar } from "../ui/parts";
 import { useGame } from "../ui/GameProvider";
 import { CompanionStage } from "../ui/CompanionStage";
 import { ROOM_COLS, ROOM_ROWS, itemMap, roomCategories, roomThemes, shopItems } from "../game/config/items";
-import { playWithItem, roomActivity, saveRoom, switchRoom } from "../game/actions";
+import { claimRoomDiscovery, playWithItem, roomActivity, saveRoom, switchRoom } from "../game/actions";
 import { roomActivities, roomDefinitions } from "../game/config/rooms";
+import { rarityDefinitions, rarityMap } from "../game/config/rarities";
 import { roomFamiliarity, roomUnlockProgress } from "../game/rooms";
+import { DISCOVERY_MOMENTS } from "../game/roomLoot";
 import type { PlacedItem, RoomActivityId, RoomId } from "../game/types";
 
 type Mode = "play" | "edit";
@@ -35,7 +38,7 @@ const activityCopy: Record<RoomActivityId, { label: string; art: string }> = {
 };
 
 export function RoomScene() {
-  const { state, run, cue, toast, clock, goTo, controller } = useGame();
+  const { state, run, cue, toast, clock, goTo, controller, showReward } = useGame();
   const [mode, setMode] = useState<Mode>("play");
   const [category, setCategory] = useState<string>("all");
   const [theme, setTheme] = useState(state.room.theme);
@@ -178,9 +181,19 @@ export function RoomScene() {
     run(result);
   }
 
+  function openDiscovery() {
+    const result = claimRoomDiscovery(state, clock());
+    run(result);
+    if (result.rewards.length) {
+      const itemReward = result.rewards.find((reward) => reward.kind === "item");
+      const item = itemReward?.kind === "item" ? itemMap[itemReward.id] : null;
+      showReward(item ? `${rarityMap[item.rarity].name} discovery!` : "Collection complete", result.rewards, "Room Bloom");
+    }
+  }
+
   return (
-    <div className="scene scene-room scene-room-world">
-      <header className="rw-head">
+    <div className={`scene scene-room scene-room-world mode-${mode}`}>
+      <header className="scene-head rw-head">
         <div className="rw-title-block">
           <span className="rw-eyebrow"><Art name="spark" size={13} /> Niumpi&apos;s little world</span>
           <h1>Your Room</h1>
@@ -252,7 +265,7 @@ export function RoomScene() {
             <span className="rw-object-count"><Art name="room" size={15} /> {placed.length} {placed.length === 1 ? "thing" : "things"}</span>
           </div>
 
-          <div className={`room-canvas rw-canvas theme-${theme} mode-${mode}`}>
+          <div className={`room-canvas rw-canvas theme-${theme} room-${state.room.activeRoomId} mode-${mode}`}>
             <div className="rw-room-architecture" aria-hidden="true">
               <span className="rw-ceiling-glow" />
               <span className="rw-wall-stars"><i /><i /><i /><i /><i /></span>
@@ -288,7 +301,7 @@ export function RoomScene() {
                 return (
                   <motion.button
                     key={entry.uid}
-                    className={`room-item rw-item size-${item.size[0]}x${item.size[1]} ${isSelected ? "is-selected" : ""} ${entry.flipped ? "is-flipped" : ""}`}
+                    className={`room-item rw-item size-${item.size[0]}x${item.size[1]} rarity-${item.rarity} ${item.image ? "has-illustration" : ""} ${isSelected ? "is-selected" : ""} ${entry.flipped ? "is-flipped" : ""}`}
                     type="button"
                     style={itemStyle}
                     aria-label={mode === "edit"
@@ -330,8 +343,11 @@ export function RoomScene() {
                       }
                     }}
                   >
-                    <span className="rw-item-art"><Art name={item.art} size="100%" /></span>
+                    <span className="rw-item-art">
+                      {item.image ? <Image src={item.image} alt="" width={768} height={768} unoptimized draggable={false} /> : <Art name={item.art} size="100%" />}
+                    </span>
                     <span className="rw-item-label">{item.name}</span>
+                    <span className="rw-item-rarity" aria-hidden="true">{rarityMap[item.rarity].name}</span>
                     {mode === "play" && item.reaction && <span className="rw-item-spark" aria-hidden="true">✦</span>}
                   </motion.button>
                 );
@@ -383,7 +399,9 @@ export function RoomScene() {
                     {interactiveItems.map(({ entry, item }) => (
                       <li key={entry.uid}>
                         <button type="button" onClick={() => performItem(entry)}>
-                          <span className="rw-reaction-art"><Art name={item.art} size={25} /></span>
+                          <span className={`rw-reaction-art rarity-${item.rarity}`}>
+                            {item.image ? <Image src={item.image} alt="" width={96} height={96} unoptimized /> : <Art name={item.art} size={25} />}
+                          </span>
                           <span><strong>{item.name}</strong><small>{item.reaction}</small></span>
                           <Art name="spark" size={12} className="rw-reaction-spark" />
                         </button>
@@ -406,6 +424,28 @@ export function RoomScene() {
                   <h2>Feels like home · Level {familiarity.level}</h2>
                   <p>{familiarity.nextAt === null ? "Niumpi knows every cozy corner." : `${familiarity.points} shared room moments`}</p>
                   <span className="rw-familiarity-track" role="progressbar" aria-label="Room familiarity" aria-valuemin={0} aria-valuemax={100} aria-valuenow={familiarity.percent}><i style={{ width: `${familiarity.percent}%` }} /></span>
+                </div>
+              </section>
+
+              <section className={`rw-side-card rw-discovery-card ${state.roomLoot.claimable ? "is-ready" : ""}`}>
+                <div className="rw-discovery-orb" aria-hidden="true"><span>✦</span><i /><b /></div>
+                <div className="rw-discovery-copy">
+                  <span className="rw-stage-kicker">Free room discovery</span>
+                  <h2>{state.roomLoot.claimable ? "A Room Bloom is ready" : "Grow a Room Bloom"}</h2>
+                  <p>{state.roomLoot.claimable
+                    ? `${state.roomLoot.claimable} ${state.roomLoot.claimable === 1 ? "discovery" : "discoveries"} waiting. No purchases, no duplicates.`
+                    : `${state.roomLoot.progress}/${DISCOVERY_MOMENTS} shared moments. Play, rest or decorate to grow it.`}</p>
+                  <span className="rw-discovery-track" role="progressbar" aria-label="Room Bloom progress" aria-valuemin={0} aria-valuemax={DISCOVERY_MOMENTS} aria-valuenow={state.roomLoot.progress}>
+                    <i style={{ width: `${state.roomLoot.claimable ? 100 : (state.roomLoot.progress / DISCOVERY_MOMENTS) * 100}%` }} />
+                  </span>
+                  <button type="button" disabled={!state.roomLoot.claimable} onClick={openDiscovery}>
+                    <Art name="collect" size={16} /> {state.roomLoot.claimable ? "Open discovery" : `${DISCOVERY_MOMENTS - state.roomLoot.progress} moments to go`}
+                  </button>
+                  <details>
+                    <summary>Fair drop rates</summary>
+                    <ul>{rarityDefinitions.map((rarity) => <li key={rarity.id}><i style={{ background: rarity.colour }} />{rarity.name}<strong>{rarity.weight}%</strong></li>)}</ul>
+                    <small>Rare+ by bloom 7 · Legendary+ by 20 · Mythic by 40.</small>
+                  </details>
                 </div>
               </section>
             </>
@@ -464,7 +504,7 @@ export function RoomScene() {
             <div>
               <span className="rw-eyebrow"><Art name="collect" size={13} /> Your collection</span>
               <h2 id="rw-collection-title">Furniture drawer</h2>
-              <p>Tap an owned item to place it. Locked discoveries live in the Shop.</p>
+              <p>Tap an owned item to place it. New pieces come from free Room Blooms or direct Shop buys.</p>
             </div>
             <TabBar label="Furniture categories" active={category} onSelect={setCategory} tabs={roomCategories} />
           </header>
@@ -480,7 +520,7 @@ export function RoomScene() {
               return (
                 <li key={item.id}>
                   <button
-                    className={`rw-inventory-item ${!isOwned ? "is-locked" : ""} ${roomEntry ? "is-placed" : ""}`}
+                    className={`rw-inventory-item rarity-${item.rarity} ${!isOwned ? "is-locked" : ""} ${roomEntry ? "is-placed" : ""}`}
                     type="button"
                     disabled={Boolean(roomEntry || elsewhere)}
                     aria-label={!isOwned
@@ -492,8 +532,10 @@ export function RoomScene() {
                       place(item.id);
                     }}
                   >
-                    <span className="rw-inventory-art"><Art name={isOwned ? item.art : "lock"} size={34} /></span>
-                    <span className="rw-inventory-copy"><strong>{item.name}</strong><small>{roomEntry ? "In this room" : elsewhere ? `In ${elsewhere.name}` : isOwned ? item.note : "Discover in Shop"}</small></span>
+                    <span className="rw-inventory-art">
+                      {isOwned && item.image ? <Image src={item.image} alt="" width={116} height={116} unoptimized /> : <Art name={isOwned ? item.art : "lock"} size={34} />}
+                    </span>
+                    <span className="rw-inventory-copy"><span className="rw-rarity-badge">{rarityMap[item.rarity].name}</span><strong>{item.name}</strong><small>{roomEntry ? "In this room" : elsewhere ? `In ${elsewhere.name}` : isOwned ? item.note : "Find in a Room Bloom or Shop"}</small></span>
                     <span className="rw-inventory-state" aria-hidden="true">
                       {roomEntry || elsewhere ? <Art name="check" size={13} /> : isOwned ? "+" : <Art name="lock" size={12} />}
                     </span>
