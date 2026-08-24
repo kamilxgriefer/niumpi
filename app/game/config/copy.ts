@@ -53,9 +53,9 @@ export const copy = {
     sharedMomentsNote: "So many memories together!",
   },
   stats: {
-    fullness: "Fullness", energy: "Energy", joy: "Joy",
+    fullness: "Fullness", energy: "Energy", joy: "Joy", cleanliness: "Cleanliness",
     bond: "Bond", level: "Level",
-    lowFullness: "Hungry", lowEnergy: "Tired", lowJoy: "Needs company",
+    lowFullness: "Hungry", lowEnergy: "Tired", lowJoy: "Needs company", lowCleanliness: "Needs a wash",
   },
   seed: {
     title: "The First Care",
@@ -66,7 +66,7 @@ export const copy = {
   },
   actions: {
     pet: "Pet", hug: "Hug", feed: "Feed", play: "Play",
-    brush: "Brush", talk: "Talk", toy: "Toy", tickle: "Tickle",
+    brush: "Brush", wash: "Wash", talk: "Talk", toy: "Toy", tickle: "Tickle",
     dance: "Dance", comfort: "Comfort", sing: "Sing", wake: "Wake",
   },
   states: {

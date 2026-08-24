@@ -1,6 +1,7 @@
 import type { CurrencyId, GameState, Reward } from "./types.ts";
 import { ingredientById } from "./config/foods.ts";
 import { itemMap } from "./config/items.ts";
+import { plantMap } from "./config/plants.ts";
 
 /** Consuming is transactional: either every part is available, or nothing moves. */
 export function canSpend(state: GameState, parts: string[]): boolean {
@@ -21,6 +22,18 @@ export function spendIngredients(state: GameState, parts: string[]): GameState |
 
 export function addIngredient(state: GameState, id: string, amount: number): GameState {
   if (!ingredientById(id)) return state;
+  return {
+    ...state,
+    inventory: {
+      ...state.inventory,
+      ingredients: { ...state.inventory.ingredients, [id]: (state.inventory.ingredients[id] ?? 0) + amount },
+    },
+  };
+}
+
+export function addSeed(state: GameState, plantId: string, amount: number): GameState {
+  if (!plantMap[plantId] || amount <= 0) return state;
+  const id = `seed:${plantId}`;
   return {
     ...state,
     inventory: {
@@ -84,6 +97,7 @@ export function grant(state: GameState, rewards: Reward[]): GameState {
   let next = state;
   for (const reward of rewards) {
     if (reward.kind === "ingredient") next = addIngredient(next, reward.id, reward.amount);
+    else if (reward.kind === "seed") next = addSeed(next, reward.id, reward.amount);
     else if (reward.kind === "currency") next = addCurrency(next, reward.id, reward.amount);
     else if (reward.kind === "item" && !next.inventory.items.includes(reward.id)) {
       next = { ...next, inventory: { ...next.inventory, items: [...next.inventory.items, reward.id] } };

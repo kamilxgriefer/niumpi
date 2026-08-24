@@ -9,11 +9,11 @@ import { createRoomLayout, reconcileRoomLayout } from "./rooms.ts";
 import { defaultRoomLoot, reconcileRoomLoot } from "./roomLoot.ts";
 import { routeMap } from "./config/routes.ts";
 
-export const SAVE_VERSION = 5;
-export const STORAGE_KEY = "niumpi-save-v5";
+export const SAVE_VERSION = 6;
+export const STORAGE_KEY = "niumpi-save-v6";
 /** Read in order when the current key is missing, then migrated forward. */
 export const LEGACY_KEYS = ["niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
-export const PRIOR_SAVE_KEYS = ["niumpi-save-v4"];
+export const PRIOR_SAVE_KEYS = ["niumpi-save-v5", "niumpi-save-v4"];
 
 export const vectorIds: VectorId[] = [
   "calm", "playful", "loving", "curious", "brave",
@@ -37,6 +37,11 @@ export const defaultStats: CareStats = {
 
 function emptyVectors(): Record<VectorId, number> {
   return Object.fromEntries(vectorIds.map((id) => [id, 0])) as Record<VectorId, number>;
+}
+
+function savedCount(value: unknown): number {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.max(0, Math.floor(number)) : 0;
 }
 
 /** Repairs saves from before silhouettes were persisted without waiting for
@@ -86,6 +91,7 @@ export function createGameState(now: number, id: string): GameState {
       seedProgress: 0, seedActions: {},
       stage: 0, stageStartedAt: now, careMoments: 0, bond: 8,
       lastInteractionAt: now, sleeping: false, sleepStartedAt: null, lampOn: false,
+      cleanliness: 100, lastWashedAt: null, lastWashTool: null,
     },
     stats: { ...defaultStats },
     evolution: { vectors: emptyVectors(), lockedRoute: null, routeConfidence: 0, history: [] },
@@ -110,6 +116,7 @@ export function createGameState(now: number, id: string): GameState {
     },
     room: createRoomLayout(now, starterLayout()),
     roomLoot: { ...defaultRoomLoot },
+    starlightShop: { opened: 0, epicPity: 0, legendaryPity: 0, lastDropAt: null },
     garden: { plots: starterPlots() },
     memories: [],
     dream: null,
@@ -236,6 +243,14 @@ export function reconcile(saved: Partial<GameState>, now: number): GameState {
     },
     room: reconcileRoomLayout(saved.room, base.room),
     roomLoot: reconcileRoomLoot(saved.roomLoot),
+    starlightShop: {
+      opened: savedCount(saved.starlightShop?.opened),
+      epicPity: savedCount(saved.starlightShop?.epicPity),
+      legendaryPity: savedCount(saved.starlightShop?.legendaryPity),
+      lastDropAt: Number.isFinite(saved.starlightShop?.lastDropAt)
+        ? Number(saved.starlightShop?.lastDropAt)
+        : null,
+    },
     garden: { plots: normalisePlots(saved.garden?.plots) },
     memories: saved.memories ?? [],
     missions: {

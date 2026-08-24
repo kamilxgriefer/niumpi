@@ -13,8 +13,8 @@ export type DialogueLine = {
   route?: RouteId[];
   trait?: string;
   /** Stat gates, checked as "value below" / "value above". */
-  below?: Partial<Record<"fullness" | "energy" | "joy" | "bond", number>>;
-  above?: Partial<Record<"fullness" | "energy" | "joy" | "bond", number>>;
+  below?: Partial<Record<"fullness" | "energy" | "joy" | "bond" | "cleanliness", number>>;
+  above?: Partial<Record<"fullness" | "energy" | "joy" | "bond" | "cleanliness", number>>;
   /** Uses the player's stored Memory Seed answer for this question. */
   seed?: string;
   weight?: number;
@@ -42,6 +42,10 @@ export const dialogue: DialogueLine[] = [
   { id: "tired-2", text: "Maybe a very short rest. A tiny one.", below: { energy: 45 } },
   { id: "sad-1", text: "Could you stay a moment longer?", below: { joy: 35 }, weight: 3 },
   { id: "sad-2", text: "I'm okay. I'd just like some company.", below: { joy: 40 } },
+  { id: "dusty-1", text: "I think I collected a little bit of the floor.", below: { cleanliness: 58 }, weight: 3 },
+  { id: "dusty-2", text: "Do clouds take baths? This one probably should.", below: { cleanliness: 42 }, weight: 4 },
+  { id: "dusty-3", text: "My fluff has a smudge. It may have friends.", below: { cleanliness: 68 }, weight: 2 },
+  { id: "clean-1", text: "I still smell like tiny bubbles!", above: { cleanliness: 94 }, weight: 2 },
   { id: "happy-1", text: "Today is a very good day, I think.", above: { joy: 80 }, weight: 2 },
   { id: "happy-2", text: "I remembered that I like you. Again!", above: { joy: 75 } },
   { id: "happy-3", text: "Everything is exactly the right size right now.", above: { joy: 85 } },

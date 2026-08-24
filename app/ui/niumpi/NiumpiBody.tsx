@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 import type { StageProfile } from "../../game/config/growth.ts";
 import type { Phenotype } from "../../game/types.ts";
 import { bellyPath, bodyPath, tipRise } from "../../game/config/growth.ts";
@@ -31,6 +31,88 @@ const LEAF_FAN: Record<number, number[]> = {
 
 function leafShape(w: number, h: number): string {
   return `M 0 0 C ${-w} ${-h * 0.34} ${-w * 0.56} ${-h} 0 ${-h} C ${w * 0.56} ${-h} ${w} ${-h * 0.34} 0 0 Z`;
+}
+
+/** Dirt is a translucent surface treatment, never a second character layer.
+ * The same marks follow every authored evolution frame with the torso. */
+function CareSurface() {
+  return (
+    <g className="nb-care-surface" pointerEvents="none">
+      <g className="nb-dirt-overlay">
+        <ellipse cx="66" cy="122" rx="12" ry="7" rotate="-18" />
+        <ellipse cx="137" cy="133" rx="9" ry="6" rotate="24" />
+        <circle cx="83" cy="151" r="5" />
+        <circle cx="149" cy="108" r="3.8" />
+        <path d="M 55 112 C 63 106 70 108 76 113 C 67 111 61 116 55 112 Z" />
+      </g>
+      <g className="nb-wash-bubbles">
+        <circle cx="66" cy="105" r="6" /><circle cx="82" cy="92" r="3.5" />
+        <circle cx="126" cy="111" r="5" /><circle cx="143" cy="96" r="3" />
+        <circle cx="111" cy="145" r="4" />
+      </g>
+      <g className="nb-wash-tool nb-wash-sponge">
+        <rect x="54" y="101" width="31" height="22" rx="8" />
+        <circle cx="62" cy="108" r="2" /><circle cx="75" cy="115" r="2.4" /><circle cx="68" cy="119" r="1.5" />
+      </g>
+      <g className="nb-wash-tool nb-wash-brush">
+        <rect x="50" y="105" width="38" height="13" rx="6.5" />
+        <path d="M 56 118 v8 M 64 118 v9 M 72 118 v9 M 80 118 v8" />
+      </g>
+    </g>
+  );
+}
+
+/** Converts the model's uniform key colour to real alpha once, client-side.
+ * The generated sheet stays lossless in the repository and the original
+ * character remains visible until the transparent texture is ready. */
+function ChromaSpriteImage({ href, className }: { href: string; className: string }) {
+  const [processed, setProcessed] = useState<string | null>(null);
+
+  useEffect(() => {
+    let disposed = false;
+    let objectUrl = "";
+    const source = new Image();
+    source.decoding = "async";
+    source.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = source.naturalWidth;
+      canvas.height = source.naturalHeight;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return;
+      context.drawImage(source, 0, 0);
+      const pixels = context.getImageData(0, 0, canvas.width, canvas.height);
+      for (let index = 0; index < pixels.data.length; index += 4) {
+        const red = pixels.data[index];
+        const green = pixels.data[index + 1];
+        const blue = pixels.data[index + 2];
+        const dominance = green - Math.max(red, blue);
+        if (green < 135 || dominance < 32) continue;
+        const removal = Math.max(0, Math.min(1, (dominance - 32) / 145));
+        pixels.data[index + 3] = Math.round(pixels.data[index + 3] * (1 - removal));
+      }
+      context.putImageData(pixels, 0, 0);
+      canvas.toBlob((blob) => {
+        if (!blob || disposed) return;
+        objectUrl = URL.createObjectURL(blob);
+        setProcessed(objectUrl);
+      }, "image/png");
+    };
+    source.src = href;
+    return () => {
+      disposed = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [href]);
+
+  if (!processed) return null;
+  return (
+    <image
+      className={className}
+      href={processed}
+      x="0" y="0" width="600" height="600"
+      preserveAspectRatio="none"
+    />
+  );
 }
 
 function MorphFeatures({ morphology, profile }: { morphology: Phenotype["morphology"]; profile: StageProfile }) {
@@ -124,78 +206,47 @@ export function NiumpiBody({
 
   const silhouette = bodyPath(body);
 
-  /* Production character art is stage-specific rather than one adult image
-   * scaled five ways. The procedural body below remains as a safe seed/fallback
-   * and as geometry documentation, while every living stage uses the approved
-   * cloud-wisp sprites. At the final stage the locked care morphology becomes
-   * the full authored route form. */
+  /* The approved painting is the identity of the character. Until an authored
+   * full-frame animation clip is available, gameplay renders that painting
+   * intact. No procedural face or cut masks may alter it. */
   if (profile.id > 0) {
     const finalForm = profile.id >= 5 && look.morphology !== "seedling";
-    const sprite = finalForm
+    const art = finalForm
       ? `/assets/niumpi/forms/${look.morphology}.webp`
       : `/assets/niumpi/stages/stage-${profile.id}.webp`;
-    const spriteEyeY = 113;
-    const spriteEyeGap = 24;
+    const authoredIdle = profile.id === 4 && !finalForm;
     return (
-      <svg className="nb nb-sprite" viewBox="0 0 200 200" role="img" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id={id("nb-sprite-leaf")} x1="0.18" y1="1" x2="0.82" y2="0">
-            <stop offset="0%" stopColor="var(--leaf-deep)" />
-            <stop offset="100%" stopColor="var(--leaf-light)" />
-          </linearGradient>
-        </defs>
+      <svg className="nb nb-sprite nb-authored-art" viewBox="0 0 200 200" role="img" aria-hidden="true" focusable="false">
         <g className="nb-torso nb-sprite-torso">
-          <g className="nb-face nb-sprite-face">
-            <image className="nb-sprite-image" href={sprite} x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid meet" />
-            <image className="nb-sprite-diet" href={sprite} x="0" y="0" width="200" height="200" preserveAspectRatio="xMidYMid meet" />
-            <g className="nb-leaves nb-sprite-leaves">
-              {angles.map((angle, index) => (
-                <g key={angle} className={`nb-leaf-anchor nb-leaf-anchor-${index + 1}`} transform={`translate(${tipX} ${body.tipY + 4})`}>
-                  <g
-                    className={`nb-leaf nb-leaf-${index + 1}`}
-                    style={{ ["--leaf-angle" as string]: `${angle}deg`, ["--leaf-delay" as string]: `${index * -0.7}s` }}
-                  >
-                    <path d={leafShape(leafW, leafH)} fill={ref("nb-sprite-leaf")} />
-                    <path d={`M 0 -2 L 0 ${-leafH * 0.82}`} stroke="var(--leaf-vein)" strokeWidth="1.4" strokeLinecap="round" opacity="0.62" fill="none" />
-                  </g>
-                </g>
-              ))}
-            </g>
-            {!finalForm && <MorphFeatures morphology={look.morphology} profile={profile} />}
-            <g className="nb-sprite-live-parts">
-              {armLength > 0 && (
-                <>
-                  <ellipse className="nb-arm nb-arm-left nb-sprite-arm" cx="47" cy="139" rx={7 + armLength * .22} ry="6" />
-                  <ellipse className="nb-arm nb-arm-right nb-sprite-arm" cx="153" cy="139" rx={7 + armLength * .22} ry="6" />
-                </>
-              )}
-              <ellipse className="nb-cheek nb-sprite-cheek" cx="66" cy="132" rx="9" ry="5" />
-              <ellipse className="nb-cheek nb-sprite-cheek" cx="134" cy="132" rx="9" ry="5" />
-              <ellipse className="nb-mouth nb-sprite-mouth" cx="100" cy="139" rx="5" ry="3.5" />
-            </g>
-            <g className="nb-sprite-marks" fill="var(--marking, var(--morph-deep))">
-              {look.markings.includes("violet-flecks") && <><circle cx="62" cy="139" r="2.8" /><circle cx="139" cy="132" r="2.2" /></>}
-              {look.markings.includes("teal-spots") && <><ellipse cx="65" cy="142" rx="5" ry="3" /><ellipse cx="137" cy="137" rx="3" ry="5" /></>}
-              {look.markings.includes("gold-sparks") && <><path d="M 66 130 l2 5 5 2-5 2-2 5-2-5-5-2 5-2Z" /><path d="M 139 141 l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5Z" /></>}
-              {look.markings.includes("rose-hearts") && <path d="M 100 137 C 94 130 86 136 89 143 C 91 149 100 154 100 154 C 100 154 109 149 111 143 C 114 136 106 130 100 137 Z" />}
-              {look.markings.includes("pastel-swirl") && <path className="nb-mark-stroke" d="M 76 150 C 78 134 99 128 110 138 C 119 148 108 158 98 154 C 91 151 92 144 98 143" />}
-              {look.markings.includes("leaf-bud") && <path d="M 129 137 C 119 132 116 145 127 149 C 136 146 138 137 129 137 Z" />}
-            </g>
-            <g className="nb-eyes nb-sprite-eyes">
-              {[-1, 1].map((side) => {
-                const ex = 100 + side * spriteEyeGap;
-                return (
-                  <g key={side} className={`nb-eye ${side < 0 ? "nb-eye-left" : "nb-eye-right"}`}>
-                    <g className="nb-gaze">
-                      <circle cx={ex - 4} cy={spriteEyeY - 5} r="2.6" fill="white" opacity=".9" />
-                      <circle cx={ex + 4} cy={spriteEyeY + 4} r="1.1" fill="white" opacity=".55" />
-                    </g>
-                    <ellipse className="nb-lid nb-sprite-lid" cx={ex} cy={spriteEyeY} rx="13" ry="15" fill="#f8f3ff" />
-                  </g>
-                );
-              })}
-            </g>
-          </g>
+          <image
+            className="nb-authored-image nb-authored-static"
+            href={art}
+            x="0" y="0" width="200" height="200"
+            preserveAspectRatio="xMidYMid meet"
+          />
+          {authoredIdle && (
+            <>
+              <svg className="nb-generated-clip nb-generated-idle" x="25" y="0" width="150" height="200" viewBox="0 0 150 200" overflow="hidden">
+                <ChromaSpriteImage
+                  href="/assets/niumpi/animations/stage-4-idle-v1.png"
+                  className="nb-authored-sheet nb-stage4-idle-sheet"
+                />
+              </svg>
+              <svg className="nb-generated-clip nb-generated-look" x="25" y="0" width="150" height="200" viewBox="0 0 150 200" overflow="hidden">
+                <ChromaSpriteImage
+                  href="/assets/niumpi/animations/stage-4-look-v1.png"
+                  className="nb-authored-sheet nb-stage4-look-sheet"
+                />
+              </svg>
+              <svg className="nb-generated-clip nb-generated-pet" x="25" y="0" width="150" height="200" viewBox="0 0 150 200" overflow="hidden">
+                <ChromaSpriteImage
+                  href="/assets/niumpi/animations/stage-4-pet-v1.png"
+                  className="nb-authored-sheet nb-stage4-pet-sheet"
+                />
+              </svg>
+            </>
+          )}
+          <CareSurface />
         </g>
       </svg>
     );
@@ -378,6 +429,7 @@ export function NiumpiBody({
             {look.markings.includes("prism-edge") && <path className="nb-mark-stroke" d={silhouette} />}
           </g>
           <path d={silhouette} fill={ref("nb-shade")} />
+          <CareSurface />
           <path d={silhouette} fill={ref("nb-sheen")} />
           {/* Rim light: the outline redrawn thick, nudged toward the light, and
               clipped — so only the lit edge survives. */}

@@ -1,15 +1,15 @@
 import { onMotionChange, prefersReducedMotion } from "./motionPrefs.ts";
+import {
+  NiumpiBehaviorMachine,
+  type BehaviorContext,
+  type BehaviorSnapshot,
+} from "./NiumpiBehaviorMachine.ts";
+import {
+  legacyAnimationForBehavior,
+  semanticBehaviorForLegacy,
+} from "./legacyBehaviorAdapter.ts";
 
-/**
- * The character's animation controller.
- *
- * No Rive asset ships with this repo, so the creature is composable SVG/CSS
- * layers driven from here instead. This class owns the single rAF loop, the
- * state machine and every per-frame value. React only ever states an intent
- * ("be happy now") — it is never told about frames, and no animation value
- * passes through React state or a re-render.
- */
-
+/** Compatibility vocabulary used by game rules and scenes. */
 export type AnimState =
   | "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep"
   | "peek" | "sway" | "shimmy" | "stretch" | "ponder"
@@ -17,73 +17,34 @@ export type AnimState =
   | "eating" | "hugging" | "petting" | "tickle" | "brushing" | "dancing"
   | "waking" | "hatching" | "evolving" | "gift" | "cooking" | "gardening" | "playing" | "returning";
 
-type StateDef = {
-  /** Higher wins. A running state is only replaced by an equal or higher one. */
-  priority: number;
-  /** ms before drifting back to rest; null means it holds until replaced. */
-  duration: number | null;
-};
-
-const STATES: Record<AnimState, StateDef> = {
-  idle: { priority: 0, duration: null },
-  wander: { priority: 1, duration: 2_600 },
-  float: { priority: 1, duration: 2_800 },
-  peek: { priority: 1, duration: 2_200 },
-  sway: { priority: 1, duration: 2_400 },
-  shimmy: { priority: 1, duration: 2_200 },
-  stretch: { priority: 1, duration: 1_900 },
-  ponder: { priority: 1, duration: 3_200 },
-  book: { priority: 1, duration: 5_200 },
-  window: { priority: 1, duration: 4_800 },
-  lamp: { priority: 1, duration: 3_200 },
-  roll: { priority: 2, duration: 2_600 },
-  singing: { priority: 2, duration: 4_000 },
-  curious: { priority: 1, duration: 4_600 },
-  sleepy: { priority: 1, duration: 3_400 },
-  petting: { priority: 2, duration: 900 },
-  brushing: { priority: 2, duration: 1_400 },
-  playing: { priority: 2, duration: 2_000 },
-  gift: { priority: 2, duration: 2_000 },
-  tickle: { priority: 3, duration: 1_500 },
-  happy: { priority: 3, duration: 2_300 },
-  spin: { priority: 3, duration: 1_550 },
-  dancing: { priority: 3, duration: 3_600 },
-  eating: { priority: 3, duration: 2_200 },
-  hugging: { priority: 3, duration: 2_400 },
-  cooking: { priority: 3, duration: 2_600 },
-  gardening: { priority: 3, duration: 2_600 },
-  waking: { priority: 4, duration: 1_800 },
-  returning: { priority: 4, duration: 3_000 },
-  asleep: { priority: 5, duration: null },
-  hatching: { priority: 9, duration: 3_200 },
-  evolving: { priority: 9, duration: 4_000 },
-};
-
-/** Spring constants for the drift and the gaze. Tuned, not physical. */
 const POSITION_STIFFNESS = 0.028;
 const POSITION_DAMPING = 0.84;
 const GAZE_STIFFNESS = 0.09;
 const GAZE_DAMPING = 0.72;
 
 type Options = {
-  /** Called once whenever the visible state changes — never per frame. */
   onStateChange?: (state: AnimState) => void;
+  seed?: string | number;
 };
 
+/**
+ * One motion director owns behavior phases, locomotion springs, gaze and
+ * presentation classes. React only sends intentions; no animation frame is
+ * stored in React state.
+ */
 export class NiumpiAnimationController {
   private root: HTMLElement | null = null;
   private frame = 0;
   private blinkTimer: number | undefined;
-  private stateTimer: number | undefined;
   private unsubscribeMotion: (() => void) | null = null;
-
-  private state: AnimState = "idle";
-  /** What to fall back to once a transient state finishes. */
+  private machine: NiumpiBehaviorMachine | null = null;
+  private presentation: AnimState = "idle";
   private restState: AnimState = "idle";
-  private queue: AnimState[] = [];
   private reduced = false;
-  private options: Options;
+  private context: Partial<BehaviorContext> = {};
+  private readonly options: Options;
   private listeners = new Set<(state: AnimState) => void>();
+  private lastSnapshotKey = "";
 
   private target = { x: 0, y: 0, gazeX: 0, gazeY: 0 };
   private value = { x: 0, y: 0, vx: 0, vy: 0, gazeX: 0, gazeY: 0, vgx: 0, vgy: 0 };
@@ -96,11 +57,25 @@ export class NiumpiAnimationController {
     if (this.root === root) return;
     this.root = root;
     this.reduced = prefersReducedMotion();
-    this.applyState();
+    const now = this.now();
+    this.machine = new NiumpiBehaviorMachine({
+      seed: this.options.seed ?? "niumpi-motion-v2",
+      now,
+      context: {
+        ...this.context,
+        mood: this.restState === "asleep" ? "sleeping" : this.context.mood,
+      },
+      reducedMotion: this.reduced,
+    });
+    this.presentation = this.restState;
+    this.lastSnapshotKey = "";
+    this.applySnapshot(this.machine.getSnapshot());
     this.startLoop();
     this.scheduleBlink();
     this.unsubscribeMotion = onMotionChange((reduced) => {
       this.reduced = reduced;
+      const snapshot = this.machine?.setReducedMotion(reduced, this.now());
+      if (snapshot) this.applySnapshot(snapshot);
       this.root?.classList.toggle("is-reduced", reduced);
       if (reduced) this.snap();
     });
@@ -110,30 +85,47 @@ export class NiumpiAnimationController {
   detach() {
     if (this.frame) window.cancelAnimationFrame(this.frame);
     window.clearTimeout(this.blinkTimer);
-    window.clearTimeout(this.stateTimer);
     this.unsubscribeMotion?.();
     this.unsubscribeMotion = null;
     this.frame = 0;
     this.root = null;
+    this.machine = null;
+    this.lastSnapshotKey = "";
   }
 
-  /** Ask for a state. Lower-priority requests are dropped, not queued behind. */
+  /** Ask for an authored reaction. The semantic machine decides interruption. */
   request(next: AnimState) {
-    const incoming = STATES[next];
-    const current = STATES[this.state];
-    if (!incoming) return;
-    if (incoming.priority < current.priority && current.duration !== null) {
-      // Something more important is playing — remember it only if it is close.
-      if (incoming.priority >= current.priority - 1) this.queue = [next];
+    const machine = this.machine;
+    if (!machine) {
+      this.presentation = next;
       return;
     }
-    this.setState(next);
+    const result = machine.request(semanticBehaviorForLegacy(next), this.now(), { source: "user" });
+    if (!result.accepted) return;
+    this.presentation = next;
+    this.applySnapshot(result.snapshot, true);
   }
 
-  /** Resting state the creature drifts back to (idle while awake, asleep at night). */
+  /** The relationship model shapes autonomous motion without choosing frames. */
+  setBehaviorContext(next: Partial<BehaviorContext>) {
+    this.context = { ...this.context, ...next };
+    const snapshot = this.machine?.setContext(this.context, this.now());
+    if (snapshot) this.applySnapshot(snapshot);
+  }
+
+  /** Resting state the creature returns to after an authored reaction. */
   setRest(state: AnimState) {
     this.restState = state;
-    if (STATES[this.state].duration === null && this.state !== state) this.setState(state);
+    this.context = {
+      ...this.context,
+      mood: state === "asleep"
+        ? "sleeping"
+        : this.context.mood === "sleeping" ? "calm" : this.context.mood,
+    };
+    const snapshot = this.machine?.setContext(this.context, this.now());
+    if (!snapshot) return;
+    this.presentation = state === "asleep" ? "asleep" : legacyAnimationForBehavior(snapshot.state);
+    this.applySnapshot(snapshot, true);
   }
 
   setPosition(x: number, y: number) {
@@ -148,51 +140,63 @@ export class NiumpiAnimationController {
     if (this.reduced) this.snap();
   }
 
-  setPressed(pressed: boolean) {
-    this.root?.classList.toggle("is-pressed", pressed);
-  }
+  setPressed(pressed: boolean) { this.root?.classList.toggle("is-pressed", pressed); }
+  setTargeted(targeted: boolean) { this.root?.classList.toggle("is-target", targeted); }
+  getState(): AnimState { return this.presentation; }
 
-  setTargeted(targeted: boolean) {
-    this.root?.classList.toggle("is-target", targeted);
-  }
-
-  getState(): AnimState {
-    return this.state;
-  }
-
-  /** Room scenery listens only to state changes, never to animation frames. */
   subscribeState(listener: (state: AnimState) => void) {
     this.listeners.add(listener);
-    listener(this.state);
+    listener(this.presentation);
     return () => { this.listeners.delete(listener); };
   }
 
-  /* ------------------------------------------------------------------ */
-
-  private setState(next: AnimState) {
-    if (this.state === next) return;
-    this.state = next;
-    this.applyState();
-    this.options.onStateChange?.(next);
-    this.listeners.forEach((listener) => listener(next));
-    window.clearTimeout(this.stateTimer);
-    const { duration } = STATES[next];
-    if (duration === null) return;
-    // Reduced motion still changes state, it just spends less time there.
-    const span = this.reduced ? Math.min(duration, 400) : duration;
-    this.stateTimer = window.setTimeout(() => {
-      const queued = this.queue.shift();
-      this.setState(queued ?? this.restState);
-    }, span);
+  private now(): number {
+    return typeof performance === "undefined" ? 0 : performance.now();
   }
 
-  private applyState() {
+  private applySnapshot(snapshot: BehaviorSnapshot, force = false) {
     const root = this.root;
     if (!root) return;
-    root.dataset.anim = this.state;
-    // One class swap per state change keeps the CSS layer in charge of the look.
-    root.className = root.className.replace(/\bbehavior-[\w-]+/g, "").trim();
-    root.classList.add(`behavior-${this.state}`);
+    const key = `${snapshot.token}:${snapshot.state}:${snapshot.phase}:${snapshot.motionScale}`;
+    if (!force && key === this.lastSnapshotKey) return;
+    this.lastSnapshotKey = key;
+
+    // Autonomous clips choose a compatible presentation. Explicit scene
+    // requests keep their richer names (book/window/tickle etc.).
+    if (snapshot.source === "autonomous" || snapshot.state === "idle") {
+      this.presentation = legacyAnimationForBehavior(snapshot.state);
+    }
+    if (snapshot.state === "sleep") this.presentation = "asleep";
+
+    // Autonomous travel chooses a quiet destination from the behavior token.
+    // The spring performs the journey; no scene interval competes with it.
+    if (snapshot.source === "autonomous" && snapshot.phase === "anticipation") {
+      const direction = snapshot.token % 2 === 0 ? 1 : -1;
+      if (snapshot.state === "walk") {
+        this.setPosition(direction * (48 + (snapshot.token % 3) * 12), 3);
+        this.setGaze(direction * 9, 1);
+      } else if (snapshot.state === "hover") {
+        this.setPosition(direction * 28, -28);
+        this.setGaze(direction * 7, -5);
+      } else if (snapshot.state === "look") {
+        this.setGaze(direction * 12, snapshot.token % 3 === 0 ? -6 : 1);
+      }
+    }
+
+    root.dataset.anim = snapshot.state;
+    root.dataset.phase = snapshot.phase;
+    root.dataset.motionToken = String(snapshot.token);
+    root.className = root.className
+      .replace(/\bbehavior-[\w-]+/g, "")
+      .replace(/\bphase-[\w-]+/g, "")
+      .trim();
+    root.classList.add(
+      `behavior-${this.presentation}`,
+      `behavior-semantic-${snapshot.state}`,
+      `phase-${snapshot.phase}`,
+    );
+    this.options.onStateChange?.(this.presentation);
+    this.listeners.forEach((listener) => listener(this.presentation));
   }
 
   private startLoop() {
@@ -204,13 +208,14 @@ export class NiumpiAnimationController {
     this.frame = window.requestAnimationFrame(step);
   }
 
-  /** The only per-frame work in the app: four springs and five CSS variables. */
   private tick() {
     const root = this.root;
     if (!root) return;
+    const snapshot = this.machine?.advance(this.now());
+    if (snapshot) this.applySnapshot(snapshot);
+
     const value = this.value;
     const target = this.target;
-
     if (this.reduced) {
       value.x = target.x; value.y = target.y;
       value.gazeX = target.gazeX; value.gazeY = target.gazeY;
@@ -228,7 +233,8 @@ export class NiumpiAnimationController {
     style.setProperty("--rig-y", `${value.y.toFixed(2)}px`);
     style.setProperty("--gaze-x", `${value.gazeX.toFixed(2)}px`);
     style.setProperty("--gaze-y", `${value.gazeY.toFixed(2)}px`);
-    style.setProperty("--gaze-tilt", `${(value.gazeX * 0.16).toFixed(2)}deg`);
+    // A tiny head lean follows attention; the whole creature never spins with gaze.
+    style.setProperty("--gaze-tilt", `${(value.gazeX * 0.045).toFixed(2)}deg`);
   }
 
   private snap() {
@@ -237,17 +243,16 @@ export class NiumpiAnimationController {
     this.value.vx = 0; this.value.vy = 0; this.value.vgx = 0; this.value.vgy = 0;
   }
 
-  /** Blinking is a class toggle on a timer, not React state. */
   private scheduleBlink() {
     const run = () => {
       this.blinkTimer = window.setTimeout(() => {
-        if (this.reduced || this.state === "asleep") { run(); return; }
+        if (this.reduced || this.presentation === "asleep") { run(); return; }
         this.root?.classList.add("is-blinking");
         this.blinkTimer = window.setTimeout(() => {
           this.root?.classList.remove("is-blinking");
           run();
-        }, 145);
-      }, 1_800 + Math.random() * 3_200);
+        }, 135);
+      }, 2_100 + Math.random() * 3_400);
     };
     run();
   }

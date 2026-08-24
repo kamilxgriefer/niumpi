@@ -21,11 +21,15 @@ export function chooseLine(state: GameState, now: number): { text: string; id: s
     if (line.trait && !state.personality.traits[line.trait]) return false;
     if (line.seed && !state.seedAnswers[line.seed]) return false;
     for (const [id, limit] of Object.entries(line.below ?? {})) {
-      const value = id === "bond" ? state.niumpi.bond : state.stats[id as "fullness"];
+      const value = id === "bond" ? state.niumpi.bond
+        : id === "cleanliness" ? state.niumpi.cleanliness
+          : state.stats[id as "fullness"];
       if (value >= (limit ?? 0)) return false;
     }
     for (const [id, limit] of Object.entries(line.above ?? {})) {
-      const value = id === "bond" ? state.niumpi.bond : state.stats[id as "fullness"];
+      const value = id === "bond" ? state.niumpi.bond
+        : id === "cleanliness" ? state.niumpi.cleanliness
+          : state.stats[id as "fullness"];
       if (value <= (limit ?? 0)) return false;
     }
     return true;

@@ -37,7 +37,7 @@ export function GamesScene() {
   return (
     <div className="scene scene-games">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>{copy.home.miniGames}</h1>
           <p>Short rounds, real rewards. Playing is always free — only the payout tapers.</p>
         </div>

@@ -42,7 +42,7 @@ export function DreamDoorsScene() {
   return (
     <div className="scene scene-dreams">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>{copy.home.dreamDoors}</h1>
           <p>{run ? "A dream is already underway." : copy.home.dreamDoorsNote}</p>
         </div>

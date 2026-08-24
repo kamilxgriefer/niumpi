@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const SAVE_KEY = "niumpi-save-v5";
+const SAVE_KEY = "niumpi-save-v6";
 const LEGACY_KEYS = ["niumpi-save-v4", "niumpi-memory-v3", "niumpi-memory-v2", "niumpi-memory-v1"];
 /** Marks a context as already seeded so reloads read what the game wrote. */
 const SEED_SENTINEL = "__e2e_seeded";

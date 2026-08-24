@@ -96,6 +96,9 @@
 .stat-fullness { color: var(--hot-pink); }
 .stat-energy { color: var(--gold); }
 .stat-joy { color: var(--turquoise); }
+.stat-cleanliness { color: var(--soft-blue); }
+.stat-cleanliness.hygiene-dusty { color: #d39a72; }
+.stat-cleanliness.hygiene-messy { color: var(--coral); }
 .stat-name { color: var(--text-muted); font-size: var(--t-xs); font-weight: 750; }
 .stat-track {
   position: relative; height: 9px; overflow: hidden;
@@ -144,17 +147,18 @@
 .chip .art { --art-1: var(--turquoise); --art-2: var(--gold); }
 
 .tab-bar {
-  display: flex; gap: 4px; padding: 4px;
+  display: flex; align-items: stretch; gap: 4px; min-width: 0; min-height: 52px; padding: 4px;
   background: rgb(255 255 255 / 6%);
   border: 1px solid var(--glass-line-soft); border-radius: var(--r-pill);
   overflow-x: auto; scrollbar-width: none;
 }
 .tab-bar::-webkit-scrollbar { display: none; }
 .tab {
-  flex: 1; min-width: max-content; min-height: 36px; padding: 7px 14px;
+  display: grid; place-items: center;
+  flex: 1; min-width: max-content; min-height: var(--tap); padding: 8px 14px;
   color: var(--text-faint);
   background: transparent; border: 0; border-radius: var(--r-pill);
-  font-size: var(--t-xs); font-weight: 800; white-space: nowrap;
+  font-size: var(--t-xs); font-weight: 800; line-height: 1.15; white-space: nowrap;
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
 .tab:hover { color: var(--text); }

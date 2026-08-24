@@ -4,7 +4,7 @@ import { CompanionStage } from "../ui/CompanionStage";
 import { useFoodDrop } from "../ui/useFoodDrop";
 import { SnackBar } from "../ui/SnackBar";
 import { Art } from "../ui/Art";
-import { BondMeter, StatRow } from "../ui/parts";
+import { BondMeter, CleanlinessRow, StatRow } from "../ui/parts";
 import {
   ActivityTiles, EvolutionPreviewCard, MemorySeedCard, MissionsCard,
   PersonalityPreview, PetStatusStrip, RoomPreviewCard,
@@ -44,6 +44,7 @@ export function HomeScene() {
                 {(["fullness", "energy", "joy"] as const).map((id) => (
                   <StatRow key={id} id={id} value={state.stats[id]} />
                 ))}
+                <CleanlinessRow value={state.niumpi.cleanliness} />
               </div>
             </div>
 
@@ -54,6 +55,10 @@ export function HomeScene() {
             <SnackBar armed={armed} onArm={setArmed} hitTest={hitTest} onCook={() => goTo("cooking")} />
 
             <div className="action-bar">
+              <button className="action-button action-wash" type="button" onClick={() => goTo("niumpi")}>
+                <Art name="drop" size={20} />
+                {copy.actions.wash}
+              </button>
               <button
                 className={`action-button action-lamp ${state.niumpi.lampOn ? "is-active" : ""}`}
                 type="button"

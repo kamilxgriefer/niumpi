@@ -45,7 +45,7 @@ export function FriendsScene() {
   return (
     <div className="scene scene-friends">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>{copy.home.friends}</h1>
           <p>{copy.home.friendsNote}</p>
         </div>

@@ -34,7 +34,7 @@ export function EvolutionScene() {
   return (
     <div className="scene scene-evolution">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>{copy.home.evolution}</h1>
           <p>{copy.home.evolutionNote}</p>
         </div>

@@ -14,9 +14,11 @@ import { dayPartAt } from "../game/time";
 import { sparkStyle } from "./parts";
 import type { CareActionId } from "../game/types";
 import type { AnimState } from "../anim/NiumpiAnimationController";
-import { chooseLearnedRoomMoment, learnedRoomLine } from "../game/behavior";
+import { learnedRoomLine } from "../game/behavior";
 import type { RoomMomentId } from "../game/behavior";
 import { chooseLine, rememberLine } from "../game/reactions";
+import { resolveRigAppearance } from "../rig/appearance.ts";
+import type { BehaviorMood } from "../anim/NiumpiBehaviorMachine.ts";
 
 /** Held longer than this counts as a hug rather than a tap. */
 const HOLD_MS = 620;
@@ -62,6 +64,10 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
   const mood = moodFor(state, now);
   const name = state.niumpi.name || "Niumpi";
   const visualStage = visualStageFor(state.niumpi.careMoments, state.niumpi.stage);
+  const rigAppearance = resolveRigAppearance({
+    ...state,
+    niumpi: { ...state.niumpi, stage: visualStage },
+  });
   const leafInfo = moodTable[mood];
 
   useEffect(() => { latestState.current = state; }, [state]);
@@ -70,6 +76,29 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
   useEffect(() => {
     controller.setRest(state.niumpi.sleeping ? "asleep" : "idle");
   }, [controller, state.niumpi.sleeping]);
+
+  useEffect(() => {
+    const behaviorMood: BehaviorMood = state.niumpi.sleeping ? "sleeping" : ({
+      excited: "excited",
+      happy: "happy",
+      tired: "tired",
+      hungry: "sad",
+      curious: "curious",
+      upset: "sad",
+      dreaming: "calm",
+      evolving: "excited",
+    } as const)[mood];
+    controller.setBehaviorContext({
+      mood: behaviorMood,
+      energy: state.stats.energy / 100,
+      joy: state.stats.joy / 100,
+      curiosity: state.stats.curiosity / 100,
+      playfulness: Math.min(1, state.evolution.vectors.playful / 40),
+    });
+  }, [
+    controller, mood, state.niumpi.sleeping, state.stats.energy, state.stats.joy,
+    state.stats.curiosity, state.evolution.vectors.playful,
+  ]);
 
   useEffect(() => {
     controller.setTargeted(targeting);
@@ -102,32 +131,24 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     cue(scene.sound);
   }, [clock, controller, cue, run, say]);
 
-  /*
-   * Movement and conversation share one unhurried rhythm. Most beats use the
-   * full contextual dialogue library; room-specific lines still appear often
-   * enough that the space feels noticed rather than decorative.
-   */
+  /* The motion director owns autonomous movement. This independent, slower
+   * timer only chooses dialogue, so two schedulers can never fight over pose. */
   useEffect(() => {
     if (state.niumpi.sleeping) return;
     let timer = 0;
     const schedule = () => {
       timer = window.setTimeout(() => {
         if (controller.getState() === "idle") {
-          const moment = chooseLearnedRoomMoment(latestState.current, clock(), Math.random(), lastMoment.current);
-          const spontaneous = Math.random() < 0.68;
-          playRoomMoment(moment, !spontaneous);
-          if (spontaneous) {
-            const line = chooseLine(latestState.current, clock());
-            patch((current) => rememberLine(current, line.id));
-            say(line.text);
-          }
+          const line = chooseLine(latestState.current, clock());
+          patch((current) => rememberLine(current, line.id));
+          say(line.text);
         }
         schedule();
-      }, 6_500 + Math.random() * 6_500);
+      }, 10_000 + Math.random() * 8_000);
     };
     schedule();
     return () => window.clearTimeout(timer);
-  }, [clock, controller, patch, playRoomMoment, say, state.niumpi.sleeping]);
+  }, [clock, controller, patch, say, state.niumpi.sleeping]);
 
   const act = useCallback((action: CareActionId) => {
     run(gesture(state, action, clock()));
@@ -270,7 +291,10 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
         <NiumpiRenderer
           rigRef={rigRef}
           phenotype={state.phenotype}
+          appearance={rigAppearance}
           stage={visualStage}
+          cleanliness={state.niumpi.cleanliness}
+          washTool={state.niumpi.lastWashTool}
           moodColour={leafInfo.colour}
           petName={name}
           onPartActivate={(bodyPart) => act(partActions[bodyPart])}

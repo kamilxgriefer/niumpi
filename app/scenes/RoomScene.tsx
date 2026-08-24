@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { motion } from "motion/react";
 import Image from "next/image";
@@ -74,6 +74,14 @@ export function RoomScene() {
     const item = itemMap[entry.itemId];
     return item?.reaction ? [{ entry, item }] : [];
   });
+
+  /* The controller is shared between scenes. A room must always begin from
+     its own safe floor anchor rather than inheriting a window/look offset from
+     Home or another room. Room interactions can move it again afterwards. */
+  useEffect(() => {
+    controller.setPosition(0, 0);
+    controller.setGaze(0, 0);
+  }, [controller, state.room.activeRoomId]);
 
   /** Grid coordinates from a pointer position, clamped inside the room. */
   function cellAt(uid: string, clientX: number, clientY: number) {
@@ -194,7 +202,7 @@ export function RoomScene() {
   return (
     <div className={`scene scene-room scene-room-world mode-${mode}`}>
       <header className="scene-head rw-head">
-        <div className="rw-title-block">
+        <div className="scene-title-block rw-title-block">
           <span className="rw-eyebrow"><Art name="spark" size={13} /> Niumpi&apos;s little world</span>
           <h1>Your Room</h1>
           <p>{mode === "play" ? "Tap a favourite thing and see what Niumpi does." : "Make a cozy place that feels like yours."}</p>
@@ -262,7 +270,18 @@ export function RoomScene() {
               <span className="rw-stage-kicker">{mode === "play" ? "Now playing" : "Arranging"}</span>
               <h2 id="rw-stage-title">{activeRoomDefinition.name}</h2>
             </div>
-            <span className="rw-object-count"><Art name="room" size={15} /> {placed.length} {placed.length === 1 ? "thing" : "things"}</span>
+            <div className="rw-stage-actions">
+              <span className="rw-object-count"><Art name="room" size={15} /> {placed.length} {placed.length === 1 ? "thing" : "things"}</span>
+              {mode === "play" && (
+                <button className="rw-edit-shortcut" type="button" onClick={() => {
+                  setMode("edit");
+                  setSelected(null);
+                  cue("blip");
+                }}>
+                  <Art name="tidy" size={15} /> Move things
+                </button>
+              )}
+            </div>
           </div>
 
           <div className={`room-canvas rw-canvas theme-${theme} room-${state.room.activeRoomId} mode-${mode}`}>
@@ -348,6 +367,7 @@ export function RoomScene() {
                     </span>
                     <span className="rw-item-label">{item.name}</span>
                     <span className="rw-item-rarity" aria-hidden="true">{rarityMap[item.rarity].name}</span>
+                    {mode === "edit" && <span className="rw-drag-handle" aria-hidden="true"><i /><i /><i /><i /></span>}
                     {mode === "play" && item.reaction && <span className="rw-item-spark" aria-hidden="true">✦</span>}
                   </motion.button>
                 );

@@ -34,7 +34,7 @@ export function GardenScene() {
   return (
     <div className="scene scene-garden">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>Garden</h1>
           <p>Plants keep growing while you are away — nothing wilts if you’re late.</p>
         </div>

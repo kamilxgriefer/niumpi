@@ -48,7 +48,7 @@ export type RoomActivityId = "read" | "window" | "rest" | "roll" | "dance" | "si
 export type CareActionId =
   | "pet" | "hug" | "tickle" | "brush" | "leaf" | "dance" | "comfort" | "sing"
   | "feed" | "cook" | "sleep" | "dream" | "minigame" | "seed" | "harvest"
-  | "plant" | "toy" | "explore" | "visit" | "decorate" | "warm" | "dewdrop" | "hum";
+  | "plant" | "toy" | "explore" | "visit" | "decorate" | "warm" | "dewdrop" | "hum" | "wash";
 
 export type Settings = {
   sound: boolean;
@@ -83,6 +83,10 @@ export type NiumpiCore = {
   sleeping: boolean;
   sleepStartedAt: number | null;
   lampOn: boolean;
+  /** 20..100. It declines gently and is restored through hands-on care. */
+  cleanliness: number;
+  lastWashedAt: number | null;
+  lastWashTool: "sponge" | "brush" | null;
 };
 
 export type CareStats = Record<StatId, number> & Record<HiddenStatId, number>;
@@ -172,6 +176,14 @@ export type RoomLootState = {
   lastDropAt: number | null;
 };
 
+/** Earned-currency discovery history. Paid Star Fragments never feed this roll. */
+export type StarlightShopState = {
+  opened: number;
+  epicPity: number;
+  legendaryPity: number;
+  lastDropAt: number | null;
+};
+
 export type Plot = {
   id: number;
   plantId: string | null;
@@ -247,6 +259,7 @@ export type GameState = {
   inventory: Inventory;
   room: RoomLayout;
   roomLoot: RoomLootState;
+  starlightShop: StarlightShopState;
   garden: { plots: Plot[] };
   memories: MemoryEntry[];
   dream: DreamRun | null;
@@ -276,6 +289,7 @@ export type CareOutcome = {
 
 export type Reward =
   | { kind: "ingredient"; id: string; amount: number }
+  | { kind: "seed"; id: string; amount: number }
   | { kind: "currency"; id: CurrencyId; amount: number }
   | { kind: "item"; id: string }
   | { kind: "recipe"; id: string }

@@ -77,6 +77,9 @@
   --t-lg: 1.08rem;
   --t-xl: 1.35rem;
   --t-2xl: 1.8rem;
+  --leading-title: 1.08;
+  --leading-copy: 1.5;
+  --measure-copy: 62ch;
   /* Fallbacks live inside var() so a missing font variable degrades to a
      rounded system face instead of collapsing the whole family to invalid. */
   --font-head: var(--font-display, "Fredoka"), var(--font-body, "Nunito"), ui-rounded, "SF Pro Rounded", system-ui, sans-serif;

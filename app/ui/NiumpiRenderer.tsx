@@ -4,6 +4,8 @@ import type { CSSProperties, MouseEvent, PointerEvent, RefObject } from "react";
 import type { Phenotype, StageId } from "../game/types";
 import { profileFor } from "../game/config/growth.ts";
 import { NiumpiBody } from "./niumpi/NiumpiBody.tsx";
+import type { ResolvedRigAppearance } from "../rig/types.ts";
+import { hygieneCondition, visibleDirt } from "../game/hygiene.ts";
 
 /**
  * Pure structure. The body itself is generated from the stage profile by
@@ -18,7 +20,10 @@ type Props = {
   /** The controller attaches to this node and owns its classes and variables. */
   rigRef: RefObject<HTMLDivElement | null>;
   phenotype: Phenotype;
+  appearance: ResolvedRigAppearance;
   stage: StageId;
+  cleanliness: number;
+  washTool: "sponge" | "brush" | null;
   moodColour: string;
   petName: string;
   onPartActivate?: (part: BodyPart) => void;
@@ -30,11 +35,17 @@ type Props = {
 };
 
 export function NiumpiRenderer({
-  rigRef, phenotype, stage, moodColour, petName,
+  rigRef, phenotype, appearance, stage, cleanliness, washTool, moodColour, petName,
   onPartActivate, onLeafTouch, onActivate, onPointerDown, onPointerMove, onPointerUp,
 }: Props) {
   const profile = profileFor(stage);
   const diet = Object.entries(phenotype.tints).sort((a, b) => b[1] - a[1])[0];
+  const morphology = appearance.form === "neutral" ? "seedling" : appearance.form;
+  const renderedPhenotype: Phenotype = {
+    ...phenotype,
+    morphology,
+    markings: [...appearance.markings],
+  };
 
   const style = {
     "--mood-colour": `var(--mood-${moodColour})`,
@@ -44,6 +55,7 @@ export function NiumpiRenderer({
     // Places the leaf touch target over wherever the leaves ended up.
     "--tip-top": `${(profile.body.tipY / 200) * 100}%`,
     "--diet-strength": Math.min(1, (diet?.[1] ?? 0) / 8),
+    "--dirt-level": visibleDirt(cleanliness),
   } as CSSProperties;
 
   return (
@@ -53,12 +65,16 @@ export function NiumpiRenderer({
         "rig-root",
         `growth-stage-${profile.id}`,
         `arms-${profile.arms}`,
-        `body-${phenotype.bodyPalette}`,
-        `leaf-${phenotype.leafType}`,
+        `body-${appearance.form === "neutral" ? "cloud" : appearance.form}`,
+        appearance.form === "neutral" ? "" : `leaf-${phenotype.leafType}`,
         `eyes-${phenotype.eyeType}`,
-        `morph-${phenotype.morphology}`,
-        profile.id > 0 ? "uses-sprite" : "",
-        phenotype.morphology !== "seedling" && profile.id < 5 ? "branch-hint" : "",
+        `hygiene-${hygieneCondition(cleanliness)}`,
+        washTool ? `wash-tool-${washTool}` : "wash-tool-sponge",
+        `morph-${morphology}`,
+        `reveal-${appearance.phase}`,
+        `locomotion-${appearance.formGeometry.locomotion}`,
+        profile.id > 0 ? "uses-layered-rig" : "",
+        appearance.phase === "branch" && morphology !== "seedling" ? "branch-hint" : "",
         diet ? `diet-${diet[0]}` : "",
         ...phenotype.markings.map((marking) => `marking-${marking}`),
         phenotype.aura ? `aura-on aura-${phenotype.aura}` : "",
@@ -83,7 +99,7 @@ export function NiumpiRenderer({
         onClick={onActivate}
         onContextMenu={(event) => event.preventDefault()}
       >
-        <NiumpiBody key={profile.id} profile={profile} phenotype={phenotype} />
+        <NiumpiBody key={`${profile.id}:${morphology}`} profile={profile} phenotype={renderedPhenotype} />
       </button>
 
       {profile.leaves > 0 && (

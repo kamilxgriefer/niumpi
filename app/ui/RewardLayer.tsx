@@ -10,6 +10,7 @@ import { itemMap } from "../game/config/items";
 import { recipeMap } from "../game/config/recipes";
 import { traitMap } from "../game/config/traits";
 import { rarityMap } from "../game/config/rarities";
+import { plantMap } from "../game/config/plants";
 import { popIn } from "../anim/transitions";
 import type { Reward } from "../game/types";
 
@@ -17,6 +18,8 @@ function describe(reward: Reward): { art: string; image?: string; title: string;
   switch (reward.kind) {
     case "ingredient":
       return { art: ingredientMap[reward.id]?.art ?? "snack", title: ingredientMap[reward.id]?.name ?? reward.id, note: `×${reward.amount}` };
+    case "seed":
+      return { art: plantMap[reward.id]?.art ?? "seed", title: `${plantMap[reward.id]?.name ?? reward.id} Seeds`, note: `×${reward.amount}` };
     case "currency":
       return { art: reward.id === "dewdrops" ? "dewdrop" : "star", title: reward.id === "dewdrops" ? "Dewdrops" : "Star Fragments", note: `+${reward.amount}` };
     case "item": {

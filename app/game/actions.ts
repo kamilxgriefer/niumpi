@@ -27,6 +27,8 @@ import {
 } from "./rooms.ts";
 import { claimRoomDrop, earnRoomDiscovery } from "./roomLoot.ts";
 import { rarityMap } from "./config/rarities.ts";
+import { soilNiumpi, washTools } from "./hygiene.ts";
+import type { WashTool } from "./hygiene.ts";
 
 export type ActionResult = {
   state: GameState;
@@ -175,6 +177,10 @@ export function gesture(state: GameState, action: CareActionId, now: number): Ac
   };
   const care = recordCare(state, action, now, vectorsByAction[action] ?? {});
   let next = care.state;
+  const activeMess: Partial<Record<CareActionId, number>> = {
+    tickle: 0.9, dance: 1.4, toy: 1.1,
+  };
+  if (activeMess[action]) next = soilNiumpi(next, activeMess[action]!);
   const signals: Partial<Record<CareActionId, string>> = {
     pet: "gentle", hug: "gentle", tickle: "tickle", dance: "dance", sing: "music", brush: "gentle", toy: "items",
   };
@@ -214,6 +220,56 @@ export function gesture(state: GameState, action: CareActionId, now: number): Ac
   };
 }
 
+/** A visible, persistent care loop. The two tools feel different, but neither
+ * can be farmed endlessly because they use the normal diminishing-care rules. */
+export function washNiumpi(state: GameState, tool: WashTool, now: number): ActionResult {
+  const config = washTools[tool];
+  if (!config) return empty(state);
+  if (!state.niumpi.hatchedAt) return empty(state);
+  if (state.niumpi.cleanliness >= 98) {
+    return {
+      ...empty(state),
+      message: "Still sparkling! Let's save the bubbles for later.",
+      behavior: "happy",
+      sound: "blip",
+      refused: true,
+    };
+  }
+
+  const action: CareActionId = tool === "brush" ? "brush" : "wash";
+  const care = recordCare(state, action, now, tool === "brush"
+    ? { calm: 2, loving: 1 }
+    : { loving: 2, nature: 1 });
+  let next = care.state;
+  next = {
+    ...next,
+    niumpi: {
+      ...next.niumpi,
+      cleanliness: Math.min(100, next.niumpi.cleanliness + config.gain),
+      lastWashedAt: now,
+      lastWashTool: tool,
+      sleeping: false,
+      sleepStartedAt: null,
+    },
+    stats: applyStat(applyStat(next.stats, "comfort", tool === "brush" ? 3 : 2), "trust", 1),
+  };
+  next = addSignal(next, "gentle", tool === "brush" ? 0.75 : 0.5);
+  next = progressMissions(next, action, now);
+  const toasts: ActionResult["toasts"] = [];
+  const rewards: Reward[] = [];
+  return {
+    state: settle(next, now, toasts, rewards),
+    message: tool === "brush"
+      ? "Slow little circles… my fluff feels lighter!"
+      : "Bubbles! I am becoming extremely shiny.",
+    behavior: "brushing",
+    spark: tool === "brush" ? "✦" : "○",
+    sound: tool === "brush" ? "leaf" : "pet",
+    rewards,
+    toasts,
+  };
+}
+
 export function feed(state: GameState, foodId: string, now: number): ActionResult {
   const food = ingredientById(foodId);
   if (!food) return empty(state);
@@ -232,7 +288,7 @@ export function feed(state: GameState, foodId: string, now: number): ActionResul
     Object.entries(food.vectors).map(([id, amount]) => [id, (amount ?? 0) * reaction.multiplier]),
   ) as Partial<Record<VectorId, number>>;
   const care = recordCare(spent, "feed", now, scaledVectors);
-  let next = care.state;
+  let next = soilNiumpi(care.state, 0.8);
   next = {
     ...next,
     stats: {

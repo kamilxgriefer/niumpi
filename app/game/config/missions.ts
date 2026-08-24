@@ -23,6 +23,8 @@ export const missionTemplates: MissionTemplate[] = [
   daily("comfort-two", "A little reassurance", "Comfort Niumpi twice", ["comfort"], 2, 11, "care"),
   daily("brush-once", "Polish the cloud crown", "One careful brush", ["brush"], 1, 8, "care"),
   daily("brush-three", "Crown care", "Brush three times today", ["brush"], 3, 14, "care"),
+  daily("wash-once", "Bubble break", "Give Niumpi a gentle wash", ["wash"], 1, 9, "care"),
+  daily("fresh-fluff", "Fresh little cloud", "Wash or brush once", ["wash", "brush"], 1, 10, "care"),
   daily("leaf-curiosity", "Follow the flutter", "Touch the crown twice", ["leaf"], 2, 10, "bond"),
   daily("tickle-once", "Find the ticklish spot", "It moves", ["tickle"], 1, 8, "play"),
   daily("tickle-three", "Giggle cloud", "Find three tickles", ["tickle"], 3, 14, "play"),
@@ -32,7 +34,7 @@ export const missionTemplates: MissionTemplate[] = [
   daily("joyful-mix", "Make a joyful mix", "Dance, sing or tickle", ["dance", "sing", "tickle"], 4, 16, "play"),
   daily("share-one", "Share a treat", "Any snack counts", ["feed"], 1, 7, "care"),
   daily("share-two", "A tiny tasting menu", "Share two treats", ["feed"], 2, 11, "care"),
-  daily("care-variety", "Care in three ways", "Gentle gestures all count", ["pet", "hug", "brush", "comfort"], 3, 13, "care"),
+  daily("care-variety", "Care in three ways", "Gentle gestures all count", ["pet", "hug", "brush", "wash", "comfort"], 3, 13, "care"),
   daily("tuck-in", "A cozy goodnight", "Tuck Niumpi in once", ["sleep"], 1, 10, "care"),
   daily("toy-play", "Bring out a toy", "See what Niumpi chooses", ["toy"], 1, 10, "play"),
   daily("toy-time", "Playroom afternoon", "Play with room toys twice", ["toy"], 2, 14, "play"),
@@ -61,10 +63,10 @@ export const missionTemplates: MissionTemplate[] = [
   daily("quiet-day", "A quiet little day", "Pet, comfort, brush or rest", ["pet", "comfort", "brush", "sleep"], 4, 18, "care"),
   daily("friendship-five", "Five shared moments", "Any loving or playful gesture", ["pet", "hug", "tickle", "dance", "sing"], 5, 22, "bond"),
   daily("world-trio", "Three tiny adventures", "Room, garden, dreams and games count", ["leaf", "toy", "plant", "harvest", "dream", "visit", "minigame"], 3, 20, "world"),
-  daily("care-six", "A cloud full of care", "Six gentle moments, any mix", ["pet", "hug", "brush", "comfort", "feed"], 6, 24, "care"),
+  daily("care-six", "A cloud full of care", "Six gentle moments, any mix", ["pet", "hug", "brush", "wash", "comfort", "feed"], 6, 24, "care"),
   daily("music-and-motion", "Music and motion", "Sing or dance four times", ["sing", "dance", "hum"], 4, 20, "create"),
   daily("curious-five", "Curiosity trail", "Five curious or playful moments", ["leaf", "toy", "explore", "minigame"], 5, 23, "world"),
-  daily("whole-day", "A day well shared", "Any eight meaningful actions", ["pet", "hug", "tickle", "brush", "leaf", "dance", "comfort", "sing", "feed", "cook", "sleep", "dream", "minigame", "seed", "harvest", "plant", "toy", "explore", "visit", "decorate"], 8, 28, "bond"),
+  daily("whole-day", "A day well shared", "Any eight meaningful actions", ["pet", "hug", "tickle", "brush", "wash", "leaf", "dance", "comfort", "sing", "feed", "cook", "sleep", "dream", "minigame", "seed", "harvest", "plant", "toy", "explore", "visit", "decorate"], 8, 28, "bond"),
 ];
 
 /** Kept claimable until their old daily board naturally rolls over. */
@@ -82,6 +84,7 @@ export const DAILY_MISSION_COUNT = 5;
 
 export const weeklyMissionTemplates: MissionTemplate[] = [
   daily("week-gentle", "Gentle rhythm", "Share 18 calm care moments this week", ["pet", "hug", "brush", "comfort"], 18, 0, "care"),
+  daily("week-hygiene", "Cloud care week", "Wash or brush Niumpi 6 times", ["wash", "brush"], 6, 0, "care"),
   daily("week-play", "Playful week", "Play, tickle or dance 14 times", ["minigame", "toy", "tickle", "dance"], 14, 0, "play"),
   daily("week-food", "Thoughtful table", "Cook or share 10 treats", ["cook", "feed"], 10, 0, "care"),
   daily("week-games", "Game night regular", "Finish 8 minigames", ["minigame"], 8, 0, "play", "games"),
@@ -93,7 +96,7 @@ export const weeklyMissionTemplates: MissionTemplate[] = [
   daily("week-music", "A week of music", "Sing, hum or dance 12 times", ["sing", "hum", "dance"], 12, 0, "create"),
   daily("week-curious", "Curiosity club", "Explore, play or discover 14 times", ["explore", "leaf", "minigame", "seed"], 14, 0, "world"),
   daily("week-bedtime", "Cozy evenings", "Tuck in or dream 5 times", ["sleep", "dream"], 5, 0, "care"),
-  daily("week-bond", "Many little moments", "Share 28 moments of any kind", ["pet", "hug", "tickle", "brush", "leaf", "dance", "comfort", "sing", "feed", "cook", "sleep", "dream", "minigame", "seed", "harvest", "plant", "toy", "explore", "visit", "decorate"], 28, 0, "bond"),
+  daily("week-bond", "Many little moments", "Share 28 moments of any kind", ["pet", "hug", "tickle", "brush", "wash", "leaf", "dance", "comfort", "sing", "feed", "cook", "sleep", "dream", "minigame", "seed", "harvest", "plant", "toy", "explore", "visit", "decorate"], 28, 0, "bond"),
   daily("week-create", "Maker's week", "Cook, decorate, sing or garden 14 times", ["cook", "decorate", "sing", "plant", "harvest"], 14, 0, "create"),
   daily("week-friends-food", "Hospitality week", "Visit, cook or share 12 times", ["visit", "cook", "feed"], 12, 0, "bond", "friends"),
   daily("week-world", "Little world tour", "Explore the wider world 12 times", ["leaf", "toy", "plant", "harvest", "dream", "visit", "explore", "minigame"], 12, 0, "world"),
@@ -122,12 +125,13 @@ const track = (id: string, labels: string[], notes: string[], category: GoalCate
     reward: index === 3 ? stars(4, rewardBase * 3) : index === 2 ? stars(2, rewardBase * 2) : dew(rewardBase * (index + 1)),
   }));
 
-/** Sixty permanent milestones across fifteen real progression tracks. */
+/** Sixty-four permanent milestones across sixteen real progression tracks. */
 export const achievementTemplates: AchievementTemplate[] = [
   ...track("care", ["First hello", "A hundred moments", "Always together", "A little lifetime"], ["Share your first care moment", "Care becomes a rhythm", "A deep everyday bond", "A history made together"], "care", { kind: "care" }, [1, 100, 350, 900]),
   ...track("bond", ["Trust begins", "Growing closer", "Heart to heart", "Unshakeable bond"], ["Reach 20% bond", "Reach 50% bond", "Reach 80% bond", "Reach full bond"], "bond", { kind: "bond" }, [20, 50, 80, 100]),
   ...track("growth", ["A cloud appears", "Growing crown", "True colours", "Final form"], ["Reach the first form", "Reach the second form", "Care shapes a direction", "Discover the final evolution"], "bond", { kind: "stage" }, [1, 2, 4, 5]),
   ...track("gentle", ["Soft touch", "Safe with you", "Gentle soul", "Cloud sanctuary"], ["Share 5 gentle gestures", "Share 40 gentle gestures", "Share 140 gentle gestures", "Share 400 gentle gestures"], "care", { kind: "action", actions: ["pet", "hug", "brush", "comfort"] }, [5, 40, 140, 400]),
+  ...track("hygiene", ["First bubbles", "Fresh fluff", "Cloud caretaker", "Forever sparkling"], ["Wash or brush once", "Share 15 cleaning moments", "Share 60 cleaning moments", "Share 180 cleaning moments"], "care", { kind: "action", actions: ["wash", "brush"] }, [1, 15, 60, 180]),
   ...track("food", ["First snack", "Tasting friends", "Tiny gourmand", "Feast of seasons"], ["Share 3 treats", "Share 25 treats", "Share 90 treats", "Share 250 treats"], "care", { kind: "action", actions: ["feed"] }, [3, 25, 90, 250]),
   ...track("play", ["First giggle", "Playmate", "Joy maker", "Endless encore"], ["Share 5 playful moments", "Share 40 playful moments", "Share 150 playful moments", "Share 450 playful moments"], "play", { kind: "action", actions: ["tickle", "dance", "toy", "minigame"] }, [5, 40, 150, 450]),
   ...track("music", ["Tiny hum", "Duet", "Cloud choir", "Song of Niumpi"], ["Make music 3 times", "Make music 25 times", "Make music 90 times", "Make music 240 times"], "create", { kind: "action", actions: ["sing", "hum", "dance"] }, [3, 25, 90, 240]),

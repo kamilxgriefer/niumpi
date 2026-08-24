@@ -84,7 +84,7 @@ export function JourneyScene() {
   return (
     <div className="scene scene-journey">
       <header className="scene-head journey-head">
-        <div>
+        <div className="scene-title-block">
           <span className="journey-eyebrow"><Art name="spark" size={16} /> A story with no finish line</span>
           <h1>Niumpi Journey</h1>
           <p>Small goals for today, bigger adventures for the week, and achievements that remember your whole story.</p>

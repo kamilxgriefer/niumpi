@@ -10,6 +10,8 @@ import { ingredients, ingredientMap } from "../game/config/foods";
 import { matchRecipe, recipes } from "../game/config/recipes";
 import { cook } from "../game/actions";
 import { copy } from "../game/config/copy";
+import { resolveRigAppearance } from "../rig/appearance";
+import type { Phenotype } from "../game/types";
 
 const MAX_SLOTS = 3;
 
@@ -20,6 +22,17 @@ export function CookingScene() {
 
   const preview = slots.length >= 2 ? matchRecipe(slots) : null;
   const owned = ingredients.filter((item) => (state.inventory.ingredients[item.id] ?? 0) > 0);
+  const chefStage = visualStageFor(state.niumpi.careMoments, state.niumpi.stage);
+  const chefAppearance = resolveRigAppearance({
+    ...state,
+    niumpi: { ...state.niumpi, stage: chefStage },
+  });
+  const chefMorphology: Phenotype["morphology"] = chefAppearance.form === "neutral" ? "seedling" : chefAppearance.form;
+  const chefPhenotype: Phenotype = {
+    ...state.phenotype,
+    morphology: chefMorphology,
+    markings: [...chefAppearance.markings],
+  };
 
   function add(id: string) {
     if (slots.length >= MAX_SLOTS) { toast("The bench is full — tap a slot to take one off", "✕"); return; }
@@ -41,7 +54,7 @@ export function CookingScene() {
   return (
     <div className="scene scene-cooking">
       <header className="scene-head">
-        <div>
+        <div className="scene-title-block">
           <h1>{copy.home.cooking}</h1>
           <p>{copy.home.cookingNote}</p>
         </div>
@@ -118,8 +131,8 @@ export function CookingScene() {
             creature standing on every other screen. */}
         <div className="cook-chef" aria-hidden="true">
           <span className="chef-hat" />
-          <span className={`cook-chef-body body-${state.phenotype.bodyPalette} leaf-${state.phenotype.leafType} morph-${state.phenotype.morphology}`}>
-            <NiumpiBody profile={profileFor(visualStageFor(state.niumpi.careMoments, state.niumpi.stage))} phenotype={state.phenotype} />
+          <span className={`cook-chef-body body-${chefAppearance.form === "neutral" ? "cloud" : chefAppearance.form} morph-${chefMorphology}`}>
+            <NiumpiBody profile={profileFor(chefStage)} phenotype={chefPhenotype} />
           </span>
         </div>
       </div>
