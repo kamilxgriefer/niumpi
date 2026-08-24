@@ -32,6 +32,7 @@ test("opening a bloom grants one unowned room collectible and consumes one claim
   assert.equal(result.state.inventory.items.includes(result.rewards[0].id), true);
   assert.equal(result.state.roomLoot.claimable, 0);
   assert.equal(result.state.roomLoot.opened, 1);
+  assert.equal(result.behavior, "gift", "discovery feedback must use a real animation state");
 });
 
 test("rare, legendary and mythic pity floors cannot downgrade", () => {

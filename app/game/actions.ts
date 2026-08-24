@@ -639,7 +639,7 @@ export function claimRoomDiscovery(state: GameState, now: number): ActionResult 
   return {
     state: drop.state,
     message: item ? `${item.name} found a home with you.` : "Your complete collection became dewdrops.",
-    behavior: "excited",
+    behavior: "gift",
     spark: drop.rarity === "mythic" ? "✦" : "✧",
     sound: "reward",
     rewards: [drop.reward],
