@@ -19,6 +19,7 @@ const OUTPUT_FPS = 60;
 const MODEL_ROOT = "/assets/niumpi/models";
 
 function clipForRoot(root: HTMLElement | null): BlenderAnimationClip {
+  if (root?.classList.contains("is-blinking")) return "blink";
   const semantic = root?.dataset.anim ?? "idle";
   if (semantic === "pet" || semantic === "petting" || semantic === "tickle") return "tap_reaction";
   if (semantic === "asleep" || semantic === "sleepy") return "sleep";
@@ -92,8 +93,10 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     let camera: ThreeTypes.PerspectiveCamera | null = null;
     let model: ThreeTypes.Object3D | null = null;
     let mixer: ThreeTypes.AnimationMixer | null = null;
+    let manifest: BlenderManifest | null = null;
     let visible = true;
     let activeClip: BlenderAnimationClip = entrance ? "hatch_complete" : forcedClip ?? "idle";
+    let queuedClip: BlenderAnimationClip | null = null;
     let clipStartedAt = performance.now();
     let lastMotionToken = "";
     let lastReportedFrame = -1;
@@ -101,8 +104,19 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     const root = canvas.closest<HTMLElement>(".rig-root");
     const chooseClip = (next: BlenderAnimationClip) => {
       if (next === activeClip && !forcedClip) return;
+      const current = manifest?.clips[activeClip];
+      const unfinished = current && !current.loop
+        && performance.now() - clipStartedAt < current.durationSeconds * 1_000;
+      // Controllers describe gameplay state and may enter recovery before a
+      // Blender performance reaches its final keyed pose. Idle waits in the
+      // wings; a new explicit performance can still interrupt immediately.
+      if (next === "idle" && unfinished) {
+        queuedClip = next;
+        return;
+      }
       activeClip = next;
       clipStartedAt = performance.now();
+      queuedClip = null;
       lastReportedFrame = -1;
     };
 
@@ -141,12 +155,13 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
         ]);
         threeModule = THREE;
         if (!manifestResponse.ok) throw new Error("Niumpi animation manifest is unavailable");
-        const manifest = await manifestResponse.json() as BlenderManifest;
+        const loadedManifest = await manifestResponse.json() as BlenderManifest;
+        manifest = loadedManifest;
         if (disposed) {
           disposeObject(gltf.scene, THREE);
           return;
         }
-        if (manifest.renderer !== "blender-gltf" || !manifest.variants.includes(variant)) {
+        if (loadedManifest.renderer !== "blender-gltf" || !loadedManifest.variants.includes(variant)) {
           throw new Error(`Niumpi Blender variant ${variant} is missing`);
         }
 
@@ -215,7 +230,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
 
         const requestFromRoot = () => {
           if (!root || forcedClip || entrance) return;
-          const token = root.dataset.motionToken ?? `state:${root.dataset.anim ?? "idle"}`;
+          const token = `${root.dataset.motionToken ?? `state:${root.dataset.anim ?? "idle"}`}:blink:${root.classList.contains("is-blinking") ? 1 : 0}`;
           if (token === lastMotionToken) return;
           lastMotionToken = token;
           chooseClip(clipForRoot(root));
@@ -229,17 +244,19 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
         const draw = (now: number) => {
           if (disposed) return;
           if (visible) {
-            const clip = manifest.clips[activeClip] ?? manifest.clips.idle;
+            const clip = loadedManifest.clips[activeClip] ?? loadedManifest.clips.idle;
             const elapsed = Math.max(0, (now - clipStartedAt) / 1_000);
             if (!clip.loop && elapsed >= clip.durationSeconds && !forcedClip) {
-              activeClip = "idle";
+              activeClip = queuedClip ?? "idle";
+              queuedClip = null;
               clipStartedAt = now;
+              lastReportedFrame = -1;
             }
-            const current = manifest.clips[activeClip] ?? manifest.clips.idle;
+            const current = loadedManifest.clips[activeClip] ?? loadedManifest.clips.idle;
             const activeElapsed = Math.max(0, (now - clipStartedAt) / 1_000);
             const local = current.loop
               ? activeElapsed % current.durationSeconds
-              : Math.min(activeElapsed, current.durationSeconds - 1 / manifest.fps);
+              : Math.min(activeElapsed, current.durationSeconds - 1 / loadedManifest.fps);
             mixer?.setTime(current.startSeconds + local);
             renderer?.render(scene, camera!);
             const frame = Math.floor(local * OUTPUT_FPS);
@@ -247,7 +264,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
             canvas.dataset.frame = String(frame);
             canvas.dataset.fps = String(OUTPUT_FPS);
             canvas.dataset.renderer = "blender-gltf";
-            canvas.dataset.blender = manifest.blenderVersion;
+            canvas.dataset.blender = loadedManifest.blenderVersion;
             if (lastReportedFrame < 0 || Math.abs(frame - lastReportedFrame) >= 3) {
               onFrame?.(frame, activeClip as BlenderAnimationClip, OUTPUT_FPS);
               lastReportedFrame = frame;

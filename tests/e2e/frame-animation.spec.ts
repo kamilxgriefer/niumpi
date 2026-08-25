@@ -66,6 +66,41 @@ test("the gameplay tap requests the protected full-frame reaction clip", async (
   await expect(canvas).toHaveAttribute("data-clip", "idle");
 });
 
+test("scheduled blinks reach the Blender player even without a behavior token change", async ({ page }) => {
+  await seed(page, hatchedSave());
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const root = page.locator(".rig-root").first();
+  const canvas = root.locator("canvas.nb-frame-canvas");
+  await expect(canvas).toHaveAttribute("data-clip", "idle", { timeout: 30_000 });
+  await root.evaluate((element) => element.classList.add("is-blinking"));
+  await expect(canvas).toHaveAttribute("data-clip", "blink");
+  await root.evaluate((element) => element.classList.remove("is-blinking"));
+  await page.waitForTimeout(250);
+  await expect(canvas).toHaveAttribute("data-clip", "blink");
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 2_000 }).toBe("idle");
+});
+
+test("idle waits until an authored non-looping performance reaches recovery", async ({ page }) => {
+  await seed(page, hatchedSave());
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const root = page.locator(".rig-root").first();
+  const canvas = root.locator("canvas.nb-frame-canvas");
+  await expect(canvas).toHaveAttribute("data-clip", "idle", { timeout: 30_000 });
+  await root.evaluate((element) => {
+    (element as HTMLElement).dataset.anim = "happy";
+    (element as HTMLElement).dataset.motionToken = "e2e-happy";
+  });
+  await expect(canvas).toHaveAttribute("data-clip", "happy");
+  await page.waitForTimeout(1_450);
+  await root.evaluate((element) => {
+    (element as HTMLElement).dataset.anim = "idle";
+    (element as HTMLElement).dataset.motionToken = "e2e-idle";
+  });
+  await page.waitForTimeout(350);
+  await expect(canvas).toHaveAttribute("data-clip", "happy");
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 2_000 }).toBe("idle");
+});
+
 test("reduced motion keeps the approved portrait in standalone views", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/?animation-lab=1", { waitUntil: "domcontentloaded" });
