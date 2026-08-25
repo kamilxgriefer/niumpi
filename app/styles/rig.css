@@ -72,8 +72,8 @@
   transition: scale .9s cubic-bezier(.22, 1, .36, 1);
 }
 
-/* Full-frame game renderer -------------------------------------------------
-   The canvas displays one flattened character painting at a time.  No live
+/* Continuous soft-body game renderer --------------------------------------
+   A dense GPU mesh bends one approved character painting at 60 FPS. No live
    eye, arm, leaf or cloud layer can leak through and create the old puppet or
    duplicate-face look. */
 .nb-frame-art {

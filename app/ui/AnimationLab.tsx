@@ -20,7 +20,7 @@ export function AnimationLab() {
   const [variant, setVariant] = useState("stage-1");
   const [clip, setClip] = useState<FrameClip>("idle");
   const [dark, setDark] = useState(true);
-  const [stats, setStats] = useState({ frame: 0, clip: "idle" as FrameClip, fps: 24 });
+  const [stats, setStats] = useState({ frame: 0, clip: "idle" as FrameClip, fps: 60 });
   const fallback = useMemo(() => fallbackFor(variant), [variant]);
   const reportFrame = useCallback((frame: number, active: FrameClip, fps: number) => {
     setStats((previous) => previous.frame === frame && previous.clip === active && previous.fps === fps
@@ -33,8 +33,8 @@ export function AnimationLab() {
       <header className="animation-lab-head">
         <div>
           <p className="eyebrow">Niumpi animation lab</p>
-          <h1>Full-frame playback</h1>
-          <p>One flattened atlas frame per draw. No DOM puppet, no duplicate face.</p>
+          <h1>Continuous soft-body motion</h1>
+          <p>One painted character, smoothly deformed at 60 FPS. No pose switching and no visible joints.</p>
         </div>
         <button className="ghost-button" type="button" onClick={() => { window.location.href = "/"; }}>
           Back to game

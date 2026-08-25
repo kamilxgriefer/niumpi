@@ -342,7 +342,8 @@ test("the five-leaf crown stays attached to a mature Niumpi", async ({ page }) =
   const authoredFrame = framePlayer.locator(".nb-frame-canvas");
   await expect(rig).toHaveClass(/growth-stage-4/);
   await expect(framePlayer.locator(".nb-frame-fallback")).toHaveAttribute("src", "/assets/niumpi/stages/stage-4.webp");
-  await expect(authoredFrame).toHaveAttribute("data-fps", "24");
+  await expect(authoredFrame).toHaveAttribute("data-fps", "60");
+  await expect(authoredFrame).toHaveAttribute("data-renderer", "continuous-soft-mesh");
 
   const rigBox = await rig.boundingBox();
   const frameBox = await authoredFrame.boundingBox();
