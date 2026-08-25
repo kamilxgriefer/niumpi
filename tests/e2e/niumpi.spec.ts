@@ -153,6 +153,11 @@ test("feeding consumes exactly one treat and fills the companion", async ({ page
   await page.getByRole("button", { name: "Feed", exact: true }).click();
 
   await expect(page.locator(".speech-text")).toContainText(/Moonberry|favourite|Yes\./i);
+  const rig = page.locator(".rig-root").first();
+  const player = rig.locator("canvas.nb-frame-canvas");
+  await expect(rig).toHaveAttribute("data-action-prop", "moonberry");
+  await expect(player).toHaveAttribute("data-clip", "eat", { timeout: 5_000 });
+  await expect.poll(async () => Number(await player.getAttribute("data-frame"))).toBeGreaterThan(0);
   await expect
     .poll(async () => (await readSave(page))?.inventory?.ingredients?.moonberry)
     .toBe(startingMoonberries - 1);

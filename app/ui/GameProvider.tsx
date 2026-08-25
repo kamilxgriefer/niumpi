@@ -278,6 +278,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const run = useCallback(<T extends ActionResult>(result: T, source = "") => {
     setState(result.state);
     if (result.message) setMessage(result.message);
+    if (result.prop) controller.setActionProp(result.prop);
     if (result.behavior) controller.request(result.behavior as AnimState);
     if (result.spark) burst(result.spark);
     if (result.sound) cue(result.sound as CueName);

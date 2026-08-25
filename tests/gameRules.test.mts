@@ -273,6 +273,8 @@ test("feeding consumes exactly one treat and only when one is owned", () => {
   const before = state.inventory.ingredients.moonberry;
   const result = feed(state, "moonberry", NOW);
   assert.equal(result.state.inventory.ingredients.moonberry, before - 1);
+  assert.equal(result.behavior, "eating");
+  assert.equal(result.prop, "moonberry");
 
   const empty = { ...state, inventory: { ...state.inventory, ingredients: { ...state.inventory.ingredients, moonberry: 0 } } };
   const refused = feed(empty, "moonberry", NOW);
@@ -286,6 +288,17 @@ test("a refused treat is never consumed", () => {
   const result = feed(picky, "moonberry", NOW);
   assert.equal(result.refused, true);
   assert.equal(result.state.inventory.ingredients.moonberry, picky.inventory.ingredients.moonberry);
+});
+
+test("a remembered favourite uses the dedicated delighted eating performance", () => {
+  const state = fresh();
+  const favourite = {
+    ...state,
+    personality: { ...state.personality, favoriteFoods: ["moonberry"] },
+  };
+  const result = feed(favourite, "moonberry", NOW);
+  assert.equal(result.behavior, "eating-favorite");
+  assert.equal(result.prop, "moonberry");
 });
 
 test("food moves the evolution vectors it is documented to move", () => {

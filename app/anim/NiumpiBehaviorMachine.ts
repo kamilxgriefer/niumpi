@@ -3,7 +3,7 @@ import { hashSeed, makeRng } from "../game/rng.ts";
 /** Semantic behavior vocabulary. Rendering engines translate this, never own it. */
 export type NiumpiBehavior =
   | "idle" | "walk" | "hover" | "land" | "look" | "pet" | "happy" | "sad"
-  | "sleep" | "dance" | "sing" | "read" | "lamp" | "roll";
+  | "eat" | "eat-favorite" | "sleep" | "dance" | "sing" | "read" | "lamp" | "roll";
 
 export type BehaviorPhase = "anticipation" | "action" | "recovery";
 export type BehaviorSource = "autonomous" | "user" | "system";
@@ -35,6 +35,8 @@ const DEFINITIONS: Record<NiumpiBehavior, BehaviorDefinition> = {
   pet: { priority: 4, phases: { anticipation: 150, action: 1_400, recovery: 300 } },
   happy: { priority: 2, phases: { anticipation: 100, action: 1_000, recovery: 300 } },
   sad: { priority: 3, phases: { anticipation: 160, action: 1_200, recovery: 350 } },
+  eat: { priority: 4, phases: { anticipation: 450, action: 2_150, recovery: 400 } },
+  "eat-favorite": { priority: 4, phases: { anticipation: 450, action: 3_050, recovery: 500 } },
   sleep: { priority: 5, phases: { anticipation: 500, action: null, recovery: 320 } },
   dance: { priority: 2, phases: { anticipation: 180, action: 1_800, recovery: 350 } },
   sing: { priority: 2, phases: { anticipation: 160, action: 2_200, recovery: 350 } },
@@ -84,6 +86,8 @@ export function idleWeightsFor(
     pet: 0,
     happy: 0.5 + context.joy * 0.8,
     sad: Math.max(0, (0.48 - context.joy) * 3),
+    eat: 0,
+    "eat-favorite": 0,
     sleep: 0,
     dance: 0.2 + context.playfulness * context.energy * 1.4,
     sing: 0.3 + context.joy * 0.55,
@@ -200,7 +204,7 @@ export class NiumpiBehaviorMachine {
     this.advance(now);
     const at = this.lastNow;
     const source = options.source ?? "user";
-    if (state === this.active.state && this.active.phase !== "recovery") {
+    if (!options.force && state === this.active.state && this.active.phase !== "recovery") {
       return { accepted: false, snapshot: this.getSnapshot(), reason: "already-active" };
     }
     const incoming = DEFINITIONS[state];

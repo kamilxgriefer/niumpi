@@ -19,6 +19,8 @@ const OUTPUT_FPS = 60;
 const MODEL_ROOT = "/assets/niumpi/models";
 
 function clipForRoot(root: HTMLElement | null): BlenderAnimationClip {
+  if (root?.classList.contains("behavior-eating-favorite")) return "eat_favorite";
+  if (root?.classList.contains("behavior-eating")) return "eat";
   if (root?.classList.contains("is-blinking")) return "blink";
   const semantic = root?.dataset.anim ?? "idle";
   if (semantic === "pet" || semantic === "petting" || semantic === "tickle") return "tap_reaction";
@@ -27,7 +29,7 @@ function clipForRoot(root: HTMLElement | null): BlenderAnimationClip {
   if (semantic === "dancing") return "dance";
   if (semantic === "singing") return "sing";
   if (semantic === "peek" || semantic === "ponder") return "look";
-  if (["idle", "blink", "look", "tap_reaction", "happy", "walk", "hover", "land", "sad",
+  if (["idle", "blink", "look", "tap_reaction", "happy", "eat", "eat_favorite", "walk", "hover", "land", "sad",
     "sleep", "dance", "sing", "read", "lamp", "roll"].includes(semantic)) return semantic as BlenderAnimationClip;
   if (root?.classList.contains("behavior-petting") || root?.classList.contains("behavior-tickle")) return "tap_reaction";
   if (root?.classList.contains("behavior-dance")) return "dance";
@@ -48,6 +50,28 @@ function disposeObject(object: ThreeTypes.Object3D, THREE: typeof import("three"
       material.dispose();
     }
   });
+}
+
+const FOOD_COLOURS: Record<string, { fruit: number; accent: number }> = {
+  moonberry: { fruit: 0x8e65e8, accent: 0x76e0c2 },
+  cloudpuff: { fruit: 0xfff9ef, accent: 0xc5eafb },
+  dewdrop: { fruit: 0x58d9df, accent: 0xb9f7f2 },
+  sunseed: { fruit: 0xffc653, accent: 0xff846d },
+  heartberry: { fruit: 0xf06991, accent: 0x8ce0a4 },
+  dreammint: { fruit: 0x9c8ce8, accent: 0x8de1c3 },
+  starmush: { fruit: 0xb889ed, accent: 0xffda76 },
+  emberfruit: { fruit: 0xf27858, accent: 0xffcd65 },
+  frostpetal: { fruit: 0x9de8f0, accent: 0xd9f6ff },
+  honeydew: { fruit: 0xf2c96f, accent: 0x9ed39a },
+  gigglenut: { fruit: 0xb77954, accent: 0xf7a7bf },
+  tidepearl: { fruit: 0x7ddbd2, accent: 0xc8f2ff },
+  auroraleaf: { fruit: 0x8edfd0, accent: 0xcb9bed },
+  rootcandy: { fruit: 0xe89968, accent: 0x8bd07b },
+};
+
+function smoothStep(from: number, to: number, value: number) {
+  const t = Math.max(0, Math.min(1, (value - from) / (to - from)));
+  return t * t * (3 - 2 * t);
 }
 
 /**
@@ -93,6 +117,9 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     let camera: ThreeTypes.PerspectiveCamera | null = null;
     let model: ThreeTypes.Object3D | null = null;
     let mixer: ThreeTypes.AnimationMixer | null = null;
+    let foodProp: ThreeTypes.Group | null = null;
+    let foodMaterial: ThreeTypes.MeshPhysicalMaterial | null = null;
+    let foodAccentMaterial: ThreeTypes.MeshPhysicalMaterial | null = null;
     let manifest: BlenderManifest | null = null;
     let visible = true;
     let activeClip: BlenderAnimationClip = entrance ? "hatch_complete" : forcedClip ?? "idle";
@@ -209,10 +236,64 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
           child.receiveShadow = true;
           const materials = Array.isArray(child.material) ? child.material : [child.material];
           for (const material of materials) {
+            if (material.name.startsWith("ReferenceArtwork_")) {
+              const painted = material as ThreeTypes.MeshStandardMaterial;
+              // The approved illustration is the colour authority. Keep the
+              // Blender mesh deformation, but do not relight or tone-map the
+              // pearlescent painting into a grey plastic object.
+              // The exported material carries the same texture as base colour
+              // and emissive for glTF portability. Render it once through the
+              // emissive channel; adding both would wash the pearl painting to
+              // flat white.
+              painted.color.set(0x000000);
+              painted.transparent = true;
+              painted.alphaTest = 0.012;
+              painted.depthWrite = false;
+              painted.side = THREE.DoubleSide;
+              painted.toneMapped = false;
+              if (painted.map) {
+                painted.emissive.set(0xffffff);
+                painted.emissiveMap = painted.map;
+                painted.emissiveIntensity = 1;
+              }
+              child.castShadow = false;
+              child.receiveShadow = false;
+              continue;
+            }
             if ("envMapIntensity" in material) (material as ThreeTypes.MeshStandardMaterial).envMapIntensity = 0.72;
           }
         });
         scene.add(model);
+
+        // The food stays separate from the reference-locked character art.
+        // It approaches the mouth and visibly loses three bites while the
+        // Blender-authored body performs anticipation, chewing and recovery.
+        foodProp = new THREE.Group();
+        foodProp.name = "NiumpiFoodPerformanceProp";
+        foodMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0x8e65e8,
+          roughness: 0.42,
+          metalness: 0,
+          clearcoat: 0.42,
+          clearcoatRoughness: 0.35,
+        });
+        foodAccentMaterial = new THREE.MeshPhysicalMaterial({
+          color: 0x76e0c2,
+          roughness: 0.5,
+          metalness: 0,
+          clearcoat: 0.25,
+        });
+        const fruit = new THREE.Mesh(new THREE.SphereGeometry(0.17, 28, 20), foodMaterial);
+        fruit.scale.set(1.04, 0.94, 0.88);
+        const accent = new THREE.Mesh(new THREE.SphereGeometry(0.075, 20, 14), foodAccentMaterial);
+        accent.position.set(0.08, 0.15, 0.01);
+        accent.scale.set(0.62, 1.2, 0.42);
+        accent.rotation.z = -0.55;
+        fruit.castShadow = true;
+        accent.castShadow = true;
+        foodProp.add(fruit, accent);
+        foodProp.visible = false;
+        scene.add(foodProp);
 
         const shadow = new THREE.Mesh(
           new THREE.CircleGeometry(0.92, 48),
@@ -260,6 +341,32 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
               ? activeElapsed % current.durationSeconds
               : Math.min(activeElapsed, current.durationSeconds - 1 / loadedManifest.fps);
             mixer?.setTime(current.startSeconds + local);
+
+            if (foodProp && foodMaterial && foodAccentMaterial) {
+              const eating = activeClip === "eat" || activeClip === "eat_favorite";
+              const progress = current.durationSeconds > 0 ? local / current.durationSeconds : 0;
+              foodProp.visible = eating && progress < 0.72;
+              if (foodProp.visible) {
+                const id = root?.dataset.actionProp ?? "moonberry";
+                const colours = FOOD_COLOURS[id] ?? FOOD_COLOURS.moonberry;
+                foodMaterial.color.setHex(colours.fruit);
+                foodAccentMaterial.color.setHex(colours.accent);
+                const approach = smoothStep(0.05, 0.31, progress);
+                const chewOne = smoothStep(0.34, 0.39, progress);
+                const chewTwo = smoothStep(0.46, 0.51, progress);
+                const chewThree = smoothStep(0.58, 0.64, progress);
+                const bites = chewOne + chewTwo + chewThree;
+                const baseScale = Math.max(0.12, 1 - bites * 0.27);
+                const sniff = Math.sin(progress * Math.PI * 18) * 0.025 * (1 - approach);
+                foodProp.position.set(
+                  1.42 + (0.18 - 1.42) * approach,
+                  1.18 + (1.08 - 1.18) * approach + sniff,
+                  0.48,
+                );
+                foodProp.rotation.z = -0.18 + approach * 0.26 + Math.sin(progress * 24) * 0.035;
+                foodProp.scale.setScalar(baseScale * (1 + Math.sin(progress * 40) * 0.025));
+              }
+            }
             renderer?.render(scene, camera!);
             const frame = Math.floor(local * OUTPUT_FPS);
             canvas.dataset.clip = activeClip;
@@ -289,6 +396,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
       intersectionObserver?.disconnect();
       if (frameRequest) window.cancelAnimationFrame(frameRequest);
       if (model && threeModule) disposeObject(model, threeModule);
+      if (foodProp && threeModule) disposeObject(foodProp, threeModule);
       mixer?.stopAllAction();
       renderer?.dispose();
     };

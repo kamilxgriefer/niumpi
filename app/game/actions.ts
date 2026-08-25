@@ -34,6 +34,8 @@ export type ActionResult = {
   state: GameState;
   message?: string;
   behavior?: string;
+  /** Optional visual prop used by an authored performance, such as a treat. */
+  prop?: string;
   spark?: string;
   sound?: string;
   rewards: Reward[];
@@ -325,7 +327,8 @@ export function feed(state: GameState, foodId: string, now: number): ActionResul
   return {
     state: settled,
     message: reaction.text,
-    behavior: reaction.behavior,
+    behavior: reaction.multiplier >= 1.25 ? "eating-favorite" : "eating",
+    prop: foodId,
     spark: reaction.spark,
     sound: reaction.sound,
     rewards,

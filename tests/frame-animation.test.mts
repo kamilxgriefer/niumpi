@@ -16,6 +16,7 @@ const manifest = JSON.parse(readFileSync(join(modelRoot, "manifest.json"), "utf8
 
 test("the production character manifest exposes every Blender evolution and performance", () => {
   assert.equal(manifest.renderer, "blender-gltf");
+  assert.equal(manifest.artDirection, "reference-locked-pearl-cloud");
   assert.match(manifest.blenderVersion, /^5\./);
   assert.equal(manifest.fps, 24);
   assert.deepEqual(manifest.variants, [...NIUMPI_MODEL_VARIANTS]);
@@ -32,26 +33,29 @@ test("the production character manifest exposes every Blender evolution and perf
   }
 });
 
-test("every evolution is a substantial, animated binary glTF asset", () => {
+test("every evolution is a reference-textured, animated binary glTF asset", () => {
   for (const variant of NIUMPI_MODEL_VARIANTS) {
     const model = join(modelRoot, `${variant}.glb`);
     const bytes = readFileSync(model);
-    assert.ok(bytes.length > 700_000, `${variant} looks like a placeholder`);
+    assert.ok(bytes.length > 250_000, `${variant} looks like a placeholder`);
     assert.equal(bytes.subarray(0, 4).toString("ascii"), "glTF");
     const document = bytes.toString("utf8");
     assert.match(document, /NiumpiRoot/);
     assert.match(document, /animations/);
-    assert.match(document, /BodyControl/);
-    assert.match(document, /LeftEyeControl/);
-    assert.match(document, /RightEyeControl/);
+    assert.match(document, /NiumpiArtwork/);
+    assert.match(document, /ReferenceArtwork_/);
+    assert.match(document, /blink_soft/);
   }
 });
 
 test("the editable Blender source and reproducible generator ship with the game", () => {
-  const source = join(root, "art", "blender", "niumpi-master.blend");
-  const builder = join(root, "tools", "blender", "build_niumpi_3d.py");
-  assert.ok(readFileSync(source).length > 250_000);
+  const source = join(root, "art", "blender", "niumpi-reference-rig-v2.blend");
+  const builder = join(root, "tools", "blender", "build_niumpi_reference_rig.py");
+  const blend = readFileSync(source);
+  assert.ok(blend.length > 150_000);
   const script = readFileSync(builder, "utf8");
+  assert.match(script, /NiumpiArtwork/);
+  assert.match(script, /soft_squash/);
   for (const clip of NIUMPI_ANIMATION_CLIPS) assert.match(script, new RegExp(`\\"${clip}\\"`));
 });
 
