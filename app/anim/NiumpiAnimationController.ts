@@ -14,7 +14,7 @@ export type AnimState =
   | "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep"
   | "peek" | "sway" | "shimmy" | "stretch" | "ponder"
   | "book" | "window" | "lamp" | "roll" | "singing"
-  | "eating" | "hugging" | "petting" | "tickle" | "brushing" | "dancing"
+  | "eating" | "eating-favorite" | "hugging" | "petting" | "tickle" | "brushing" | "dancing"
   | "waking" | "hatching" | "evolving" | "gift" | "cooking" | "gardening" | "playing" | "returning";
 
 const POSITION_STIFFNESS = 0.028;
@@ -100,7 +100,13 @@ export class NiumpiAnimationController {
       this.presentation = next;
       return;
     }
-    const result = machine.request(semanticBehaviorForLegacy(next), this.now(), { source: "user" });
+    let result = machine.request(semanticBehaviorForLegacy(next), this.now(), { source: "user" });
+    // Two rich performances can share one semantic state. Feeding while an
+    // autonomous happy moment is active must still restart as the explicit
+    // eating performance, rather than silently keeping the generic bounce.
+    if (!result.accepted && result.reason === "already-active") {
+      result = machine.request(semanticBehaviorForLegacy(next), this.now(), { source: "user", force: true });
+    }
     if (!result.accepted) return;
     this.presentation = next;
     this.applySnapshot(result.snapshot, true);
@@ -142,6 +148,9 @@ export class NiumpiAnimationController {
 
   setPressed(pressed: boolean) { this.root?.classList.toggle("is-pressed", pressed); }
   setTargeted(targeted: boolean) { this.root?.classList.toggle("is-target", targeted); }
+  setActionProp(prop: string) {
+    if (this.root) this.root.dataset.actionProp = prop;
+  }
   getState(): AnimState { return this.presentation; }
 
   subscribeState(listener: (state: AnimState) => void) {

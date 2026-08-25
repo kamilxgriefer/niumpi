@@ -1,5 +1,5 @@
 export type BlenderAnimationClip =
-  | "idle" | "blink" | "look" | "tap_reaction" | "happy" | "hatch_complete"
+  | "idle" | "blink" | "look" | "tap_reaction" | "happy" | "eat" | "eat_favorite" | "hatch_complete"
   | "walk" | "hover" | "land" | "sad" | "sleep" | "dance" | "sing"
   | "read" | "lamp" | "roll";
 
@@ -14,6 +14,7 @@ export type BlenderClipDefinition = {
 export type BlenderManifest = {
   version: number;
   renderer: "blender-gltf";
+  artDirection?: "reference-locked-pearl-cloud";
   blenderVersion: string;
   fps: number;
   variants: string[];
@@ -26,7 +27,7 @@ export const NIUMPI_MODEL_VARIANTS = [
 ] as const;
 
 export const NIUMPI_ANIMATION_CLIPS: BlenderAnimationClip[] = [
-  "idle", "blink", "look", "tap_reaction", "happy", "hatch_complete",
+  "idle", "blink", "look", "tap_reaction", "happy", "eat", "eat_favorite", "hatch_complete",
   "walk", "hover", "land", "sad", "sleep", "dance", "sing", "read", "lamp", "roll",
 ];
 

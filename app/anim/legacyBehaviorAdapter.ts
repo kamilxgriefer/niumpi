@@ -7,7 +7,7 @@ export function semanticBehaviorForLegacy(state: AnimState): NiumpiBehavior {
     idle: "idle", wander: "walk", float: "hover", spin: "roll", curious: "look", happy: "happy",
     sleepy: "sad", asleep: "sleep", peek: "look", sway: "idle", shimmy: "dance", stretch: "land",
     ponder: "look", book: "read", window: "look", lamp: "lamp", roll: "roll", singing: "sing",
-    eating: "happy", hugging: "pet", petting: "pet", tickle: "happy", brushing: "pet", dancing: "dance",
+    eating: "eat", "eating-favorite": "eat-favorite", hugging: "pet", petting: "pet", tickle: "happy", brushing: "pet", dancing: "dance",
     waking: "land", hatching: "happy", evolving: "happy", gift: "happy", cooking: "happy",
     gardening: "look", playing: "roll", returning: "walk",
   };
@@ -19,6 +19,7 @@ export function legacyAnimationForBehavior(state: NiumpiBehavior): AnimState {
   const map: Record<NiumpiBehavior, AnimState> = {
     idle: "idle", walk: "wander", hover: "float", land: "stretch", look: "curious", pet: "petting",
     happy: "happy", sad: "sleepy", sleep: "asleep", dance: "dancing", sing: "singing",
+    eat: "eating", "eat-favorite": "eating-favorite",
     read: "book", lamp: "lamp", roll: "roll",
   };
   return map[state];

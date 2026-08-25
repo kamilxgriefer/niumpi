@@ -28,8 +28,8 @@ export function AnimationLab() {
       <header className="animation-lab-head">
         <div>
           <p className="eyebrow">Niumpi character studio</p>
-          <h1>Blender-authored 3D performances</h1>
-          <p>One coherent pearl-cloud body, 16 authored performances and smooth real-time interpolation at 60 FPS.</p>
+          <h1>Reference-locked Blender performances</h1>
+          <p>The approved pearl-cloud artwork on one seamless soft mesh, with 18 authored performances interpolated at 60 FPS.</p>
         </div>
         <button className="ghost-button" type="button" onClick={() => { window.location.href = "/"; }}>
           Back to game

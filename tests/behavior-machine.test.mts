@@ -30,6 +30,19 @@ test("higher priority interrupts and lower priority cannot steal the character",
   assert.equal(pet.snapshot.state, "pet");
 });
 
+test("a forced user performance restarts the same semantic state", () => {
+  const machine = new NiumpiBehaviorMachine({ seed: "restart", now: 0, idleDelay: [99_000, 99_000] });
+  const first = machine.request("happy", 100, { source: "autonomous" });
+  assert.equal(first.accepted, true);
+  const repeated = machine.request("happy", 140, { source: "user" });
+  assert.equal(repeated.accepted, false);
+  assert.equal(repeated.reason, "already-active");
+  const forced = machine.request("happy", 150, { source: "user", force: true });
+  assert.equal(forced.accepted, true);
+  assert.equal(forced.snapshot.source, "user");
+  assert.notEqual(forced.snapshot.token, first.snapshot.token);
+});
+
 test("cancellation is token-aware and uses the authored recovery", () => {
   const machine = new NiumpiBehaviorMachine({ seed: "cancel", now: 0, idleDelay: [99_000, 99_000] });
   const sing = machine.request("sing", 0).snapshot;
@@ -143,7 +156,7 @@ test("enabling reduced motion cancels an autonomous high-motion moment", () => {
 test("legacy adapter covers every old animation and every semantic state", () => {
   const legacy: AnimState[] = [
     "idle", "wander", "float", "spin", "curious", "happy", "sleepy", "asleep", "peek", "sway",
-    "shimmy", "stretch", "ponder", "book", "window", "lamp", "roll", "singing", "eating", "hugging",
+    "shimmy", "stretch", "ponder", "book", "window", "lamp", "roll", "singing", "eating", "eating-favorite", "hugging",
     "petting", "tickle", "brushing", "dancing", "waking", "hatching", "evolving", "gift", "cooking",
     "gardening", "playing", "returning",
   ];

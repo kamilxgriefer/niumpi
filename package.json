@@ -16,7 +16,7 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
-    "animation:blender": "blender --background --factory-startup --python tools/blender/build_niumpi_3d.py",
+    "animation:blender": "blender --background --factory-startup --python tools/blender/build_niumpi_reference_rig.py",
     "ci": "npm run lint && npm run typecheck && npm run test:unit && npm run build"
   },
   "dependencies": {
