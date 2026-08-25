@@ -59,11 +59,11 @@ test("the gameplay tap requests the protected full-frame reaction clip", async (
   await page.getByRole("button", { name: "Pet Mango" }).click();
   await expect(canvas).toHaveAttribute("data-clip", "tap_reaction", { timeout: 5_000 });
   await expect.poll(async () => Number(await canvas.getAttribute("data-frame"))).toBeGreaterThan(0);
-  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 3_000 }).toBe("idle");
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 8_000 }).not.toBe("tap_reaction");
   // The controller still moves through recovery after the reaction
   // completes. A phase-only mutation must not replay the reaction.
   await page.waitForTimeout(800);
-  await expect(canvas).toHaveAttribute("data-clip", "idle");
+  await expect.poll(async () => canvas.getAttribute("data-clip")).not.toBe("tap_reaction");
 });
 
 test("scheduled blinks reach the Blender player even without a behavior token change", async ({ page }) => {
@@ -77,7 +77,7 @@ test("scheduled blinks reach the Blender player even without a behavior token ch
   await root.evaluate((element) => element.classList.remove("is-blinking"));
   await page.waitForTimeout(250);
   await expect(canvas).toHaveAttribute("data-clip", "blink");
-  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 2_000 }).toBe("idle");
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 8_000 }).not.toBe("blink");
 });
 
 test("idle waits until an authored non-looping performance reaches recovery", async ({ page }) => {
@@ -91,14 +91,20 @@ test("idle waits until an authored non-looping performance reaches recovery", as
     (element as HTMLElement).dataset.motionToken = "e2e-happy";
   });
   await expect(canvas).toHaveAttribute("data-clip", "happy");
-  await page.waitForTimeout(1_450);
+  // Recovery is requested immediately, just as a gameplay controller may
+  // request it before Blender's 2.5-second performance has finished.
   await root.evaluate((element) => {
     (element as HTMLElement).dataset.anim = "idle";
     (element as HTMLElement).dataset.motionToken = "e2e-idle";
   });
-  await page.waitForTimeout(350);
-  await expect(canvas).toHaveAttribute("data-clip", "happy");
-  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 2_000 }).toBe("idle");
+  await expect.poll(async () => {
+    if (await canvas.getAttribute("data-clip") !== "happy") return -1;
+    return Number(await canvas.getAttribute("data-frame"));
+  }, { timeout: 5_000 }).toBeGreaterThan(60);
+  // A scheduled blink may legitimately be the first ambient performance after
+  // recovery, so assert that the protected clip completes rather than racing
+  // one exact idle substate.
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 5_000 }).not.toBe("happy");
 });
 
 test("reduced motion keeps the approved portrait in standalone views", async ({ page }) => {

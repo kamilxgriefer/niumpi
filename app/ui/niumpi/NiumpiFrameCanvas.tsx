@@ -100,6 +100,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     let clipStartedAt = performance.now();
     let lastMotionToken = "";
     let lastReportedFrame = -1;
+    const ambientClips = new Set<BlenderAnimationClip>(["idle", "blink", "look", "walk", "hover", "land"]);
 
     const root = canvas.closest<HTMLElement>(".rig-root");
     const chooseClip = (next: BlenderAnimationClip) => {
@@ -107,11 +108,12 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
       const current = manifest?.clips[activeClip];
       const unfinished = current && !current.loop
         && performance.now() - clipStartedAt < current.durationSeconds * 1_000;
-      // Controllers describe gameplay state and may enter recovery before a
-      // Blender performance reaches its final keyed pose. Idle waits in the
-      // wings; a new explicit performance can still interrupt immediately.
-      if (next === "idle" && unfinished) {
-        queuedClip = next;
+      // Controllers describe gameplay state and may enter recovery or schedule
+      // a blink before a Blender performance reaches its final keyed pose.
+      // Ambient motion waits in the wings; a new explicit performance can
+      // still interrupt immediately when the player asks for another action.
+      if (unfinished && ambientClips.has(next)) {
+        if (next === "idle") queuedClip = next;
         return;
       }
       activeClip = next;
