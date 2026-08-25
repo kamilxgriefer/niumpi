@@ -172,11 +172,10 @@ export class NiumpiAnimationController {
     // The spring performs the journey; no scene interval competes with it.
     if (snapshot.source === "autonomous" && snapshot.phase === "anticipation") {
       const direction = snapshot.token % 2 === 0 ? 1 : -1;
-      const fullFrameCharacter = root.classList.contains("uses-frame-animation");
-      if (snapshot.state === "walk" && !fullFrameCharacter) {
+      if (snapshot.state === "walk") {
         this.setPosition(direction * (48 + (snapshot.token % 3) * 12), 3);
         this.setGaze(direction * 9, 1);
-      } else if (snapshot.state === "hover" && !fullFrameCharacter) {
+      } else if (snapshot.state === "hover") {
         this.setPosition(direction * 28, -28);
         this.setGaze(direction * 7, -5);
       } else if (snapshot.state === "look") {

@@ -73,7 +73,7 @@ export function NiumpiRenderer({
         `morph-${morphology}`,
         `reveal-${appearance.phase}`,
         `locomotion-${appearance.formGeometry.locomotion}`,
-        profile.id > 0 ? "uses-frame-animation" : "",
+        profile.id > 0 ? "uses-frame-animation uses-continuous-animation" : "",
         appearance.phase === "branch" && morphology !== "seedling" ? "branch-hint" : "",
         diet ? `diet-${diet[0]}` : "",
         ...phenotype.markings.map((marking) => `marking-${marking}`),

@@ -26,7 +26,7 @@ function hatchedSave(name = "Mango", stage = 2) {
   };
 }
 
-test("animation lab advances real atlas frames and switches clips on desktop and mobile", async ({ page }) => {
+test("animation lab advances continuous 60 FPS motion and switches performances on desktop and mobile", async ({ page }) => {
   const errors: string[] = [];
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
   page.on("pageerror", (error) => errors.push(error.message));
@@ -44,7 +44,7 @@ test("animation lab advances real atlas frames and switches clips on desktop and
 
     await page.getByRole("button", { name: "tap reaction" }).click();
     await expect(canvas).toHaveAttribute("data-clip", "tap_reaction");
-    await expect(page.locator(".animation-lab-stats")).toContainText("24");
+    await expect(page.locator(".animation-lab-stats")).toContainText("60");
     expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(2);
   }
   expect(errors).toEqual([]);
@@ -59,7 +59,7 @@ test("the gameplay tap requests the protected full-frame reaction clip", async (
   await expect(canvas).toHaveAttribute("data-clip", "tap_reaction", { timeout: 5_000 });
   await expect.poll(async () => Number(await canvas.getAttribute("data-frame"))).toBeGreaterThan(0);
   await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 3_000 }).toBe("idle");
-  // The controller still moves through recovery after the one-second drawing
+  // The controller still moves through recovery after the reaction
   // completes. A phase-only mutation must not replay the reaction.
   await page.waitForTimeout(800);
   await expect(canvas).toHaveAttribute("data-clip", "idle");

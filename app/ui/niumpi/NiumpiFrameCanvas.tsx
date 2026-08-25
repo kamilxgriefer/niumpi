@@ -2,14 +2,18 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { loadFrameManifest, preloadFrameAtlas } from "../../anim/NiumpiFrameAssets.ts";
 import { onMotionChange, prefersReducedMotion } from "../../anim/motionPrefs.ts";
 import {
-  frameIndexAtTime,
+  CONTINUOUS_DURATIONS,
+  CONTINUOUS_FPS,
+  motionFrameAtTime,
+  sampleContinuousMotion,
+} from "../../anim/NiumpiContinuousMotion.ts";
+import { NiumpiSoftRenderer } from "../../anim/NiumpiSoftRenderer.ts";
+import {
   frameStateForRoot,
   NiumpiFrameMachine,
   type FrameClip,
-  type FrameManifest,
   type FrameState,
 } from "../../anim/NiumpiFrameMachine.ts";
 
@@ -45,33 +49,31 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     let disposed = false;
     let frameRequest = 0;
     let observer: MutationObserver | null = null;
-    let manifest: FrameManifest;
-    let atlas: HTMLImageElement;
+    let renderer: NiumpiSoftRenderer | null = null;
     let machine: NiumpiFrameMachine;
     let activeToken = -1;
     let lastFrame = -1;
+    let lastReportedFrame = -1;
+    let behaviorStartedAt = 0;
     const canvas = canvasRef.current;
     if (!canvas) return;
     setReady(false);
     if (reducedMotion) return;
-    const context = canvas.getContext("2d", { alpha: true });
-    if (!context) return;
-    context.imageSmoothingEnabled = true;
-    context.imageSmoothingQuality = "high";
 
     const start = async () => {
       try {
-        manifest = await loadFrameManifest();
-        const asset = manifest.variants[variant] ?? manifest.variants["stage-1"];
-        atlas = await preloadFrameAtlas(variant, asset.atlas);
+        const image = new window.Image();
+        image.decoding = "async";
+        image.src = fallback;
+        await image.decode();
         if (disposed) return;
-        const durations = Object.fromEntries(
-          Object.entries(manifest.clips).map(([name, clip]) => [name, clip.durationMs]),
-        ) as Record<FrameClip, number>;
+        renderer = new NiumpiSoftRenderer(canvas, image);
         const initialState = forcedClip
           ? STATE_FOR_CLIP[forcedClip]
           : entrance ? "ENTERING" : "IDLE";
-        machine = new NiumpiFrameMachine(initialState, performance.now(), durations);
+        const startedAt = performance.now();
+        behaviorStartedAt = startedAt;
+        machine = new NiumpiFrameMachine(initialState, startedAt, CONTINUOUS_DURATIONS);
         setReady(true);
 
         const root = canvas.closest<HTMLElement>(".rig-root");
@@ -81,6 +83,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
           const rootToken = root.dataset.motionToken ?? `state:${root.dataset.anim ?? "idle"}`;
           if (rootToken === lastRootToken) return;
           lastRootToken = rootToken;
+          behaviorStartedAt = performance.now();
           const next = frameStateForRoot(root);
           machine.request(next, performance.now());
         };
@@ -93,20 +96,23 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
         const draw = (now: number) => {
           if (disposed) return;
           const snapshot = machine.advance(now);
-          const clip = manifest.clips[forcedClip ?? snapshot.clip];
-          const index = frameIndexAtTime(clip, now - snapshot.enteredAt);
+          const clip = forcedClip ?? snapshot.clip;
+          const elapsed = forcedClip
+            ? (now - startedAt) % CONTINUOUS_DURATIONS[forcedClip]
+            : now - snapshot.enteredAt;
+          const behavior = forcedClip ?? root?.dataset.anim ?? clip;
+          const index = motionFrameAtTime(clip, elapsed);
           if (index !== lastFrame || snapshot.token !== activeToken) {
-            const source = clip.frames[index];
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            context.drawImage(
-              atlas,
-              source.x, source.y, source.w, source.h,
-              0, 0, canvas.width, canvas.height,
-            );
-            canvas.dataset.clip = forcedClip ?? snapshot.clip;
+            const motionElapsed = forcedClip ? elapsed : now - behaviorStartedAt;
+            renderer?.draw(sampleContinuousMotion(clip, motionElapsed, behavior), now / 1_000);
+            canvas.dataset.clip = clip;
             canvas.dataset.frame = String(index);
-            canvas.dataset.fps = String(clip.fps);
-            onFrame?.(index, forcedClip ?? snapshot.clip, clip.fps);
+            canvas.dataset.fps = String(CONTINUOUS_FPS);
+            canvas.dataset.renderer = "continuous-soft-mesh";
+            if (lastReportedFrame < 0 || Math.abs(index - lastReportedFrame) >= 3) {
+              onFrame?.(index, clip, CONTINUOUS_FPS);
+              lastReportedFrame = index;
+            }
             lastFrame = index;
             activeToken = snapshot.token;
           }
@@ -124,8 +130,9 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
       disposed = true;
       observer?.disconnect();
       if (frameRequest) window.cancelAnimationFrame(frameRequest);
+      renderer?.dispose();
     };
-  }, [entrance, forcedClip, onFrame, reducedMotion, variant]);
+  }, [entrance, fallback, forcedClip, onFrame, reducedMotion, variant]);
 
   return (
     <span
@@ -133,7 +140,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
       data-variant={variant}
     >
       <Image className="nb-frame-fallback" src={fallback} alt="" fill sizes="330px" unoptimized draggable={false} />
-      <canvas ref={canvasRef} className="nb-frame-canvas" width={224} height={224} aria-hidden="true" />
+      <canvas ref={canvasRef} className="nb-frame-canvas" width={640} height={640} aria-hidden="true" />
     </span>
   );
 }

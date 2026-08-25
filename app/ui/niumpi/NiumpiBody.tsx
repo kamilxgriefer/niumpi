@@ -156,9 +156,9 @@ export function NiumpiBody({
 
   const silhouette = bodyPath(body);
 
-  /* The approved painting is the identity of the character.  Every living
-   * stage is now rendered from flattened, full-character atlas frames — never
-   * assembled from live DOM puppet pieces. */
+  /* The approved painting is the identity of the character. Every living
+   * stage is rendered as one deformable GPU surface — never assembled from
+   * live DOM puppet pieces and never switched between a handful of poses. */
   if (profile.id > 0) {
     const finalForm = profile.id >= 5 && look.morphology !== "seedling";
     const art = finalForm
