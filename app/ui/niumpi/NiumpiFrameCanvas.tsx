@@ -49,6 +49,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     let disposed = false;
     let frameRequest = 0;
     let observer: MutationObserver | null = null;
+    let resizeObserver: ResizeObserver | null = null;
     let renderer: NiumpiSoftRenderer | null = null;
     let machine: NiumpiFrameMachine;
     let activeToken = -1;
@@ -59,6 +60,20 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     if (!canvas) return;
     setReady(false);
     if (reducedMotion) return;
+
+    const resizeBackingStore = () => {
+      const bounds = canvas.getBoundingClientRect();
+      const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+      const width = Math.max(48, Math.min(640, Math.round(bounds.width * pixelRatio)));
+      const height = Math.max(48, Math.min(640, Math.round(bounds.height * pixelRatio)));
+      if (canvas.width !== width) canvas.width = width;
+      if (canvas.height !== height) canvas.height = height;
+      canvas.dataset.buffer = `${width}x${height}`;
+    };
+
+    resizeBackingStore();
+    resizeObserver = new ResizeObserver(resizeBackingStore);
+    resizeObserver.observe(canvas);
 
     const start = async () => {
       try {
@@ -129,6 +144,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
     return () => {
       disposed = true;
       observer?.disconnect();
+      resizeObserver?.disconnect();
       if (frameRequest) window.cancelAnimationFrame(frameRequest);
       renderer?.dispose();
     };
@@ -140,7 +156,7 @@ export function NiumpiFrameCanvas({ variant, fallback, entrance = false, forcedC
       data-variant={variant}
     >
       <Image className="nb-frame-fallback" src={fallback} alt="" fill sizes="330px" unoptimized draggable={false} />
-      <canvas ref={canvasRef} className="nb-frame-canvas" width={640} height={640} aria-hidden="true" />
+      <canvas ref={canvasRef} className="nb-frame-canvas" width={320} height={320} aria-hidden="true" />
     </span>
   );
 }
