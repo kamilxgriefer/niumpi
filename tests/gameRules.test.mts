@@ -301,6 +301,21 @@ test("a remembered favourite uses the dedicated delighted eating performance", (
   assert.equal(result.prop, "moonberry");
 });
 
+test("a night-owl moonberry bonus does not pretend the food is a favourite", () => {
+  const night = new Date(2026, 0, 2, 23, 0, 0).getTime();
+  const state = fresh();
+  const nightOwl = {
+    ...state,
+    personality: {
+      ...state.personality,
+      traits: { ...state.personality.traits, "night-owl": night },
+      favoriteFoods: [],
+    },
+  };
+  const result = feed(nightOwl, "moonberry", night);
+  assert.equal(result.behavior, "eating");
+});
+
 test("food moves the evolution vectors it is documented to move", () => {
   const state = fresh();
   const after = feed(state, "sunseed", NOW).state;

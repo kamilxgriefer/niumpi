@@ -327,7 +327,7 @@ export function feed(state: GameState, foodId: string, now: number): ActionResul
   return {
     state: settled,
     message: reaction.text,
-    behavior: reaction.multiplier >= 1.25 ? "eating-favorite" : "eating",
+    behavior: state.personality.favoriteFoods.includes(foodId) ? "eating-favorite" : "eating",
     prop: foodId,
     spark: reaction.spark,
     sound: reaction.sound,
