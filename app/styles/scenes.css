@@ -121,6 +121,7 @@
   grid-template-rows: auto minmax(0, 1fr) auto;
   grid-template-areas:
     "bubble stats"
+    "pet    pet"
     "pet    pet";
   align-items: start;
   gap: var(--s-3);
@@ -423,10 +424,11 @@
 .is-sleeping .sleep-nest { opacity: 1; }
 
 .speech-bubble {
-  position: absolute; left: 50%; bottom: 54%; z-index: 7;
+  position: relative; grid-area: bubble; z-index: 7;
+  justify-self: center; align-self: start;
   display: grid; gap: 2px;
   width: min(440px, calc(100% - 32px)); padding: 10px 16px 12px;
-  translate: -50% 0;
+  translate: 0 0;
   color: white;
   background: linear-gradient(135deg, rgb(41 24 62 / 90%), rgb(71 43 94 / 82%));
   border: 1px solid rgb(255 255 255 / 20%);
@@ -451,8 +453,8 @@
 .speech-trail i:nth-child(2) { top: 18px; width: 7px; height: 7px; translate: calc(-50% + 4px) 0; opacity: .82; }
 .speech-trail i:nth-child(3) { top: 30px; width: 4px; height: 4px; translate: calc(-50% - 2px) 0; opacity: .68; }
 @keyframes speech-caption-in {
-  from { opacity: 0; translate: -50% 6px; scale: .97; }
-  to { opacity: 1; translate: -50% 0; scale: 1; }
+  from { opacity: 0; translate: 0 6px; scale: .97; }
+  to { opacity: 1; translate: 0 0; scale: 1; }
 }
 
 .spark-layer { position: absolute; inset: 0; z-index: 8; pointer-events: none; }
@@ -1197,7 +1199,7 @@
   box-shadow: 0 28px 90px rgb(12 6 31 / 28%);
   overflow: hidden;
 }
-.animation-lab-stage .nb-frame-player { inset: 8%; }
+.animation-lab-stage .nb-frame-player { inset: 8%; width: auto; height: auto; }
 .animation-lab-stats {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));

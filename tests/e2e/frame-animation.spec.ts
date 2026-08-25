@@ -26,7 +26,7 @@ function hatchedSave(name = "Mango", stage = 2) {
   };
 }
 
-test("animation lab advances continuous 60 FPS motion and switches performances on desktop and mobile", async ({ page }) => {
+test("animation lab advances Blender-authored 60 FPS motion and switches performances on desktop and mobile", async ({ page }) => {
   const errors: string[] = [];
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
   page.on("pageerror", (error) => errors.push(error.message));
@@ -36,6 +36,7 @@ test("animation lab advances continuous 60 FPS motion and switches performances 
     await page.goto("/?animation-lab=1", { waitUntil: "domcontentloaded" });
     const canvas = page.locator(".animation-lab-stage canvas");
     await expect(canvas).toBeVisible({ timeout: 30_000 });
+    await expect(canvas).toHaveAttribute("data-renderer", "blender-gltf", { timeout: 30_000 });
     await expect(canvas).toHaveAttribute("data-clip", "idle", { timeout: 30_000 });
     const first = Number(await canvas.getAttribute("data-frame"));
     await page.waitForTimeout(260);

@@ -29,7 +29,7 @@
     grid-template-areas: "bubble" "pet" "stats";
   }
   .stage-aside { justify-self: stretch; width: 100%; }
-  .speech-bubble { width: min(420px, calc(100% - 28px)); bottom: 55%; }
+  .speech-bubble { width: min(420px, calc(100% - 28px)); }
   .seed-care-layout { grid-template-columns: minmax(0, 1fr); width: min(700px, 100%); }
   .wonder-shop { grid-template-columns: minmax(0, 1fr); }
   .wonder-chest-card { position: relative; top: auto; grid-template-columns: auto minmax(0, 1fr); justify-items: stretch; text-align: left; }
@@ -131,7 +131,7 @@
   .hero-panel { padding: var(--s-3); border-radius: var(--r-xl); }
   .home-side { grid-template-columns: minmax(0, 1fr); }
   .companion-stage { min-height: 300px; padding: var(--s-3); }
-  .speech-bubble { bottom: 57%; padding: 9px 13px 10px; border-radius: 15px; }
+  .speech-bubble { padding: 9px 13px 10px; border-radius: 15px; }
   .speech-speaker { font-size: 9px; }
   .speech-text { font-size: .88rem; }
   .mood-badge { padding: 6px 12px 6px 8px; }

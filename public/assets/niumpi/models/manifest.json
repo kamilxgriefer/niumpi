@@ -1,0 +1,132 @@
+{
+  "version": 1,
+  "renderer": "blender-gltf",
+  "blenderVersion": "5.2.0 LTS",
+  "fps": 24,
+  "variants": [
+    "stage-1",
+    "stage-2",
+    "stage-3",
+    "stage-4",
+    "stage-5",
+    "moonveil",
+    "bloomheart",
+    "sparkleap",
+    "mistwander",
+    "prismatic"
+  ],
+  "clips": {
+    "idle": {
+      "startFrame": 1,
+      "endFrame": 145,
+      "startSeconds": 0.041666666666666664,
+      "durationSeconds": 6.0,
+      "loop": true
+    },
+    "blink": {
+      "startFrame": 147,
+      "endFrame": 165,
+      "startSeconds": 6.125,
+      "durationSeconds": 0.75,
+      "loop": false
+    },
+    "look": {
+      "startFrame": 167,
+      "endFrame": 215,
+      "startSeconds": 6.958333333333333,
+      "durationSeconds": 2.0,
+      "loop": false
+    },
+    "tap_reaction": {
+      "startFrame": 217,
+      "endFrame": 259,
+      "startSeconds": 9.041666666666666,
+      "durationSeconds": 1.75,
+      "loop": false
+    },
+    "happy": {
+      "startFrame": 261,
+      "endFrame": 321,
+      "startSeconds": 10.875,
+      "durationSeconds": 2.5,
+      "loop": false
+    },
+    "hatch_complete": {
+      "startFrame": 323,
+      "endFrame": 395,
+      "startSeconds": 13.458333333333334,
+      "durationSeconds": 3.0,
+      "loop": false
+    },
+    "walk": {
+      "startFrame": 397,
+      "endFrame": 445,
+      "startSeconds": 16.541666666666668,
+      "durationSeconds": 2.0,
+      "loop": true
+    },
+    "hover": {
+      "startFrame": 447,
+      "endFrame": 519,
+      "startSeconds": 18.625,
+      "durationSeconds": 3.0,
+      "loop": true
+    },
+    "land": {
+      "startFrame": 521,
+      "endFrame": 545,
+      "startSeconds": 21.708333333333332,
+      "durationSeconds": 1.0,
+      "loop": false
+    },
+    "sad": {
+      "startFrame": 547,
+      "endFrame": 619,
+      "startSeconds": 22.791666666666668,
+      "durationSeconds": 3.0,
+      "loop": true
+    },
+    "sleep": {
+      "startFrame": 621,
+      "endFrame": 717,
+      "startSeconds": 25.875,
+      "durationSeconds": 4.0,
+      "loop": true
+    },
+    "dance": {
+      "startFrame": 719,
+      "endFrame": 791,
+      "startSeconds": 29.958333333333332,
+      "durationSeconds": 3.0,
+      "loop": true
+    },
+    "sing": {
+      "startFrame": 793,
+      "endFrame": 865,
+      "startSeconds": 33.041666666666664,
+      "durationSeconds": 3.0,
+      "loop": true
+    },
+    "read": {
+      "startFrame": 867,
+      "endFrame": 963,
+      "startSeconds": 36.125,
+      "durationSeconds": 4.0,
+      "loop": true
+    },
+    "lamp": {
+      "startFrame": 965,
+      "endFrame": 1037,
+      "startSeconds": 40.208333333333336,
+      "durationSeconds": 3.0,
+      "loop": true
+    },
+    "roll": {
+      "startFrame": 1039,
+      "endFrame": 1099,
+      "startSeconds": 43.291666666666664,
+      "durationSeconds": 2.5,
+      "loop": false
+    }
+  }
+}
