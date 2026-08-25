@@ -2,7 +2,7 @@ import { useId } from "react";
 import type { StageProfile } from "../../game/config/growth.ts";
 import type { Phenotype } from "../../game/types.ts";
 import { bellyPath, bodyPath, tipRise } from "../../game/config/growth.ts";
-import { variantFor } from "../../anim/NiumpiFrameMachine.ts";
+import { variantFor } from "../../anim/NiumpiModelVariants.ts";
 import { NiumpiFrameCanvas } from "./NiumpiFrameCanvas.tsx";
 
 /**

@@ -26,7 +26,7 @@ function hatchedSave(name = "Mango", stage = 2) {
   };
 }
 
-test("animation lab advances continuous 60 FPS motion and switches performances on desktop and mobile", async ({ page }) => {
+test("animation lab advances Blender-authored 60 FPS motion and switches performances on desktop and mobile", async ({ page }) => {
   const errors: string[] = [];
   page.on("console", (message) => { if (message.type() === "error") errors.push(message.text()); });
   page.on("pageerror", (error) => errors.push(error.message));
@@ -36,6 +36,7 @@ test("animation lab advances continuous 60 FPS motion and switches performances 
     await page.goto("/?animation-lab=1", { waitUntil: "domcontentloaded" });
     const canvas = page.locator(".animation-lab-stage canvas");
     await expect(canvas).toBeVisible({ timeout: 30_000 });
+    await expect(canvas).toHaveAttribute("data-renderer", "blender-gltf", { timeout: 30_000 });
     await expect(canvas).toHaveAttribute("data-clip", "idle", { timeout: 30_000 });
     const first = Number(await canvas.getAttribute("data-frame"));
     await page.waitForTimeout(260);
@@ -58,11 +59,52 @@ test("the gameplay tap requests the protected full-frame reaction clip", async (
   await page.getByRole("button", { name: "Pet Mango" }).click();
   await expect(canvas).toHaveAttribute("data-clip", "tap_reaction", { timeout: 5_000 });
   await expect.poll(async () => Number(await canvas.getAttribute("data-frame"))).toBeGreaterThan(0);
-  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 3_000 }).toBe("idle");
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 8_000 }).not.toBe("tap_reaction");
   // The controller still moves through recovery after the reaction
   // completes. A phase-only mutation must not replay the reaction.
   await page.waitForTimeout(800);
-  await expect(canvas).toHaveAttribute("data-clip", "idle");
+  await expect.poll(async () => canvas.getAttribute("data-clip")).not.toBe("tap_reaction");
+});
+
+test("scheduled blinks reach the Blender player even without a behavior token change", async ({ page }) => {
+  await seed(page, hatchedSave());
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const root = page.locator(".rig-root").first();
+  const canvas = root.locator("canvas.nb-frame-canvas");
+  await expect(canvas).toHaveAttribute("data-clip", "idle", { timeout: 30_000 });
+  await root.evaluate((element) => element.classList.add("is-blinking"));
+  await expect(canvas).toHaveAttribute("data-clip", "blink");
+  await root.evaluate((element) => element.classList.remove("is-blinking"));
+  await page.waitForTimeout(250);
+  await expect(canvas).toHaveAttribute("data-clip", "blink");
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 8_000 }).not.toBe("blink");
+});
+
+test("idle waits until an authored non-looping performance reaches recovery", async ({ page }) => {
+  await seed(page, hatchedSave());
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  const root = page.locator(".rig-root").first();
+  const canvas = root.locator("canvas.nb-frame-canvas");
+  await expect(canvas).toHaveAttribute("data-clip", "idle", { timeout: 30_000 });
+  await root.evaluate((element) => {
+    (element as HTMLElement).dataset.anim = "happy";
+    (element as HTMLElement).dataset.motionToken = "e2e-happy";
+  });
+  await expect(canvas).toHaveAttribute("data-clip", "happy");
+  // Recovery is requested immediately, just as a gameplay controller may
+  // request it before Blender's 2.5-second performance has finished.
+  await root.evaluate((element) => {
+    (element as HTMLElement).dataset.anim = "idle";
+    (element as HTMLElement).dataset.motionToken = "e2e-idle";
+  });
+  await expect.poll(async () => {
+    if (await canvas.getAttribute("data-clip") !== "happy") return -1;
+    return Number(await canvas.getAttribute("data-frame"));
+  }, { timeout: 5_000 }).toBeGreaterThan(60);
+  // A scheduled blink may legitimately be the first ambient performance after
+  // recovery, so assert that the protected clip completes rather than racing
+  // one exact idle substate.
+  await expect.poll(async () => canvas.getAttribute("data-clip"), { timeout: 5_000 }).not.toBe("happy");
 });
 
 test("reduced motion keeps the approved portrait in standalone views", async ({ page }) => {

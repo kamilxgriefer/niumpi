@@ -16,14 +16,15 @@
     "test:e2e": "playwright test",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
-    "animation:build": ".venv-animation/bin/python scripts/build-niumpi-animation.py",
+    "animation:blender": "blender --background --factory-startup --python tools/blender/build_niumpi_3d.py",
     "ci": "npm run lint && npm run typecheck && npm run test:unit && npm run build"
   },
   "dependencies": {
     "motion": "^13.1.1",
     "phaser": "^4.2.1",
     "react": "19.2.6",
-    "react-dom": "19.2.6"
+    "react-dom": "19.2.6",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.37.1",
@@ -35,6 +36,7 @@
     "@types/node": "22.19.19",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@types/three": "^0.185.4",
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
     "eslint": "9.39.4",

@@ -1,14 +1,9 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type { FrameClip } from "../anim/NiumpiFrameMachine.ts";
-import { NiumpiFrameCanvas } from "./niumpi/NiumpiFrameCanvas.tsx";
+import { NiumpiFrameCanvas, type BlenderAnimationClip } from "./niumpi/NiumpiFrameCanvas.tsx";
+import { NIUMPI_ANIMATION_CLIPS, NIUMPI_MODEL_VARIANTS } from "../anim/NiumpiModelVariants.ts";
 
-const VARIANTS = [
-  "stage-1", "stage-2", "stage-3", "stage-4", "stage-5",
-  "moonveil", "bloomheart", "sparkleap", "mistwander", "prismatic",
-];
-const CLIPS: FrameClip[] = ["idle", "blink", "look", "tap_reaction", "happy", "hatch_complete"];
 
 function fallbackFor(variant: string): string {
   return variant.startsWith("stage-")
@@ -18,11 +13,11 @@ function fallbackFor(variant: string): string {
 
 export function AnimationLab() {
   const [variant, setVariant] = useState("stage-1");
-  const [clip, setClip] = useState<FrameClip>("idle");
+  const [clip, setClip] = useState<BlenderAnimationClip>("idle");
   const [dark, setDark] = useState(true);
-  const [stats, setStats] = useState({ frame: 0, clip: "idle" as FrameClip, fps: 60 });
+  const [stats, setStats] = useState({ frame: 0, clip: "idle" as BlenderAnimationClip, fps: 60 });
   const fallback = useMemo(() => fallbackFor(variant), [variant]);
-  const reportFrame = useCallback((frame: number, active: FrameClip, fps: number) => {
+  const reportFrame = useCallback((frame: number, active: BlenderAnimationClip, fps: number) => {
     setStats((previous) => previous.frame === frame && previous.clip === active && previous.fps === fps
       ? previous
       : { frame, clip: active, fps });
@@ -32,9 +27,9 @@ export function AnimationLab() {
     <section className={`animation-lab ${dark ? "is-dark" : "is-light"}`}>
       <header className="animation-lab-head">
         <div>
-          <p className="eyebrow">Niumpi animation lab</p>
-          <h1>Continuous soft-body motion</h1>
-          <p>One painted character, smoothly deformed at 60 FPS. No pose switching and no visible joints.</p>
+          <p className="eyebrow">Niumpi character studio</p>
+          <h1>Blender-authored 3D performances</h1>
+          <p>One coherent pearl-cloud body, 16 authored performances and smooth real-time interpolation at 60 FPS.</p>
         </div>
         <button className="ghost-button" type="button" onClick={() => { window.location.href = "/"; }}>
           Back to game
@@ -62,11 +57,11 @@ export function AnimationLab() {
         <label>
           Evolution
           <select value={variant} onChange={(event) => setVariant(event.target.value)}>
-            {VARIANTS.map((entry) => <option key={entry} value={entry}>{entry}</option>)}
+            {NIUMPI_MODEL_VARIANTS.map((entry) => <option key={entry} value={entry}>{entry}</option>)}
           </select>
         </label>
         <div className="animation-lab-buttons" aria-label="Animation clips">
-          {CLIPS.map((entry) => (
+          {NIUMPI_ANIMATION_CLIPS.map((entry) => (
             <button key={entry} className={clip === entry ? "is-active" : ""} type="button" onClick={() => setClip(entry)}>
               {entry.replace("_", " ")}
             </button>
