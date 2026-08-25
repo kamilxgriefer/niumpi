@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import test from "node:test";
 
@@ -35,9 +35,8 @@ test("the production character manifest exposes every Blender evolution and perf
 test("every evolution is a substantial, animated binary glTF asset", () => {
   for (const variant of NIUMPI_MODEL_VARIANTS) {
     const model = join(modelRoot, `${variant}.glb`);
-    assert.ok(existsSync(model), `${variant} is missing`);
-    assert.ok(statSync(model).size > 700_000, `${variant} looks like a placeholder`);
     const bytes = readFileSync(model);
+    assert.ok(bytes.length > 700_000, `${variant} looks like a placeholder`);
     assert.equal(bytes.subarray(0, 4).toString("ascii"), "glTF");
     const document = bytes.toString("utf8");
     assert.match(document, /NiumpiRoot/);
@@ -51,9 +50,7 @@ test("every evolution is a substantial, animated binary glTF asset", () => {
 test("the editable Blender source and reproducible generator ship with the game", () => {
   const source = join(root, "art", "blender", "niumpi-master.blend");
   const builder = join(root, "tools", "blender", "build_niumpi_3d.py");
-  assert.ok(existsSync(source));
-  assert.ok(statSync(source).size > 250_000);
-  assert.ok(existsSync(builder));
+  assert.ok(readFileSync(source).length > 250_000);
   const script = readFileSync(builder, "utf8");
   for (const clip of NIUMPI_ANIMATION_CLIPS) assert.match(script, new RegExp(`\\"${clip}\\"`));
 });
