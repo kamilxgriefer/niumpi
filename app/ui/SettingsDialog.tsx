@@ -2,12 +2,11 @@
 
 import { Modal } from "./parts";
 import { useGame } from "./GameProvider";
-import { setChannelVolume } from "./audio";
 import { copy } from "../game/config/copy";
 import type { Settings } from "../game/types";
 
 export function SettingsDialog({ onClose }: { onClose: () => void }) {
-  const { state, update, toast } = useGame();
+  const { state, update, toast, cue } = useGame();
   const settings = state.profile.settings;
 
   function set<K extends keyof Settings>(key: K, value: Settings[K]) {
@@ -19,13 +18,21 @@ export function SettingsDialog({ onClose }: { onClose: () => void }) {
       <fieldset className="settings-group">
         <legend>Sound</legend>
         <label className="switch-row">
-          <input type="checkbox" checked={settings.sound} onChange={(event) => set("sound", event.target.checked)} />
-          <span>Sound effects</span>
+          <input type="checkbox" checked={settings.sound} onChange={(event) => {
+            set("sound", event.target.checked);
+            if (event.target.checked) cue("chime", { force: true, source: "ui" });
+          }} />
+          <span>All sound</span>
         </label>
         <label className="switch-row">
-          <input type="checkbox" checked={settings.music}
-            onChange={(event) => { set("music", event.target.checked); setChannelVolume("music", event.target.checked ? 0.5 : 0); }} />
-          <span>Music</span>
+          <input type="checkbox" checked={settings.music} disabled={!settings.sound}
+            onChange={(event) => set("music", event.target.checked)} />
+          <span>Adaptive music &amp; ambience</span>
+        </label>
+        <label className="switch-row">
+          <input type="checkbox" checked={settings.effects} disabled={!settings.sound}
+            onChange={(event) => set("effects", event.target.checked)} />
+          <span>Niumpi reactions &amp; interface</span>
         </label>
       </fieldset>
 

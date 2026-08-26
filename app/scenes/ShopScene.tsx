@@ -57,7 +57,7 @@ export function ShopScene() {
     const result = openWonderChest(state, clock());
     if (!result.ok) { toast(result.reason, "✕"); cue("fail"); return; }
     update(result.state);
-    cue("reward");
+    cue(result.drop?.tier === "legendary" ? "legendary" : result.drop?.tier === "rare" || result.drop?.tier === "epic" ? "rare" : "reward");
     showReward(result.drop?.name ?? "Wonder Chest", result.rewards, "Play-earned discovery");
   }
 

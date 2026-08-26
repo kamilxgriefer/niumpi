@@ -18,7 +18,7 @@ import type { WashTool } from "../game/hygiene";
 
 /** The full-screen care scene: fewer panels, more room to touch. */
 export function CompanionScene() {
-  const { state, run, update, goTo, say, cue, clock} = useGame();
+  const { state, run, update, goTo, say, cue, clock, controller } = useGame();
   const { armed, setArmed, stageRef, hitTest, dropFood } = useFoodDrop(state, run, clock);
   const [panel, setPanel] = useState<"none" | "feed" | "toy" | "wash">("none");
 
@@ -39,6 +39,7 @@ export function CompanionScene() {
     {
       id: "talk", label: copy.actions.talk, art: "spark",
       onClick: () => {
+        if (!state.niumpi.sleeping) controller.request("curious");
         const line = chooseLine(state, clock());
         update(rememberLine(state, line.id));
         say(line.text);

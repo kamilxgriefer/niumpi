@@ -1,5 +1,6 @@
 import type { GameState } from "./types.ts";
 import { LEGACY_KEYS, PRIOR_SAVE_KEYS, STORAGE_KEY, createGameState, makeId, migrateLegacy, reconcile } from "./state.ts";
+import { runtimeNow } from "./runtimeClock.ts";
 
 export type SaveStatus = "idle" | "saving" | "saved" | "error";
 
@@ -28,29 +29,29 @@ export type PersistenceAdapter = {
  * The only adapter today. A cloud adapter can be added behind this same shape
  * without touching a single component — the shell only ever sees the interface.
  */
-export function localAdapter(): PersistenceAdapter {
+export function localAdapter(now: () => number = runtimeNow): PersistenceAdapter {
   return {
     async load() {
       if (typeof window === "undefined") return null;
-      const now = Date.now();
+      const at = now();
       const current = window.localStorage.getItem(STORAGE_KEY);
       if (current) {
         const parsed = JSON.parse(current) as Partial<GameState>;
         // A newer build may have written this. Read what we understand and
         // never destroy the rest.
-        return reconcile(parsed, now);
+        return reconcile(parsed, at);
       }
       for (const key of PRIOR_SAVE_KEYS) {
         const prior = window.localStorage.getItem(key);
         if (!prior) continue;
         const parsed = migrateStages(JSON.parse(prior) as Record<string, unknown>);
         // The old key stays put until the new save lands, so nothing is lost.
-        return reconcile(parsed as Partial<GameState>, now);
+        return reconcile(parsed as Partial<GameState>, at);
       }
       for (const key of LEGACY_KEYS) {
         const legacy = window.localStorage.getItem(key);
         if (!legacy) continue;
-        const migrated = migrateLegacy(JSON.parse(legacy), now, makeId(now));
+        const migrated = migrateLegacy(JSON.parse(legacy), at, makeId(at));
         // The old key stays put until the new save lands, so nothing is lost.
         return migrated;
       }

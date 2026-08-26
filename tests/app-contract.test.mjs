@@ -57,6 +57,11 @@ test("quality scripts cover lint, types, build and browser tests", async () => {
   assert.equal(packageJson.scripts.lint, "eslint . --ignore-pattern dist --ignore-pattern .next");
   assert.equal(packageJson.scripts.typecheck, "tsc --noEmit");
   assert.equal(packageJson.scripts.build, "WRANGLER_LOG_PATH=.wrangler/wrangler.log vinext build");
-  assert.equal(packageJson.scripts["test:e2e"], "playwright test");
+  assert.equal(packageJson.scripts["test:e2e"], "playwright test --grep-invert @semantic-animation-gate");
+  assert.equal(packageJson.scripts["test:e2e:core"], packageJson.scripts["test:e2e"]);
+  assert.equal(
+    packageJson.scripts["test:e2e:semantic"],
+    "NIUMPI_REQUIRE_SEMANTIC=1 playwright test --grep @semantic-animation-gate",
+  );
   assert.equal(packageJson.devDependencies["@playwright/test"], "1.62.1");
 });

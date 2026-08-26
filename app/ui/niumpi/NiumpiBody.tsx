@@ -1,8 +1,9 @@
+import Image from "next/image";
 import { useId } from "react";
 import type { StageProfile } from "../../game/config/growth.ts";
-import type { Phenotype } from "../../game/types.ts";
+import type { Phenotype, RouteId } from "../../game/types.ts";
 import { bellyPath, bodyPath, tipRise } from "../../game/config/growth.ts";
-import { variantFor } from "../../anim/NiumpiModelVariants.ts";
+import { fallbackForVariant, variantFor } from "../../anim/NiumpiModelVariants.ts";
 import { NiumpiFrameCanvas } from "./NiumpiFrameCanvas.tsx";
 
 /**
@@ -120,12 +121,14 @@ function MorphFeatures({ morphology, profile }: { morphology: Phenotype["morphol
 }
 
 export function NiumpiBody({
-  profile, phenotype, morphology, animation = "idle",
+  profile, phenotype, morphology, lockedRoute = null, animation = "idle", animated = true,
 }: {
   profile: StageProfile;
   phenotype?: Pick<Phenotype, "morphology" | "markings">;
   morphology?: Phenotype["morphology"];
+  lockedRoute?: RouteId | null;
   animation?: "idle" | "hatch";
+  animated?: boolean;
 }) {
   const { body, face } = profile;
   const look = phenotype ?? { morphology: morphology ?? "seedling", markings: [] };
@@ -157,17 +160,25 @@ export function NiumpiBody({
   const silhouette = bodyPath(body);
 
   /* The approved painting is the identity of the character. Every living
-   * stage is rendered as one deformable GPU surface — never assembled from
-   * live DOM puppet pieces and never switched between a handful of poses. */
+   * stage is drawn by the production frame-atlas player — never rebuilt from
+   * duplicate live DOM eyes, mouths or leaves. */
   if (profile.id > 0) {
-    const finalForm = profile.id >= 5 && look.morphology !== "seedling";
-    const art = finalForm
-      ? `/assets/niumpi/forms/${look.morphology}.webp`
-      : `/assets/niumpi/stages/stage-${profile.id}.webp`;
-    const variant = variantFor(profile.id, look.morphology);
+    const variant = variantFor(profile.id, look.morphology, lockedRoute);
+    const art = fallbackForVariant(variant);
     return (
       <span className="nb nb-frame-art" role="img" aria-label="Niumpi" data-animation-variant={variant}>
-        <NiumpiFrameCanvas variant={variant} fallback={art} entrance={animation === "hatch"} />
+        {animated ? (
+          <NiumpiFrameCanvas variant={variant} fallback={art} entrance={animation === "hatch"} />
+        ) : (
+          <span
+            className="nb-frame-player nb-frame-approved-still"
+            data-variant={variant}
+            data-renderer="approved-still"
+            aria-hidden="true"
+          >
+            <Image className="nb-frame-fallback" src={art} alt="" fill sizes="112px" unoptimized draggable={false} />
+          </span>
+        )}
         <svg className="nb-frame-care" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
           <CareSurface />
         </svg>

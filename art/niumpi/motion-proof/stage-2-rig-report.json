@@ -1,0 +1,952 @@
+{
+  "schemaVersion": 1,
+  "gate": "A",
+  "variant": "stage-2",
+  "requestedVariant": "stage-2",
+  "landmarkVariant": "stage-2",
+  "sourceBlend": "art/niumpi/blender/stage-2_master.blend",
+  "loadedBlend": "art/niumpi/blender/stage-2_master.blend",
+  "approvedArt": "public/assets/niumpi/stages/stage-2.webp",
+  "approvedArtSha256": "f01a5c4df57e6f97039d5ba89ed0fdc175a515e5d32480ede5018ea73ce20b2f",
+  "requiredClips": [
+    "idle",
+    "blink",
+    "look_left",
+    "look_right",
+    "tap_reaction",
+    "happy",
+    "eat"
+  ],
+  "mode": "phase14-core",
+  "topology": {
+    "visibleLeaves": 2,
+    "armsPresentInApprovedArt": true,
+    "continuousSkin": true,
+    "leafBonePairs": [
+      [
+        "leaf_stem_01",
+        "leaf_stem_02"
+      ],
+      [
+        "leaf.01.base",
+        "leaf.01.tip"
+      ]
+    ]
+  },
+  "blenderVersion": "5.2.0 LTS",
+  "thresholds": {
+    "idle": {
+      "controls": 4,
+      "channels": 6,
+      "regions": 4
+    },
+    "tap_reaction": {
+      "controls": 6,
+      "channels": 10,
+      "regions": 6
+    },
+    "happy": {
+      "controls": 6,
+      "channels": 10,
+      "regions": 6
+    },
+    "eat": {
+      "controls": 6,
+      "channels": 10,
+      "regions": 6
+    },
+    "blinkClosure": 0.8,
+    "eatPupilDisplacementPerEyeDiameter": 0.06,
+    "eatPupilDirectionCosine": 0.7
+  },
+  "hierarchy": {
+    "armature": "NiumpiRig",
+    "armatureCount": 1,
+    "bones": [
+      "arm.L",
+      "arm.R",
+      "body",
+      "body_squash",
+      "cheek.L",
+      "cheek.R",
+      "eye.L",
+      "eye.R",
+      "foot.L",
+      "foot.R",
+      "head",
+      "leaf.01.base",
+      "leaf.01.tip",
+      "leaf_stem_01",
+      "leaf_stem_02",
+      "mouth",
+      "pupil.L",
+      "pupil.R",
+      "root",
+      "shadow"
+    ],
+    "missingBones": [],
+    "separateMeshCount": 9,
+    "missingMeshes": [],
+    "binding": {
+      "body": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "arm.L",
+          "arm.R",
+          "body_squash",
+          "foot.L",
+          "foot.R",
+          "head",
+          "leaf.01.base",
+          "leaf.01.tip",
+          "leaf_stem_01",
+          "leaf_stem_02"
+        ]
+      },
+      "cheek.L": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "cheek.L"
+        ]
+      },
+      "cheek.R": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "cheek.R"
+        ]
+      },
+      "eye.L": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "eye.L"
+        ]
+      },
+      "eye.R": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "eye.R"
+        ]
+      },
+      "mouth": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "mouth"
+        ]
+      },
+      "pupil.L": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "pupil.L"
+        ]
+      },
+      "pupil.R": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "pupil.R"
+        ]
+      },
+      "shadow": {
+        "armatureModifier": true,
+        "weightedGroups": [
+          "shadow"
+        ]
+      }
+    },
+    "shapeKeys": {
+      "eye.L": {
+        "required": [
+          "blink"
+        ],
+        "missing": [],
+        "maxDisplacement": {
+          "blink": 0.346628
+        }
+      },
+      "eye.R": {
+        "required": [
+          "blink"
+        ],
+        "missing": [],
+        "maxDisplacement": {
+          "blink": 0.382043
+        }
+      },
+      "pupil.L": {
+        "required": [
+          "blink"
+        ],
+        "missing": [],
+        "maxDisplacement": {
+          "blink": 0.279174
+        }
+      },
+      "pupil.R": {
+        "required": [
+          "blink"
+        ],
+        "missing": [],
+        "maxDisplacement": {
+          "blink": 0.310827
+        }
+      },
+      "mouth": {
+        "required": [
+          "mouth_open"
+        ],
+        "missing": [],
+        "maxDisplacement": {
+          "mouth_open": 0.045
+        }
+      },
+      "cheek.L": {
+        "required": [
+          "puff"
+        ],
+        "missing": [],
+        "maxDisplacement": {
+          "puff": 0.0396
+        }
+      },
+      "cheek.R": {
+        "required": [
+          "puff"
+        ],
+        "missing": [],
+        "maxDisplacement": {
+          "puff": 0.042
+        }
+      }
+    },
+    "driverTargets": {
+      "blink": [
+        "eye.L.blink",
+        "eye.R.blink",
+        "pupil.L.blink",
+        "pupil.R.blink"
+      ],
+      "cheek_puff": [
+        "cheek.L.puff",
+        "cheek.R.puff"
+      ],
+      "mouth_open": [
+        "mouth.mouth_open"
+      ]
+    },
+    "result": "PASS",
+    "reasons": []
+  },
+  "clips": {
+    "idle": {
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.location[1]",
+        "body_squash.rotation_euler[2]",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.location[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "regions": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "counts": {
+        "animatedControls": 12,
+        "animatedChannels": 18,
+        "regions": 9,
+        "rootCameraShadowChannels": 2
+      },
+      "rootCameraShadowChannels": [
+        "NiumpiRig[\"body_stretch\"]",
+        "shadow.scale[0]"
+      ],
+      "featureMotion": {
+        "body": true,
+        "head": true,
+        "arms": true,
+        "feet": true,
+        "pupils": true,
+        "leaf": true,
+        "mouth": false,
+        "cheeks": false,
+        "eyelids": false,
+        "shadow": true,
+        "accessory": false,
+        "tail": false
+      },
+      "requiredFeatures": [
+        "arms",
+        "body",
+        "leaf",
+        "pupils"
+      ],
+      "motionFingerprint": "a8acc75dc5923d8ba544001f9b501b148e3573e15ba6491bc8e13ecd62e1ebb5",
+      "subloopFingerprint": null,
+      "blinkClosure": 0.0,
+      "eyelidMaxima": {},
+      "pupilGaze": null,
+      "frameRange": [
+        1,
+        72
+      ],
+      "action": "stage-2::idle",
+      "result": "PASS",
+      "reasons": []
+    },
+    "blink": {
+      "animatedControls": [
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "cheek.L.location[1]",
+        "cheek.R.location[1]",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "regions": [
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "leaf",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "counts": {
+        "animatedControls": 9,
+        "animatedChannels": 9,
+        "regions": 7,
+        "rootCameraShadowChannels": 0
+      },
+      "rootCameraShadowChannels": [],
+      "featureMotion": {
+        "body": false,
+        "head": false,
+        "arms": false,
+        "feet": false,
+        "pupils": true,
+        "leaf": true,
+        "mouth": false,
+        "cheeks": true,
+        "eyelids": true,
+        "shadow": false,
+        "accessory": false,
+        "tail": false
+      },
+      "requiredFeatures": [
+        "eyelids"
+      ],
+      "motionFingerprint": "92b545fa0d349fcd05c2007ca98defe36f979154ccdefacfecaab0b743493250",
+      "subloopFingerprint": null,
+      "blinkClosure": 1.0,
+      "eyelidMaxima": {
+        "eye.L": 1.0,
+        "eye.R": 1.0,
+        "pupil.L": 1.0,
+        "pupil.R": 1.0
+      },
+      "pupilGaze": null,
+      "frameRange": [
+        1,
+        12
+      ],
+      "action": "stage-2::blink",
+      "result": "PASS",
+      "reasons": []
+    },
+    "look_left": {
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.rotation_euler[2]",
+        "head.location[0]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "regions": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "head",
+        "leaf",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "counts": {
+        "animatedControls": 10,
+        "animatedChannels": 13,
+        "regions": 7,
+        "rootCameraShadowChannels": 0
+      },
+      "rootCameraShadowChannels": [],
+      "featureMotion": {
+        "body": true,
+        "head": true,
+        "arms": true,
+        "feet": false,
+        "pupils": true,
+        "leaf": true,
+        "mouth": false,
+        "cheeks": false,
+        "eyelids": false,
+        "shadow": false,
+        "accessory": false,
+        "tail": false
+      },
+      "requiredFeatures": [
+        "arms",
+        "body",
+        "leaf",
+        "pupils"
+      ],
+      "motionFingerprint": "f3bf82d2664803ed46fac47f1434b7701f7789ccc724e3c374941a709a220a45",
+      "subloopFingerprint": null,
+      "blinkClosure": 0.0,
+      "eyelidMaxima": {},
+      "pupilGaze": null,
+      "frameRange": [
+        1,
+        24
+      ],
+      "action": "stage-2::look_left",
+      "result": "PASS",
+      "reasons": []
+    },
+    "look_right": {
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.rotation_euler[2]",
+        "head.location[0]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "regions": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "head",
+        "leaf",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "counts": {
+        "animatedControls": 10,
+        "animatedChannels": 13,
+        "regions": 7,
+        "rootCameraShadowChannels": 0
+      },
+      "rootCameraShadowChannels": [],
+      "featureMotion": {
+        "body": true,
+        "head": true,
+        "arms": true,
+        "feet": false,
+        "pupils": true,
+        "leaf": true,
+        "mouth": false,
+        "cheeks": false,
+        "eyelids": false,
+        "shadow": false,
+        "accessory": false,
+        "tail": false
+      },
+      "requiredFeatures": [
+        "arms",
+        "body",
+        "leaf",
+        "pupils"
+      ],
+      "motionFingerprint": "77306f14d26548565904370eaa725b4ec1321c3ca907a2cd9e3d117800417829",
+      "subloopFingerprint": null,
+      "blinkClosure": 0.0,
+      "eyelidMaxima": {},
+      "pupilGaze": null,
+      "frameRange": [
+        1,
+        24
+      ],
+      "action": "stage-2::look_right",
+      "result": "PASS",
+      "reasons": []
+    },
+    "tap_reaction": {
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "body_squash",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "body_squash.rotation_euler[2]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "regions": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "counts": {
+        "animatedControls": 18,
+        "animatedChannels": 23,
+        "regions": 14,
+        "rootCameraShadowChannels": 4
+      },
+      "rootCameraShadowChannels": [
+        "NiumpiRig[\"body_squash\"]",
+        "NiumpiRig[\"body_stretch\"]",
+        "root.location[1]",
+        "shadow.scale[0]"
+      ],
+      "featureMotion": {
+        "body": true,
+        "head": true,
+        "arms": true,
+        "feet": true,
+        "pupils": true,
+        "leaf": true,
+        "mouth": true,
+        "cheeks": true,
+        "eyelids": true,
+        "shadow": true,
+        "accessory": false,
+        "tail": false
+      },
+      "requiredFeatures": [
+        "arms",
+        "body",
+        "leaf",
+        "pupils"
+      ],
+      "motionFingerprint": "1f8d7957d99bcdd4e0dd48e2bf1f31033d77f42336ef1f5b4224e955ba464bf6",
+      "subloopFingerprint": null,
+      "blinkClosure": 0.0,
+      "eyelidMaxima": {},
+      "pupilGaze": null,
+      "frameRange": [
+        1,
+        40
+      ],
+      "action": "stage-2::tap_reaction",
+      "result": "PASS",
+      "reasons": []
+    },
+    "happy": {
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "body_squash",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "body_squash.rotation_euler[2]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "regions": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "counts": {
+        "animatedControls": 18,
+        "animatedChannels": 25,
+        "regions": 14,
+        "rootCameraShadowChannels": 4
+      },
+      "rootCameraShadowChannels": [
+        "NiumpiRig[\"body_squash\"]",
+        "NiumpiRig[\"body_stretch\"]",
+        "root.location[1]",
+        "shadow.scale[0]"
+      ],
+      "featureMotion": {
+        "body": true,
+        "head": true,
+        "arms": true,
+        "feet": true,
+        "pupils": true,
+        "leaf": true,
+        "mouth": true,
+        "cheeks": true,
+        "eyelids": true,
+        "shadow": true,
+        "accessory": false,
+        "tail": false
+      },
+      "requiredFeatures": [
+        "arms",
+        "body",
+        "leaf",
+        "pupils"
+      ],
+      "motionFingerprint": "836ca22b0bab10b63627dab80ddaab9884966f35cc284024daec434cfcd8b3b3",
+      "subloopFingerprint": null,
+      "blinkClosure": 0.0,
+      "eyelidMaxima": {},
+      "pupilGaze": null,
+      "frameRange": [
+        1,
+        56
+      ],
+      "action": "stage-2::happy",
+      "result": "PASS",
+      "reasons": []
+    },
+    "eat": {
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.location[1]",
+        "arm.L.rotation_euler[2]",
+        "arm.R.location[1]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.scale[0]",
+        "mouth.scale[1]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "regions": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "leaf",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "counts": {
+        "animatedControls": 16,
+        "animatedChannels": 27,
+        "regions": 13,
+        "rootCameraShadowChannels": 5
+      },
+      "rootCameraShadowChannels": [
+        "NiumpiRig[\"body_squash\"]",
+        "root.location[0]",
+        "root.location[1]",
+        "root.rotation_euler[2]",
+        "shadow.scale[0]"
+      ],
+      "featureMotion": {
+        "body": true,
+        "head": false,
+        "arms": true,
+        "feet": true,
+        "pupils": true,
+        "leaf": true,
+        "mouth": true,
+        "cheeks": true,
+        "eyelids": true,
+        "shadow": true,
+        "accessory": false,
+        "tail": false
+      },
+      "requiredFeatures": [
+        "arms",
+        "body",
+        "leaf",
+        "mouth",
+        "pupils"
+      ],
+      "motionFingerprint": "58767a45f144b51e77e04b02df95e0fbdaf0543110c825c41ae599cdab2d6e56",
+      "subloopFingerprint": null,
+      "blinkClosure": 0.0,
+      "eyelidMaxima": {},
+      "pupilGaze": {
+        "unit": "camera-projected pupil-relative-to-head displacement / rendered eye diameter",
+        "firstBiteFrameExclusive": 34,
+        "expectedDirection": [
+          1.0,
+          0.0
+        ],
+        "minimumDisplacementPerDiameter": 0.06,
+        "minimumDirectionCosine": 0.7,
+        "perEye": {
+          "pupil.L": {
+            "renderedDiameterPx": 36.3685,
+            "preBitePeakDisplacementPx": 7.5963,
+            "displacementPerDiameter": 0.20887,
+            "directionCosine": 1.0,
+            "peakFrame": 22,
+            "vectorPx": [
+              4.7305,
+              5.9435
+            ],
+            "directionVectorPx": [
+              4.7305,
+              0.0
+            ],
+            "approvedEyeBBoxPx": [
+              48.0,
+              62.0
+            ]
+          },
+          "pupil.R": {
+            "renderedDiameterPx": 44.9889,
+            "preBitePeakDisplacementPx": 4.3268,
+            "displacementPerDiameter": 0.096174,
+            "directionCosine": 1.0,
+            "peakFrame": 33,
+            "vectorPx": [
+              4.2058,
+              -1.0158
+            ],
+            "directionVectorPx": [
+              4.2058,
+              0.0
+            ],
+            "approvedEyeBBoxPx": [
+              66.0,
+              69.0
+            ]
+          }
+        },
+        "result": "PASS",
+        "reasons": [],
+        "directionUnit": "signed camera-screen horizontal displacement",
+        "pixelsPerWorldUnit": 66.666668
+      },
+      "frameRange": [
+        1,
+        84
+      ],
+      "action": "stage-2::eat",
+      "result": "PASS",
+      "reasons": []
+    }
+  },
+  "semanticFingerprintReasons": [],
+  "failedClips": [],
+  "result": "PASS",
+  "manifest": {
+    "result": "UPDATED",
+    "path": "public/assets/niumpi/v2/stage-2/manifest.json",
+    "clips": [
+      "idle",
+      "blink",
+      "look_left",
+      "look_right",
+      "tap_reaction",
+      "happy",
+      "eat"
+    ]
+  }
+}

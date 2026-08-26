@@ -327,9 +327,9 @@ test("a freshly hatched Niumpi renders small, and grows", async ({ browser }) =>
 test("the hatchling wears a single leaf and no arms", async ({ page }) => {
   await openHatchedGame(page, { niumpi: hatchedAs(1) });
   await expect(page.locator(".rig-root")).toHaveClass(/growth-stage-1/);
-  // Living Niumpis are now coherent Blender models rather than a collection
-  // of independently animated face, body and leaf DOM fragments.
-  const player = page.locator('.nb-frame-player[data-variant="stage-1"]');
+  // Living Niumpis use the verified production baby sprite sequence rather
+  // than rebuilding a second face from independent DOM fragments.
+  const player = page.locator('.nb-frame-player[data-variant="baby"]');
   await expect(player).toBeVisible();
   await expect(player.locator(".nb-frame-fallback")).toHaveAttribute("src", "/assets/niumpi/stages/stage-1.webp");
   await expect(player.locator(".nb-frame-canvas")).toHaveAttribute("data-clip", "idle");
@@ -344,19 +344,22 @@ test("the five-leaf crown stays attached to a mature Niumpi", async ({ page }) =
 
   const rig = page.locator(".rig-root").first();
   const framePlayer = page.locator('.nb-frame-player[data-variant="stage-4"]').first();
-  const authoredFrame = framePlayer.locator(".nb-frame-canvas");
+  const fallback = framePlayer.locator(".nb-frame-fallback");
+  const canvas = framePlayer.locator(".nb-frame-canvas");
   await expect(rig).toHaveClass(/growth-stage-4/);
-  await expect(framePlayer.locator(".nb-frame-fallback")).toHaveAttribute("src", "/assets/niumpi/stages/stage-4.webp");
-  await expect(authoredFrame).toHaveAttribute("data-fps", "60");
-  await expect(authoredFrame).toHaveAttribute("data-renderer", "blender-gltf");
+  await expect(fallback).toHaveAttribute("src", "/assets/niumpi/stages/stage-4.webp");
+  await expect(framePlayer).toHaveClass(/is-ready/);
+  await expect(fallback).toBeHidden();
+  await expect(canvas).toBeVisible();
+  await expect(canvas).toHaveAttribute("data-variant", "stage-4");
+  await expect(canvas).toHaveAttribute("data-motion-gate", "PASS");
 
   const rigBox = await rig.boundingBox();
-  const frameBox = await authoredFrame.boundingBox();
+  const frameBox = await canvas.boundingBox();
   if (!rigBox) throw new Error("mature rig has no box");
-  if (!frameBox) throw new Error("mature authored frame has no box");
+  if (!frameBox) throw new Error("mature production canvas has no box");
 
-  // The crown belongs to the 3D model. Verifying that the complete Canvas stays
-  // inside the rig replaces the obsolete fragment-level SVG leaf test.
+  // The production animation remains attached to the mature rig box.
   expect(frameBox.x).toBeGreaterThanOrEqual(rigBox.x - 1);
   expect(frameBox.y).toBeGreaterThanOrEqual(rigBox.y - 1);
   expect(frameBox.x + frameBox.width).toBeLessThanOrEqual(rigBox.x + rigBox.width + 1);

@@ -1,5 +1,5 @@
 import type {
-  CareActionId, HiddenStatId, RoomActivityId, RoomId, StatId, VectorId,
+  CareActionId, FeedbackSoundId, HiddenStatId, RoomActivityId, RoomId, StatId, VectorId,
 } from "../types.ts";
 
 export type RoomDefinition = {
@@ -50,7 +50,7 @@ export type RoomActivityDefinition = {
   stats: Partial<Record<StatId | HiddenStatId, number>>;
   message: string;
   behavior: string;
-  sound: string;
+  sound: FeedbackSoundId;
 };
 
 export const roomActivities: RoomActivityDefinition[] = [

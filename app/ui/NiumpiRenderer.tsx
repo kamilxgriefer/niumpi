@@ -73,7 +73,7 @@ export function NiumpiRenderer({
         `morph-${morphology}`,
         `reveal-${appearance.phase}`,
         `locomotion-${appearance.formGeometry.locomotion}`,
-        profile.id > 0 ? "uses-blender-animation" : "",
+        profile.id > 0 ? "uses-sprite-animation" : "",
         appearance.phase === "branch" && morphology !== "seedling" ? "branch-hint" : "",
         diet ? `diet-${diet[0]}` : "",
         ...phenotype.markings.map((marking) => `marking-${marking}`),
@@ -99,7 +99,12 @@ export function NiumpiRenderer({
         onClick={onActivate}
         onContextMenu={(event) => event.preventDefault()}
       >
-        <NiumpiBody key={`${profile.id}:${morphology}`} profile={profile} phenotype={renderedPhenotype} />
+        <NiumpiBody
+          key={`${profile.id}:${morphology}`}
+          profile={profile}
+          phenotype={renderedPhenotype}
+          lockedRoute={appearance.lockedRoute}
+        />
       </button>
 
       {profile.leaves > 0 && (

@@ -8,7 +8,7 @@ import { weatherMap } from "./config/weather.ts";
 import { stageMap } from "./config/stages.ts";
 import { SEED_COOLDOWN_MS, SEED_STEP, seedActions } from "./config/stages.ts";
 import type {
-  CareActionId, GameState, MinigameId, PlacedItem, Reward, RoomActivityId, RoomId, StageId, VectorId,
+  CareActionId, FeedbackSoundId, GameState, MinigameId, PlacedItem, Reward, RoomActivityId, RoomId, StageId, VectorId,
 } from "./types.ts";
 import { addSignal, discoverTrait, newlyDiscoveredTraits, recordCare, stageProgress } from "./care.ts";
 import { addTint, lockRoute, phenotypeFor } from "./evolution.ts";
@@ -37,7 +37,7 @@ export type ActionResult = {
   /** Optional visual prop used by an authored performance, such as a treat. */
   prop?: string;
   spark?: string;
-  sound?: string;
+  sound?: FeedbackSoundId;
   rewards: Reward[];
   toasts: Array<{ text: string; icon: string }>;
   refused?: boolean;
@@ -266,7 +266,7 @@ export function washNiumpi(state: GameState, tool: WashTool, now: number): Actio
       : "Bubbles! I am becoming extremely shiny.",
     behavior: "brushing",
     spark: tool === "brush" ? "✦" : "○",
-    sound: tool === "brush" ? "leaf" : "pet",
+    sound: "wash",
     rewards,
     toasts,
   };
@@ -560,7 +560,11 @@ export function playWithItem(state: GameState, itemId: string, now: number): Act
 
 /** Furniture keeps its own movement vocabulary instead of every object causing
  * the same generic happy bounce. */
-function itemInteractionFor(itemId: string, category: string) {
+function itemInteractionFor(itemId: string, category: string): {
+  behavior: string;
+  sound: FeedbackSoundId;
+  spark: string;
+} {
   if (["music-radio", "wind-chimes"].includes(itemId)) return { behavior: "singing", sound: "chime", spark: "♪" };
   if (["star-rug"].includes(itemId)) return { behavior: "dancing", sound: "tap", spark: "♪" };
   if (["ball-of-yarn", "toy-chest", "leaf-mobile"].includes(itemId)) return { behavior: "roll", sound: "tap", spark: "✦" };
@@ -644,7 +648,9 @@ export function claimRoomDiscovery(state: GameState, now: number): ActionResult 
     message: item ? `${item.name} found a home with you.` : "Your complete collection became dewdrops.",
     behavior: "gift",
     spark: drop.rarity === "mythic" ? "✦" : "✧",
-    sound: "reward",
+    sound: drop.rarity === "legendary" || drop.rarity === "mythic"
+      ? "legendary"
+      : drop.rarity === "rare" || drop.rarity === "epic" ? "rare" : "reward",
     rewards: [drop.reward],
     toasts: [{ text: item && rarity ? `${rarity.name} discovery — ${item.name}` : "Collection bonus", icon: "✦" }],
   };
