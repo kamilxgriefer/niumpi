@@ -22,6 +22,12 @@ export type MoodId =
 export type WeatherId = "sunny" | "cloudy" | "rainy" | "storm" | "starfall";
 export type DayPart = "morning" | "day" | "sunset" | "night";
 
+/** Semantic feedback names understood by the session audio director. */
+export type FeedbackSoundId =
+  | "tap" | "pet" | "hold" | "leaf" | "eat" | "sleep" | "wake"
+  | "blip" | "chime" | "hatch" | "evolve" | "reward" | "fail"
+  | "wash" | "lamp" | "book" | "roll" | "sad" | "rare" | "legendary";
+
 export type TalentId = "cooking" | "music" | "gardening" | "agility" | "exploration" | "storytelling";
 
 export type MinigameId =

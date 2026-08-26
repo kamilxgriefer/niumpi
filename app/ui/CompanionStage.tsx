@@ -12,7 +12,7 @@ import { gesture, toggleLamp, wake } from "../game/actions";
 import { moodFor, moodTable } from "../game/mood";
 import { dayPartAt } from "../game/time";
 import { sparkStyle } from "./parts";
-import type { CareActionId } from "../game/types";
+import type { CareActionId, FeedbackSoundId } from "../game/types";
 import type { AnimState } from "../anim/NiumpiAnimationController";
 import { learnedRoomLine } from "../game/behavior";
 import type { RoomMomentId } from "../game/behavior";
@@ -28,7 +28,7 @@ const PET_DISTANCE = 30;
 const TICKLE_REVERSALS = 3;
 const ROOM_MOMENTS: Array<{
   state: RoomMomentId; x: number; y: number; gazeX: number; gazeY: number;
-  line: string; sound: "blip" | "leaf" | "tap" | "pet" | "chime";
+  line: string; sound: FeedbackSoundId;
 }> = [
   { state: "book", x: -76, y: 2, gazeX: -12, gazeY: -6, line: "This one has a map inside.", sound: "blip" },
   { state: "window", x: 76, y: -3, gazeX: 14, gazeY: -8, line: "Something moved past the window…", sound: "leaf" },

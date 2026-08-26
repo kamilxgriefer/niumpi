@@ -1,6 +1,6 @@
 import { dialogue, gestureLines } from "./config/dialogue.ts";
 import { ingredientById } from "./config/foods.ts";
-import type { CareActionId, GameState, MoodId } from "./types.ts";
+import type { CareActionId, FeedbackSoundId, GameState, MoodId } from "./types.ts";
 import { moodFor } from "./mood.ts";
 import { dayPartAt } from "./time.ts";
 import { hashSeed, makeRng, pickWeighted } from "./rng.ts";
@@ -58,7 +58,7 @@ export type Reaction = {
   behavior: string;
   /** Spark glyph shown at the point of contact. */
   spark: string;
-  sound: string;
+  sound: FeedbackSoundId;
   /** Set when the gesture was refused, so nothing is consumed. */
   refused?: boolean;
 };
@@ -92,7 +92,7 @@ export function reactToGesture(state: GameState, action: CareActionId, now: numb
     pet: "happy", hug: "happy", tickle: "spin", brush: "curious", leaf: "curious",
     dance: "dancing", comfort: "happy", sing: "singing", toy: "happy", wake: "happy",
   };
-  const soundByAction: Record<string, string> = {
+  const soundByAction: Record<string, FeedbackSoundId> = {
     pet: "pet", hug: "hold", tickle: "tap", brush: "leaf", leaf: "leaf",
     dance: "chime", comfort: "hold", sing: "chime", toy: "blip", wake: "wake",
   };

@@ -109,7 +109,7 @@ export function SoundToggle() {
       aria-pressed={on}
       onClick={() => {
         update({ ...state, profile: { ...state.profile, settings: { ...state.profile.settings, sound: !on } } });
-        if (!on) cue("blip");
+        if (!on) cue("chime", { force: true, source: "ui" });
       }}
     >
       <Art name={on ? "sound" : "mute"} size={16} />

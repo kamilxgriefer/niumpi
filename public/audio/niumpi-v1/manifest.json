@@ -1,0 +1,2193 @@
+{
+  "version": 1,
+  "schemaVersion": 1,
+  "sampleRate": 48000,
+  "library": "niumpi-v1",
+  "generatorVersion": "1.0.0",
+  "provenance": {
+    "kind": "procedural-original",
+    "samplesFromInternet": false,
+    "humanVoice": false,
+    "seed": 1313428813,
+    "description": "Original oscillator, seeded-noise, envelope and resonator synthesis."
+  },
+  "mix": {
+    "sampleRate": 48000,
+    "musicLoopSampleCount": 1536000,
+    "musicLoopDurationMs": 32000.0,
+    "recommendedMasterGainDb": -3.0,
+    "duckMusicOnReactionDb": -2.5,
+    "duckAttackMs": 35,
+    "duckReleaseMs": 320
+  },
+  "assets": {
+    "music_base": {
+      "id": "music_base",
+      "category": "music",
+      "loop": true,
+      "durationSeconds": 32.0,
+      "gain": 0.891251,
+      "gainDb": -1.0,
+      "cooldownMs": 0,
+      "polyphony": 1,
+      "rateVariance": 0.0,
+      "reverb": 0.0,
+      "channels": 2,
+      "sampleRate": 48000,
+      "sampleCount": 1536000,
+      "durationMs": 32000.0,
+      "measuredPeakDbfs": -8.1,
+      "measuredRmsDbfs": -18.55,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/music_base.webm",
+          "type": "audio/webm; codecs=opus",
+          "codec": "opus",
+          "bytes": 289762,
+          "sha256": "1c16f9c90198d65c5f186cf4db6b7b2709175eccd1b990831af0f74f75b6672b",
+          "validation": {
+            "decodedSampleCount": 1536000,
+            "decodedPeakDbfs": -7.88,
+            "integratedLufs": -17.0,
+            "truePeakDbfs": -7.9,
+            "decodedSeam": {
+              "boundaryDelta": 8.907e-05,
+              "boundaryVsP95Step": 0.0227,
+              "derivativeDelta": 2e-08
+            }
+          }
+        },
+        {
+          "src": "/audio/niumpi-v1/music_base.m4a",
+          "type": "audio/mp4; codecs=mp4a.40.2",
+          "codec": "aac-lc",
+          "bytes": 399338,
+          "sha256": "b1a14cc99da75b5c50fec8b1024fe5975cd8abcf5e5d2cf3ece9b4b56e918da9",
+          "validation": {
+            "decodedSampleCount": 1536000,
+            "decodedPeakDbfs": -6.98,
+            "integratedLufs": -17.1,
+            "truePeakDbfs": -7.0,
+            "decodedSeam": {
+              "boundaryDelta": 5.755e-05,
+              "boundaryVsP95Step": 0.0147,
+              "derivativeDelta": 3.447e-05
+            }
+          }
+        }
+      ],
+      "loopStartSeconds": 0.0,
+      "loopEndSeconds": 32.0,
+      "seam": {
+        "boundaryDelta": 0.0,
+        "boundaryVsP95Step": 0.0,
+        "derivativeDelta": 1.4e-07
+      }
+    },
+    "music_warmth": {
+      "id": "music_warmth",
+      "category": "music",
+      "loop": true,
+      "durationSeconds": 32.0,
+      "gain": 0.794328,
+      "gainDb": -2.0,
+      "cooldownMs": 0,
+      "polyphony": 1,
+      "rateVariance": 0.0,
+      "reverb": 0.0,
+      "channels": 2,
+      "sampleRate": 48000,
+      "sampleCount": 1536000,
+      "durationMs": 32000.0,
+      "measuredPeakDbfs": -8.01,
+      "measuredRmsDbfs": -21.54,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/music_warmth.webm",
+          "type": "audio/webm; codecs=opus",
+          "codec": "opus",
+          "bytes": 523429,
+          "sha256": "df9ff3a2b99fd322f6d5ec62eaacc35c296f6af746004e909b496983e1402c66",
+          "validation": {
+            "decodedSampleCount": 1536000,
+            "decodedPeakDbfs": -8.04,
+            "integratedLufs": -18.6,
+            "truePeakDbfs": -7.9,
+            "decodedSeam": {
+              "boundaryDelta": 8.369e-05,
+              "boundaryVsP95Step": 0.0041,
+              "derivativeDelta": 8.4e-07
+            }
+          }
+        },
+        {
+          "src": "/audio/niumpi-v1/music_warmth.m4a",
+          "type": "audio/mp4; codecs=mp4a.40.2",
+          "codec": "aac-lc",
+          "bytes": 392948,
+          "sha256": "2218134eacd2ae4e197d75d08ceacf00140ceb07552fe28d4c9408d54120d32e",
+          "validation": {
+            "decodedSampleCount": 1536000,
+            "decodedPeakDbfs": -7.82,
+            "integratedLufs": -18.6,
+            "truePeakDbfs": -7.7,
+            "decodedSeam": {
+              "boundaryDelta": 3.5e-06,
+              "boundaryVsP95Step": 0.0002,
+              "derivativeDelta": 2.367e-05
+            }
+          }
+        }
+      ],
+      "loopStartSeconds": 0.0,
+      "loopEndSeconds": 32.0,
+      "seam": {
+        "boundaryDelta": 0.0,
+        "boundaryVsP95Step": 0.0,
+        "derivativeDelta": 1e-08
+      }
+    },
+    "music_sparkle": {
+      "id": "music_sparkle",
+      "category": "music",
+      "loop": true,
+      "durationSeconds": 32.0,
+      "gain": 0.668344,
+      "gainDb": -3.5,
+      "cooldownMs": 0,
+      "polyphony": 1,
+      "rateVariance": 0.0,
+      "reverb": 0.0,
+      "channels": 2,
+      "sampleRate": 48000,
+      "sampleCount": 1536000,
+      "durationMs": 32000.0,
+      "measuredPeakDbfs": -2.78,
+      "measuredRmsDbfs": -23.17,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/music_sparkle.webm",
+          "type": "audio/webm; codecs=opus",
+          "codec": "opus",
+          "bytes": 336415,
+          "sha256": "ed9e12a2c95179047899e6565eae96649c41836c8a31b390ee25450c06d3aa0e",
+          "validation": {
+            "decodedSampleCount": 1536000,
+            "decodedPeakDbfs": -2.35,
+            "integratedLufs": -18.6,
+            "truePeakDbfs": -2.2,
+            "decodedSeam": {
+              "boundaryDelta": 7.104e-05,
+              "boundaryVsP95Step": 0.0019,
+              "derivativeDelta": 5.35e-05
+            }
+          }
+        },
+        {
+          "src": "/audio/niumpi-v1/music_sparkle.m4a",
+          "type": "audio/mp4; codecs=mp4a.40.2",
+          "codec": "aac-lc",
+          "bytes": 369977,
+          "sha256": "135b95487165b620c8bab80a9df84a5fcf2d8b592aa61283f6f4030471f18c4c",
+          "validation": {
+            "decodedSampleCount": 1536000,
+            "decodedPeakDbfs": -3.39,
+            "integratedLufs": -18.6,
+            "truePeakDbfs": -3.4,
+            "decodedSeam": {
+              "boundaryDelta": 0.00079842,
+              "boundaryVsP95Step": 0.0232,
+              "derivativeDelta": 0.00154226
+            }
+          }
+        }
+      ],
+      "loopStartSeconds": 0.0,
+      "loopEndSeconds": 32.0,
+      "seam": {
+        "boundaryDelta": 0.0,
+        "boundaryVsP95Step": 0.0,
+        "derivativeDelta": 0.0
+      }
+    },
+    "ambience_room": {
+      "id": "ambience_room",
+      "category": "ambience",
+      "loop": true,
+      "durationSeconds": 16.0,
+      "gain": 0.794328,
+      "gainDb": -2.0,
+      "cooldownMs": 0,
+      "polyphony": 1,
+      "rateVariance": 0.0,
+      "reverb": 0.0,
+      "channels": 2,
+      "sampleRate": 48000,
+      "sampleCount": 768000,
+      "durationMs": 16000.0,
+      "measuredPeakDbfs": -18.78,
+      "measuredRmsDbfs": -31.54,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/ambience_room.webm",
+          "type": "audio/webm; codecs=opus",
+          "codec": "opus",
+          "bytes": 146840,
+          "sha256": "21a8615882c943bb5b7f336622dd3505b37239e3341a754e8e616838f6b9f283",
+          "validation": {
+            "decodedSampleCount": 768000,
+            "decodedPeakDbfs": -18.61,
+            "integratedLufs": -30.7,
+            "truePeakDbfs": -18.6,
+            "decodedSeam": {
+              "boundaryDelta": 0.0006928,
+              "boundaryVsP95Step": 0.6006,
+              "derivativeDelta": 2.6e-07
+            }
+          }
+        },
+        {
+          "src": "/audio/niumpi-v1/ambience_room.m4a",
+          "type": "audio/mp4; codecs=mp4a.40.2",
+          "codec": "aac-lc",
+          "bytes": 197708,
+          "sha256": "6768831372bcd35baeaa8c107db9a1fe7a146e529c92894418697c2cc064a382",
+          "validation": {
+            "decodedSampleCount": 768000,
+            "decodedPeakDbfs": -18.81,
+            "integratedLufs": -30.7,
+            "truePeakDbfs": -18.8,
+            "decodedSeam": {
+              "boundaryDelta": 3.61e-06,
+              "boundaryVsP95Step": 0.0031,
+              "derivativeDelta": 3.84e-06
+            }
+          }
+        }
+      ],
+      "loopStartSeconds": 0.0,
+      "loopEndSeconds": 16.0,
+      "seam": {
+        "boundaryDelta": 0.0,
+        "boundaryVsP95Step": 0.0,
+        "derivativeDelta": 0.0
+      }
+    },
+    "ambience_garden": {
+      "id": "ambience_garden",
+      "category": "ambience",
+      "loop": true,
+      "durationSeconds": 16.0,
+      "gain": 0.794328,
+      "gainDb": -2.0,
+      "cooldownMs": 0,
+      "polyphony": 1,
+      "rateVariance": 0.0,
+      "reverb": 0.0,
+      "channels": 2,
+      "sampleRate": 48000,
+      "sampleCount": 768000,
+      "durationMs": 16000.0,
+      "measuredPeakDbfs": -13.11,
+      "measuredRmsDbfs": -30.07,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/ambience_garden.webm",
+          "type": "audio/webm; codecs=opus",
+          "codec": "opus",
+          "bytes": 111585,
+          "sha256": "ae4d7fe259cdc142930198e30fc013d4623eea746af8cb5015bc098745b8f7f1",
+          "validation": {
+            "decodedSampleCount": 768000,
+            "decodedPeakDbfs": -13.2,
+            "integratedLufs": -26.6,
+            "truePeakDbfs": -13.2,
+            "decodedSeam": {
+              "boundaryDelta": 0.00033499,
+              "boundaryVsP95Step": 0.0524,
+              "derivativeDelta": 4.6e-07
+            }
+          }
+        },
+        {
+          "src": "/audio/niumpi-v1/ambience_garden.m4a",
+          "type": "audio/mp4; codecs=mp4a.40.2",
+          "codec": "aac-lc",
+          "bytes": 196194,
+          "sha256": "07488e62dfedf0510d0ba7fb4e599f4630fcbf57565ed9f96066d8fd4452d577",
+          "validation": {
+            "decodedSampleCount": 768000,
+            "decodedPeakDbfs": -13.09,
+            "integratedLufs": -26.7,
+            "truePeakDbfs": -13.1,
+            "decodedSeam": {
+              "boundaryDelta": 1.968e-05,
+              "boundaryVsP95Step": 0.0031,
+              "derivativeDelta": 8.77e-06
+            }
+          }
+        }
+      ],
+      "loopStartSeconds": 0.0,
+      "loopEndSeconds": 16.0,
+      "seam": {
+        "boundaryDelta": 0.0,
+        "boundaryVsP95Step": 0.0,
+        "derivativeDelta": 0.0
+      }
+    },
+    "ui_hover": {
+      "id": "ui_hover",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.115,
+      "gain": 0.891251,
+      "gainDb": -1.0,
+      "cooldownMs": 55,
+      "polyphony": 3,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 5520,
+      "durationMs": 115.0,
+      "measuredPeakDbfs": -9.29,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/ui_hover.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 11084,
+          "sha256": "7de490e9b8ea0ae35a6676e4abe1212d8655545dd71980b6399e469a317dbe30"
+        }
+      ]
+    },
+    "ui_tap": {
+      "id": "ui_tap",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.16,
+      "gain": 0.891251,
+      "gainDb": -1.0,
+      "cooldownMs": 55,
+      "polyphony": 3,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 7680,
+      "durationMs": 160.0,
+      "measuredPeakDbfs": -6.99,
+      "measuredRmsDbfs": -16.61,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/ui_tap.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 15404,
+          "sha256": "0cdd0da2f745d4127f32bab32729ea7fba23f8039fb7aa2c50ba3c16f6fd52b3"
+        }
+      ]
+    },
+    "ui_confirm": {
+      "id": "ui_confirm",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.42,
+      "gain": 0.891251,
+      "gainDb": -1.0,
+      "cooldownMs": 55,
+      "polyphony": 3,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 20160,
+      "durationMs": 420.0,
+      "measuredPeakDbfs": -6.5,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/ui_confirm.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 40364,
+          "sha256": "074193a25c97799d5ffb0b6e818b48d9e64471f7995165346d0e974cded1a60d"
+        }
+      ]
+    },
+    "ui_reward": {
+      "id": "ui_reward",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.82,
+      "gain": 0.891251,
+      "gainDb": -1.0,
+      "cooldownMs": 55,
+      "polyphony": 3,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 39360,
+      "durationMs": 820.0,
+      "measuredPeakDbfs": -7.48,
+      "measuredRmsDbfs": -16.58,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/ui_reward.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 78764,
+          "sha256": "1f3cea216b42cfeee75d795baff00d9ed28e1699a3999fd4a6952741c848f812"
+        }
+      ]
+    },
+    "ui_fail": {
+      "id": "ui_fail",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.38,
+      "gain": 0.891251,
+      "gainDb": -1.0,
+      "cooldownMs": 55,
+      "polyphony": 3,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 18240,
+      "durationMs": 380.0,
+      "measuredPeakDbfs": -7.49,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/ui_fail.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 36524,
+          "sha256": "ec9cd4b718b59c21a920d0d1110f795265581d7c488c184a0a1664f1b177d761"
+        }
+      ]
+    },
+    "pet_soft": {
+      "id": "pet_soft",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.46,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 22080,
+      "durationMs": 460.0,
+      "measuredPeakDbfs": -7.15,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/pet_soft.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 44204,
+          "sha256": "17e096b4d1b5e1b907d5ac23d25b58e820b5410f34edfb66b0831c77c8a0b7d5"
+        }
+      ]
+    },
+    "pet_purr": {
+      "id": "pet_purr",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.95,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 45600,
+      "durationMs": 950.0,
+      "measuredPeakDbfs": -5.94,
+      "measuredRmsDbfs": -16.63,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/pet_purr.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 91244,
+          "sha256": "15a978de38297226466d4baad805e264f798e15f236853e1fefa829dbf7699a3"
+        }
+      ]
+    },
+    "hold_warm": {
+      "id": "hold_warm",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.92,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 44160,
+      "durationMs": 920.0,
+      "measuredPeakDbfs": -6.27,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/hold_warm.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 88364,
+          "sha256": "3d2399875e8ce757e38359d5e0c4ef30cdb7a13fa3117d7662fd57562351a3ab"
+        }
+      ]
+    },
+    "leaf_rustle": {
+      "id": "leaf_rustle",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.58,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 27840,
+      "durationMs": 580.0,
+      "measuredPeakDbfs": -5.99,
+      "measuredRmsDbfs": -21.55,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/leaf_rustle.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 55724,
+          "sha256": "025cd91f05d828f90d94e18a1a5d488ffb6301185c406cd37b5c9ce6cbee04d7"
+        }
+      ]
+    },
+    "eat_anticipate": {
+      "id": "eat_anticipate",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.42,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 20160,
+      "durationMs": 420.0,
+      "measuredPeakDbfs": -10.2,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/eat_anticipate.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 40364,
+          "sha256": "417c16dd7af662dfa84f0bbf0e967172522d4d1940e39437dba82174d77cc957"
+        }
+      ]
+    },
+    "bite_1": {
+      "id": "bite_1",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.205,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 9840,
+      "durationMs": 205.0,
+      "measuredPeakDbfs": -1.0,
+      "measuredRmsDbfs": -18.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/bite_1.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 19724,
+          "sha256": "10774984d3e89e3cfd822a757557059f2295c9bc58686c0edfbf441d7d3c46dc"
+        }
+      ]
+    },
+    "bite_2": {
+      "id": "bite_2",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.22,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 10560,
+      "durationMs": 220.0,
+      "measuredPeakDbfs": -1.0,
+      "measuredRmsDbfs": -17.64,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/bite_2.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 21164,
+          "sha256": "f4584190d6a0dd4eafc98af0a164130192d10f61e6d531c63f4f084977e065f1"
+        }
+      ]
+    },
+    "bite_3": {
+      "id": "bite_3",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.235,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 11280,
+      "durationMs": 235.0,
+      "measuredPeakDbfs": -1.0,
+      "measuredRmsDbfs": -17.13,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/bite_3.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 22604,
+          "sha256": "f9b9603d6e336e4be9cca4faa7c55bb0b151e747710052133ebb0f9557f67853"
+        }
+      ]
+    },
+    "swallow": {
+      "id": "swallow",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.5,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 24000,
+      "durationMs": 500.0,
+      "measuredPeakDbfs": -7.95,
+      "measuredRmsDbfs": -16.57,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/swallow.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 48044,
+          "sha256": "42778b2af54a297ade6f35648f9de44dcee18284ca52cd78bf8c1a98d80e7927"
+        }
+      ]
+    },
+    "happy_peak": {
+      "id": "happy_peak",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.72,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 34560,
+      "durationMs": 720.0,
+      "measuredPeakDbfs": -6.74,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/happy_peak.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 69164,
+          "sha256": "27139f0585a006f931130317492132d7f64b71c16cbdb0b62ba2c0c93bade464"
+        }
+      ]
+    },
+    "sad_drop": {
+      "id": "sad_drop",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.62,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 29760,
+      "durationMs": 620.0,
+      "measuredPeakDbfs": -10.29,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sad_drop.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 59564,
+          "sha256": "928fbc57bcf35169e3df153f688724e7924c4ab727cfb66c21cc4511d37f435b"
+        }
+      ]
+    },
+    "sad_sigh": {
+      "id": "sad_sigh",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.92,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 44160,
+      "durationMs": 920.0,
+      "measuredPeakDbfs": -12.48,
+      "measuredRmsDbfs": -21.51,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sad_sigh.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 88364,
+          "sha256": "9e3b4496c9cc14ce310ebcce5dc9fa1111f0555879c224c94153de3c9c8020be"
+        }
+      ]
+    },
+    "sleep_settle": {
+      "id": "sleep_settle",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.78,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 37440,
+      "durationMs": 780.0,
+      "measuredPeakDbfs": -6.92,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sleep_settle.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 74924,
+          "sha256": "44e7efd962a5847fd9cbf71e5452ce1dcd8a45abbc99889323d2b5b6314206bf"
+        }
+      ]
+    },
+    "sleep_breath": {
+      "id": "sleep_breath",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 1.2,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 57600,
+      "durationMs": 1200.0,
+      "measuredPeakDbfs": -5.42,
+      "measuredRmsDbfs": -21.55,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sleep_breath.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 115244,
+          "sha256": "26d6e2a04a234c30a6de7efc4010e61eccdac19e19500c626127c0511f6b1386"
+        }
+      ]
+    },
+    "sleep_murmur": {
+      "id": "sleep_murmur",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.78,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 37440,
+      "durationMs": 780.0,
+      "measuredPeakDbfs": -15.16,
+      "measuredRmsDbfs": -21.51,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sleep_murmur.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 74924,
+          "sha256": "472d085ad8cf402f7698f2f3171b18edaeb1a64083459f08393b7d7c507b6f76"
+        }
+      ]
+    },
+    "wake_rise": {
+      "id": "wake_rise",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.74,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 35520,
+      "durationMs": 740.0,
+      "measuredPeakDbfs": -7.08,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/wake_rise.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 71084,
+          "sha256": "cf62f9bb9b77c7b1fba7983eb52626929cfb297a67b9c59a79549ab9a96fab7c"
+        }
+      ]
+    },
+    "wash_splash": {
+      "id": "wash_splash",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.52,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 24960,
+      "durationMs": 520.0,
+      "measuredPeakDbfs": -5.48,
+      "measuredRmsDbfs": -16.61,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/wash_splash.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 49964,
+          "sha256": "dc1a3c16787e3235df50f36ee708ec59c6a17d9c00ac3b7462ba2b7f0900f8d8"
+        }
+      ]
+    },
+    "wash_brush": {
+      "id": "wash_brush",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.74,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 35520,
+      "durationMs": 740.0,
+      "measuredPeakDbfs": -2.84,
+      "measuredRmsDbfs": -16.67,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/wash_brush.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 71084,
+          "sha256": "7f7ea1c8ec99ac4b8668f33bacbf082c9cbc7ffb97bb8226391316132ef15415"
+        }
+      ]
+    },
+    "look_left": {
+      "id": "look_left",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.27,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 12960,
+      "durationMs": 270.0,
+      "measuredPeakDbfs": -6.4,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/look_left.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 25964,
+          "sha256": "c62393e7bd320185b8b76fedde9dc1413a5c461a2ba7dd8f2b7dc44f3cbf4891"
+        }
+      ]
+    },
+    "look_right": {
+      "id": "look_right",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.27,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 12960,
+      "durationMs": 270.0,
+      "measuredPeakDbfs": -6.66,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/look_right.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 25964,
+          "sha256": "56b05b68e70e9b317f47bd80d6ed8877ed7fe0f2c1a951bb7b0236788ec857c1"
+        }
+      ]
+    },
+    "lamp_reach": {
+      "id": "lamp_reach",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.32,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 15360,
+      "durationMs": 320.0,
+      "measuredPeakDbfs": -7.53,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/lamp_reach.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 30764,
+          "sha256": "3256e637e28ea55477993ca7df78fe7f250e2e1cbcf5f61c6c362c1b5b15ed1d"
+        }
+      ]
+    },
+    "lamp_glow": {
+      "id": "lamp_glow",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.88,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 42240,
+      "durationMs": 880.0,
+      "measuredPeakDbfs": -7.59,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/lamp_glow.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 84524,
+          "sha256": "8fac5a5b6adfbf3be9cd3f88f653d41cabef0e0b8ea53b2d01ed6efd1cdf46e0"
+        }
+      ]
+    },
+    "book_open": {
+      "id": "book_open",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.48,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 23040,
+      "durationMs": 480.0,
+      "measuredPeakDbfs": -4.47,
+      "measuredRmsDbfs": -16.62,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/book_open.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 46124,
+          "sha256": "1f9021da8d4ece31ebd873fadd8e8b70037ce1ba05a9661e5868cce6ef35d7fb"
+        }
+      ]
+    },
+    "page_turn": {
+      "id": "page_turn",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.41,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 19680,
+      "durationMs": 410.0,
+      "measuredPeakDbfs": -4.71,
+      "measuredRmsDbfs": -16.62,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/page_turn.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 39404,
+          "sha256": "a85b789d08224b511237142d54ae31204496bd059466976488241f754cc185d7"
+        }
+      ]
+    },
+    "book_discovery": {
+      "id": "book_discovery",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.92,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 44160,
+      "durationMs": 920.0,
+      "measuredPeakDbfs": -6.16,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/book_discovery.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 88364,
+          "sha256": "f39cf4fe38a655c4da941c3bdc57ed48dbaffa0dc38ccfe65cd7ca804c12cb63"
+        }
+      ]
+    },
+    "book_close": {
+      "id": "book_close",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.34,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 16320,
+      "durationMs": 340.0,
+      "measuredPeakDbfs": -5.0,
+      "measuredRmsDbfs": -16.62,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/book_close.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 32684,
+          "sha256": "f6bf427d7e639b8f270bc3be903a9bf0d764e8be3e3d964dfc8286cda47800dd"
+        }
+      ]
+    },
+    "dance_beat_1": {
+      "id": "dance_beat_1",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.2,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 9600,
+      "durationMs": 200.0,
+      "measuredPeakDbfs": -9.09,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/dance_beat_1.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 19244,
+          "sha256": "73272da2aba2593c51443afc79be93cc85a55b445e4bb4a5c60b8e24228f00e3"
+        }
+      ]
+    },
+    "dance_beat_2": {
+      "id": "dance_beat_2",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.2,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 9600,
+      "durationMs": 200.0,
+      "measuredPeakDbfs": -9.07,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/dance_beat_2.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 19244,
+          "sha256": "7ec3aa5b1aae2944899cf4edd3daa58f0aa81ffefd0d4e4ec228ada36bf5cab7"
+        }
+      ]
+    },
+    "dance_beat_3": {
+      "id": "dance_beat_3",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.2,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 9600,
+      "durationMs": 200.0,
+      "measuredPeakDbfs": -8.9,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/dance_beat_3.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 19244,
+          "sha256": "dc4eb03bf541739b080a1d57549623d012f90ad54997858848596aef69214ee9"
+        }
+      ]
+    },
+    "dance_beat_4": {
+      "id": "dance_beat_4",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.25,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 12000,
+      "durationMs": 250.0,
+      "measuredPeakDbfs": -8.45,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/dance_beat_4.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 24044,
+          "sha256": "8214ddf8705fafb2f69db816ced79ce83047020e70798677e1f8bb8ded52e647"
+        }
+      ]
+    },
+    "dance_air": {
+      "id": "dance_air",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.43,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 20640,
+      "durationMs": 430.0,
+      "measuredPeakDbfs": -7.54,
+      "measuredRmsDbfs": -16.58,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/dance_air.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 41324,
+          "sha256": "508f5a70beb0929dca0dc4d8b3cc4ccc2b603285f07a46d40665c2e0936e7fc6"
+        }
+      ]
+    },
+    "dance_land": {
+      "id": "dance_land",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.3,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 14400,
+      "durationMs": 300.0,
+      "measuredPeakDbfs": -7.05,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/dance_land.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 28844,
+          "sha256": "910f6b625a15b698aaa3cc0ffe68efec1b31837360738e610c44f09b555d6256"
+        }
+      ]
+    },
+    "sing_inhale": {
+      "id": "sing_inhale",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.43,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 20640,
+      "durationMs": 430.0,
+      "measuredPeakDbfs": -8.51,
+      "measuredRmsDbfs": -21.53,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sing_inhale.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 41324,
+          "sha256": "d70da05b9ebc65c40f18d759ad8546ea4e8fec584afad0bfb9954cb00eba65d2"
+        }
+      ]
+    },
+    "sing_phrase_1": {
+      "id": "sing_phrase_1",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.78,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 37440,
+      "durationMs": 780.0,
+      "measuredPeakDbfs": -6.96,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sing_phrase_1.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 74924,
+          "sha256": "0e63d05ff1090b865ec22e5fec53aea9510c1e9052f130f63f4b12770b0c3a9b"
+        }
+      ]
+    },
+    "sing_phrase_2": {
+      "id": "sing_phrase_2",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.82,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 39360,
+      "durationMs": 820.0,
+      "measuredPeakDbfs": -6.64,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sing_phrase_2.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 78764,
+          "sha256": "dcbc64e4aab6051cd7c7f786bc9d021e192ef47eee96c525d206610b13d66cf4"
+        }
+      ]
+    },
+    "sing_phrase_3": {
+      "id": "sing_phrase_3",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.96,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 46080,
+      "durationMs": 960.0,
+      "measuredPeakDbfs": -6.18,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sing_phrase_3.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 92204,
+          "sha256": "c9211a3b8d42f803246738e6c673473e6517ebfef3281c00d8e1fa7dfbbfe7a0"
+        }
+      ]
+    },
+    "sing_hold": {
+      "id": "sing_hold",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 1.28,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 61440,
+      "durationMs": 1280.0,
+      "measuredPeakDbfs": -11.25,
+      "measuredRmsDbfs": -16.55,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sing_hold.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 122924,
+          "sha256": "cf4c524f06064f80cbcf5d02a7fe746c52b009f467899cb9398ff04d74c4d298"
+        }
+      ]
+    },
+    "sing_release": {
+      "id": "sing_release",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.46,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 22080,
+      "durationMs": 460.0,
+      "measuredPeakDbfs": -7.21,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/sing_release.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 44204,
+          "sha256": "4fb65f36d7ff65935c65bbbf45388a92bba81075443abe58a583298786aed505"
+        }
+      ]
+    },
+    "roll_launch": {
+      "id": "roll_launch",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.42,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 20160,
+      "durationMs": 420.0,
+      "measuredPeakDbfs": -10.03,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/roll_launch.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 40364,
+          "sha256": "12fd49de3e67b8cc94767e39a40150682ef7f10bb656c0fa788309c6f790cacd"
+        }
+      ]
+    },
+    "roll_contact": {
+      "id": "roll_contact",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.24,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 11520,
+      "durationMs": 240.0,
+      "measuredPeakDbfs": -9.36,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/roll_contact.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 23084,
+          "sha256": "ae247a17fe44b2d53f1f730017d6407b872b483dba9dad153363ed958036b19a"
+        }
+      ]
+    },
+    "roll_half": {
+      "id": "roll_half",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.34,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 16320,
+      "durationMs": 340.0,
+      "measuredPeakDbfs": -9.96,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/roll_half.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 32684,
+          "sha256": "d1519e52ce0ea2671fd9fd160216b0de279ce1e67f7c8a9de45e503bc9c256e1"
+        }
+      ]
+    },
+    "roll_land": {
+      "id": "roll_land",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.32,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 15360,
+      "durationMs": 320.0,
+      "measuredPeakDbfs": -8.62,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/roll_land.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 30764,
+          "sha256": "4118896a9376749ed8ba09173064d509f3f198a859a424a24c7236ccc0b7fe8d"
+        }
+      ]
+    },
+    "roll_dizzy": {
+      "id": "roll_dizzy",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.76,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 36480,
+      "durationMs": 760.0,
+      "measuredPeakDbfs": -6.54,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/roll_dizzy.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 73004,
+          "sha256": "7a30648f45e2e03c49eef52695f9b51452ca5e0b4616384eb48a43aacdf8b956"
+        }
+      ]
+    },
+    "travel_depart": {
+      "id": "travel_depart",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.56,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 26880,
+      "durationMs": 560.0,
+      "measuredPeakDbfs": -10.05,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/travel_depart.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 53804,
+          "sha256": "c96cb20f831af1624b10e12331ec971da6074510de85cf782127b432449a04c6"
+        }
+      ]
+    },
+    "travel_pulse_1": {
+      "id": "travel_pulse_1",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.4,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 19200,
+      "durationMs": 400.0,
+      "measuredPeakDbfs": -7.36,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/travel_pulse_1.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 38444,
+          "sha256": "d8a72f2922787205113674e084de0960727c08cdd5a7b3fa90dff3bd0d475c7e"
+        }
+      ]
+    },
+    "travel_pulse_2": {
+      "id": "travel_pulse_2",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.4,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 19200,
+      "durationMs": 400.0,
+      "measuredPeakDbfs": -7.55,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/travel_pulse_2.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 38444,
+          "sha256": "5b95494c5bce2934de675da7efe3ce8d6e009e0b095eeed7f38b2a0773956dad"
+        }
+      ]
+    },
+    "travel_apex": {
+      "id": "travel_apex",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.66,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 31680,
+      "durationMs": 660.0,
+      "measuredPeakDbfs": -6.02,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/travel_apex.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 63404,
+          "sha256": "314c5696dba46865cd5f56908b4ecb8be7f91a04e21ad5a44bdaae67ea593b99"
+        }
+      ]
+    },
+    "travel_land": {
+      "id": "travel_land",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.36,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 17280,
+      "durationMs": 360.0,
+      "measuredPeakDbfs": -8.86,
+      "measuredRmsDbfs": -16.56,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/travel_land.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 34604,
+          "sha256": "fa85cb418c0f58d632b32324fd07aca192b4581da7fb63bd8551b2529ad6ed0b"
+        }
+      ]
+    },
+    "travel_arrive": {
+      "id": "travel_arrive",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.62,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 29760,
+      "durationMs": 620.0,
+      "measuredPeakDbfs": -6.42,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/travel_arrive.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 59564,
+          "sha256": "7334bfaeb56f9425aa268c5045610042304c0a6e6b043f498e420574a1f3eb2d"
+        }
+      ]
+    },
+    "cozy_contact": {
+      "id": "cozy_contact",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.42,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 20160,
+      "durationMs": 420.0,
+      "measuredPeakDbfs": -7.45,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/cozy_contact.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 40364,
+          "sha256": "5503ef4e46f6fca4eb3b673045164497dd33289936398784d7e24bdb8125891b"
+        }
+      ]
+    },
+    "cozy_sigh": {
+      "id": "cozy_sigh",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.76,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 36480,
+      "durationMs": 760.0,
+      "measuredPeakDbfs": -12.11,
+      "measuredRmsDbfs": -21.51,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/cozy_sigh.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 73004,
+          "sha256": "c94d01c9d431247b53918e1ceb2e0be1afee90e20954a3134e4b142d25fe5aa8"
+        }
+      ]
+    },
+    "cozy_release": {
+      "id": "cozy_release",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.42,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 20160,
+      "durationMs": 420.0,
+      "measuredPeakDbfs": -7.55,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/cozy_release.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 40364,
+          "sha256": "5c4e7eb9bf5e267b45493b47a6a44dac65ed77606e74d6f1d55bf3e8a6d3c5f4"
+        }
+      ]
+    },
+    "hatch_reveal": {
+      "id": "hatch_reveal",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 2.2,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 105600,
+      "durationMs": 2200.0,
+      "measuredPeakDbfs": -3.9,
+      "measuredRmsDbfs": -15.64,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/hatch_reveal.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 211244,
+          "sha256": "d1ecb1c31b9f974f8e7e0b9588dca3c7d8552114c21692155496ed1856674a92"
+        }
+      ]
+    },
+    "hatch_settled": {
+      "id": "hatch_settled",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 0.88,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 42240,
+      "durationMs": 880.0,
+      "measuredPeakDbfs": -6.4,
+      "measuredRmsDbfs": -16.6,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/hatch_settled.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 84524,
+          "sha256": "40323da346d0437b7fffe2063f676ffae740d020b4b924a9bc202272cf9f3258"
+        }
+      ]
+    },
+    "evolve_rise": {
+      "id": "evolve_rise",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 2.84,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 136320,
+      "durationMs": 2840.0,
+      "measuredPeakDbfs": -5.65,
+      "measuredRmsDbfs": -15.61,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/evolve_rise.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 272684,
+          "sha256": "1dbb513107a53da05722f39ddf746b354d2acb0446697e2e601c43d8c473ed72"
+        }
+      ]
+    },
+    "loot_rare": {
+      "id": "loot_rare",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 1.04,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 49920,
+      "durationMs": 1040.0,
+      "measuredPeakDbfs": -6.75,
+      "measuredRmsDbfs": -16.59,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/loot_rare.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 99884,
+          "sha256": "469e3c1545908d4d863088f027c731e44f60c0f60e375e9c5c8c213f09e42e76"
+        }
+      ]
+    },
+    "loot_legendary": {
+      "id": "loot_legendary",
+      "category": "effects",
+      "loop": false,
+      "durationSeconds": 1.62,
+      "gain": 1.0,
+      "gainDb": 0.0,
+      "cooldownMs": 55,
+      "polyphony": 2,
+      "rateVariance": 0.018,
+      "reverb": 0.08,
+      "channels": 1,
+      "sampleRate": 48000,
+      "sampleCount": 77760,
+      "durationMs": 1620.0,
+      "measuredPeakDbfs": -4.21,
+      "measuredRmsDbfs": -15.67,
+      "sources": [
+        {
+          "src": "/audio/niumpi-v1/loot_legendary.wav",
+          "type": "audio/wav",
+          "codec": "pcm_s16le",
+          "bytes": 155564,
+          "sha256": "84ca7f00a8c40717e92f64190cfd76d20cfe279bad6a5203285069faf2ea9d08"
+        }
+      ]
+    }
+  },
+  "cueMap": {
+    "hover": [
+      "ui_hover"
+    ],
+    "tap": [
+      "ui_tap"
+    ],
+    "confirm": [
+      "ui_confirm"
+    ],
+    "reward": [
+      "ui_reward"
+    ],
+    "fail": [
+      "ui_fail"
+    ],
+    "pet": [
+      "pet_soft",
+      "pet_purr"
+    ],
+    "hold": [
+      "hold_warm"
+    ],
+    "leaf": [
+      "leaf_rustle"
+    ],
+    "eat.anticipate": [
+      "eat_anticipate"
+    ],
+    "eat.bite": [
+      "bite_1",
+      "bite_2",
+      "bite_3"
+    ],
+    "eat.swallow": [
+      "swallow"
+    ],
+    "joy_peak": [
+      "happy_peak"
+    ],
+    "sad_drop": [
+      "sad_drop"
+    ],
+    "sad_sigh": [
+      "sad_sigh"
+    ],
+    "sleep_eyes_closed": [
+      "sleep_settle"
+    ],
+    "sleep_breath": [
+      "sleep_breath"
+    ],
+    "sleep_murmur": [
+      "sleep_murmur"
+    ],
+    "sleep_exit": [
+      "wake_rise"
+    ],
+    "wash.splash": [
+      "wash_splash"
+    ],
+    "wash.brush": [
+      "wash_brush"
+    ],
+    "look.left": [
+      "look_left"
+    ],
+    "look.right": [
+      "look_right"
+    ],
+    "lamp_reach": [
+      "lamp_reach"
+    ],
+    "lamp_contact": [
+      "ui_tap"
+    ],
+    "lamp_glow": [
+      "lamp_glow"
+    ],
+    "lamp_release": [
+      "ui_hover"
+    ],
+    "book_open": [
+      "book_open"
+    ],
+    "page_turn": [
+      "page_turn"
+    ],
+    "book_discovery": [
+      "book_discovery"
+    ],
+    "book_close": [
+      "book_close"
+    ],
+    "dance_beat": [
+      "dance_beat_1",
+      "dance_beat_2",
+      "dance_beat_3",
+      "dance_beat_4"
+    ],
+    "dance_airborne": [
+      "dance_air"
+    ],
+    "dance_contact": [
+      "dance_land"
+    ],
+    "sing_inhale": [
+      "sing_inhale"
+    ],
+    "sing_vocal_phrase": [
+      "sing_phrase_1",
+      "sing_phrase_2",
+      "sing_phrase_3"
+    ],
+    "sing_held_note": [
+      "sing_hold"
+    ],
+    "sing_release": [
+      "sing_release"
+    ],
+    "roll_launch": [
+      "roll_launch"
+    ],
+    "roll_contact": [
+      "roll_contact"
+    ],
+    "roll_half": [
+      "roll_half"
+    ],
+    "roll_land": [
+      "roll_land"
+    ],
+    "roll_dizzy": [
+      "roll_dizzy"
+    ],
+    "travel_depart": [
+      "travel_depart"
+    ],
+    "travel_pulse": [
+      "travel_pulse_1",
+      "travel_pulse_2"
+    ],
+    "travel_apex": [
+      "travel_apex"
+    ],
+    "travel_land": [
+      "travel_land"
+    ],
+    "travel_arrive": [
+      "travel_arrive"
+    ],
+    "cozy_contact": [
+      "cozy_contact"
+    ],
+    "cozy_curl": [
+      "pet_purr"
+    ],
+    "cozy_sigh": [
+      "cozy_sigh"
+    ],
+    "cozy_release": [
+      "cozy_release"
+    ],
+    "hatch_reveal": [
+      "hatch_reveal"
+    ],
+    "hatch_settled": [
+      "hatch_settled"
+    ],
+    "evolution_rise": [
+      "evolve_rise"
+    ],
+    "loot_rare": [
+      "loot_rare"
+    ],
+    "loot_legendary": [
+      "loot_legendary"
+    ]
+  }
+}

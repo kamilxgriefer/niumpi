@@ -16,8 +16,9 @@ import { ensureFriends } from "../game/friends";
 import { recordWeatherDay, reunion } from "../game/actions";
 import type { ActionResult } from "../game/actions";
 import { chooseLine, rememberLine } from "../game/reactions";
+import { moodFor } from "../game/mood";
 import { setTimeMultiplier } from "../game/time";
-import { playCue } from "./audio";
+import { mountAudioRuntime, playCue, syncSoundscape } from "./audio";
 import type { CueName } from "./audio";
 import { NiumpiAnimationController } from "../anim/NiumpiAnimationController";
 import type { AnimState } from "../anim/NiumpiAnimationController";
@@ -49,7 +50,7 @@ type GameContextValue = {
   toasts: Toast[];
   reward: RewardCard;
   dismissReward: () => void;
-  cue: (name: CueName) => void;
+  cue: (name: CueName, options?: { force?: boolean; source?: "ui" | "action" | "animation" | "system" }) => void;
   /** Reads wall-clock time. Stable, so calling it is never a render-time impurity. */
   clock: () => number;
   isOpen: (scene: SceneId) => { open: boolean; note: string };
@@ -113,6 +114,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const booted = useRef(false);
   // One controller for the whole session: scenes attach and detach, it persists.
   const [controller] = useState(() => new NiumpiAnimationController());
+  const audioMood = moodFor(state, now);
 
   useEffect(() => {
     latest.current = state;
@@ -150,9 +152,42 @@ export function GameProvider({ children }: { children: ReactNode }) {
     later(() => setSparks((current) => current.filter((spark) => !born.has(spark.id))), SPARK_LIFE);
   }, [later]);
 
-  const cue = useCallback((name: CueName) => {
-    if (latest.current?.profile.settings.sound) playCue(name);
+  const cue = useCallback((name: CueName, options: { force?: boolean; source?: "ui" | "action" | "animation" | "system" } = {}) => {
+    if (options.force || latest.current?.profile.settings.sound) void playCue(name, options);
   }, []);
+
+  /* One musical clock and event bridge for the whole game session. */
+  useEffect(() => mountAudioRuntime(), []);
+
+  /* Saved settings and the live world continuously orchestrate the same score. */
+  useEffect(() => {
+    if (!ready) return;
+    syncSoundscape({
+      scene,
+      stage: state.niumpi.stage,
+      route: state.evolution.lockedRoute,
+      mood: audioMood,
+      weather: state.weather.key,
+      sleeping: state.niumpi.sleeping,
+      lampOn: state.niumpi.lampOn,
+      musicEnabled: state.profile.settings.sound && state.profile.settings.music,
+      effectsEnabled: state.profile.settings.sound && state.profile.settings.effects,
+      lowPower: state.profile.settings.lowPower,
+    });
+  }, [
+    audioMood,
+    ready,
+    scene,
+    state.evolution.lockedRoute,
+    state.niumpi.lampOn,
+    state.niumpi.sleeping,
+    state.niumpi.stage,
+    state.profile.settings.effects,
+    state.profile.settings.lowPower,
+    state.profile.settings.music,
+    state.profile.settings.sound,
+    state.weather.key,
+  ]);
 
   const showReward = useCallback((title: string, rewards: Reward[], source = "") => {
     if (!rewards.length) return;
@@ -281,12 +316,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const run = useCallback(<T extends ActionResult>(result: T, source = "") => {
+    const previous = latest.current;
     setState(result.state);
     if (result.message) setMessage(result.message);
     if (result.prop) controller.setActionProp(result.prop);
     if (result.behavior) controller.request(result.behavior as AnimState);
     if (result.spark) burst(result.spark);
-    if (result.sound) cue(result.sound as CueName);
+    const evolved = previous && (
+      previous.niumpi.stage !== result.state.niumpi.stage
+      || previous.evolution.lockedRoute !== result.state.evolution.lockedRoute
+    );
+    if (evolved) cue("evolve", { source: "system" });
+    else if (result.sound) cue(result.sound, { source: "action" });
     result.toasts.forEach((entry) => pushToast(entry.text, entry.icon));
     // Small payouts stay as toasts; a real haul gets a card, titled by the
     // most significant thing in it rather than a generic line.
