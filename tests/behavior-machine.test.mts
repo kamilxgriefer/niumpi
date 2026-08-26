@@ -11,9 +11,9 @@ import type { AnimState } from "../app/anim/NiumpiAnimationController.ts";
 test("every transient behavior traverses anticipation, action and recovery", () => {
   const machine = new NiumpiBehaviorMachine({ seed: "phases", now: 0, idleDelay: [99_000, 99_000] });
   assert.equal(machine.request("dance", 0).snapshot.phase, "anticipation");
-  assert.equal(machine.advance(180).phase, "action");
-  assert.equal(machine.advance(1_980).phase, "recovery");
-  assert.equal(machine.advance(2_330).state, "idle");
+  assert.equal(machine.advance(1_000 / 3).phase, "action");
+  assert.equal(machine.advance(2_500).phase, "recovery");
+  assert.equal(machine.advance(3_000).state, "idle");
 });
 
 test("higher priority interrupts and lower priority cannot steal the character", () => {
@@ -54,15 +54,15 @@ test("cancellation is token-aware and uses the authored recovery", () => {
   const cancelled = machine.cancel(120, sing.token);
   assert.equal(cancelled.accepted, true);
   assert.equal(cancelled.snapshot.phase, "recovery");
-  assert.equal(machine.advance(470).state, "idle");
+  assert.equal(machine.advance(120 + 2_000 / 3).state, "idle");
 });
 
-test("hover has an explicit landing state before returning to idle", () => {
+test("walk, hover and land each use one complete semantic travel performance", () => {
   const machine = new NiumpiBehaviorMachine({ seed: "landing", now: 0, idleDelay: [99_000, 99_000] });
   machine.request("hover", 0);
-  assert.equal(machine.advance(1_800).state, "land");
-  assert.equal(machine.advance(1_940).phase, "action");
-  assert.equal(machine.advance(2_530).state, "idle");
+  assert.equal(machine.advance(2_500).state, "hover");
+  assert.equal(machine.advance(2_500).phase, "recovery");
+  assert.equal(machine.advance(3_000).state, "idle");
 });
 
 test("idle timing and choices replay exactly for the same seed", () => {
@@ -92,6 +92,25 @@ test("timestamps are monotonic even when a stale caller supplies an older clock 
   assert.ok((result.snapshot.phaseEndsAt ?? 0) >= 5_000);
 });
 
+test("a presentation suspension shifts the complete behavior clock without changing phase", () => {
+  const machine = new NiumpiBehaviorMachine({ seed: "shared-clock", now: 100, idleDelay: [99_000, 99_000] });
+  const before = machine.request("read", 100).snapshot;
+  assert.equal(before.phase, "anticipation");
+  assert.equal(before.phaseEndsAt, 600);
+  assert.equal(machine.advance(400).phase, "anticipation", "the root clock may advance while an atlas decodes");
+
+  const resumed = machine.shiftClock(320);
+  assert.equal(resumed.token, before.token);
+  assert.equal(resumed.phase, "anticipation");
+  assert.equal(resumed.enteredAt, 420);
+  assert.equal(resumed.phaseStartedAt, 420);
+  assert.equal(resumed.phaseEndsAt, 920);
+  assert.equal(machine.advance(401).phase, "anticipation", "retiming must not push the sampling cursor into the future");
+  assert.equal(machine.advance(919.9).phase, "anticipation");
+  assert.equal(machine.advance(920).phase, "action");
+  assert.deepEqual(machine.shiftClock(Number.NaN), machine.getSnapshot(), "invalid shifts are inert");
+});
+
 test("mood weights seek matching behavior without forcing false cheer", () => {
   const sad = idleWeightsFor({ mood: "sad", joy: 0.1, energy: 0.7 });
   assert.ok(sad.sad > sad.happy * 20);
@@ -110,13 +129,13 @@ test("sleep is a held system state and waking passes through recovery", () => {
   let snapshot = machine.setContext({ mood: "sleeping" }, 100);
   assert.equal(snapshot.state, "sleep");
   assert.equal(snapshot.phase, "anticipation");
-  snapshot = machine.advance(600);
+  snapshot = machine.advance(100 + 2_000 / 3);
   assert.equal(snapshot.phase, "action");
   assert.equal(snapshot.phaseEndsAt, null);
   snapshot = machine.setContext({ mood: "calm" }, 1_000);
   assert.equal(snapshot.state, "sleep");
   assert.equal(snapshot.phase, "recovery");
-  assert.equal(machine.advance(1_320).state, "idle");
+  assert.equal(machine.advance(1_000 + 2_000 / 3).state, "idle");
 });
 
 test("reduced motion removes travel from idle and shortens explicit reactions", () => {
@@ -155,7 +174,7 @@ test("enabling reduced motion cancels an autonomous high-motion moment", () => {
 
 test("legacy adapter covers every old animation and every semantic state", () => {
   const legacy: AnimState[] = [
-    "idle", "wander", "float", "spin", "curious", "happy", "sleepy", "asleep", "peek", "sway",
+    "idle", "wander", "float", "spin", "curious", "happy", "sleepy", "asleep", "peek", "sway", "cozy-rest",
     "shimmy", "stretch", "ponder", "book", "window", "lamp", "roll", "singing", "eating", "eating-favorite", "hugging",
     "petting", "tickle", "brushing", "dancing", "waking", "hatching", "evolving", "gift", "cooking",
     "gardening", "playing", "returning",

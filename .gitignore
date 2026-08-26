@@ -44,3 +44,15 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
+
+# Niumpi animation working files. Keep the canonical Blender master, compact
+# proof reports, landmarks, manifests and final public atlas pages tracked.
+/art/niumpi/rendered-source/
+/art/niumpi/.semantic-render-workers-current/
+/art/niumpi/motion-proof/*.jpg
+/artifacts/niumpi-animation-proof/
+*.blend1
+*.blend2
+/scripts/niumpi/__pycache__/
+*.pyc
+**/.atlas-build-*/

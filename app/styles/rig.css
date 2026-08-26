@@ -72,10 +72,10 @@
   transition: scale .9s cubic-bezier(.22, 1, .36, 1);
 }
 
-/* Blender character renderer ---------------------------------------------
-   One exported 3D character owns silhouette, face, limbs and leaves. Three.js
-   evaluates Blender's authored curves at display refresh rate; the still art
-   below is only a loading and reduced-motion fallback. */
+/* Production sprite renderer ---------------------------------------------
+   Each Canvas frame comes from a real Blender render in the versioned atlas. The
+   approved still below exists only during loading or failure; reduced motion
+   uses each semantic clip's authored low-motion pose from the same atlas. */
 .nb-frame-art {
   position: relative;
   display: grid;
@@ -94,6 +94,75 @@
   height: 100%;
 }
 .nb-frame-player { display: block; }
+.nb-presentation-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  overflow: visible;
+  pointer-events: none;
+}
+.nb-presentation-prop,
+.nb-presentation-effect {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform-origin: 50% 80%;
+  transition: opacity 90ms linear;
+  --art-1: #9d78e5;
+  --art-2: #f4a8c5;
+  --art-3: #fff8ed;
+}
+.nb-presentation-book {
+  left: 22%;
+  bottom: 13%;
+  width: 21%;
+  aspect-ratio: 1;
+  rotate: -10deg;
+  filter: drop-shadow(0 8px 8px rgb(55 30 86 / 24%));
+}
+.nb-presentation-blanket {
+  left: 17%;
+  right: 17%;
+  bottom: 8%;
+  height: 24%;
+  --art-1: #c6a8f1;
+  --art-2: #f4bfd1;
+  filter: drop-shadow(0 8px 10px rgb(55 30 86 / 18%));
+}
+.nb-presentation-layer[data-presentation-prop="book"] .nb-presentation-book,
+.nb-presentation-layer[data-presentation-prop="cozy-target"] .nb-presentation-blanket {
+  opacity: 1;
+  animation: nb-presentation-settle 420ms cubic-bezier(.2, .8, .2, 1) both;
+}
+.nb-presentation-effect { width: 13%; aspect-ratio: 1; }
+.nb-presentation-glow { right: 20%; top: 38%; --art-1: #ffd36f; --art-2: #fff4b5; }
+.nb-presentation-note { right: 22%; top: 29%; --art-1: #9d78e5; --art-2: #f36f9e; }
+.nb-presentation-dream { right: 19%; top: 28%; --art-1: #8dded0; --art-2: #b89bed; }
+.nb-presentation-travel { left: 16%; bottom: 16%; --art-1: #eef7ff; --art-2: #b8a1e7; }
+.nb-presentation-sigh { right: 21%; top: 33%; width: auto; color: #8260b0; font-weight: 900; letter-spacing: .18em; }
+.nb-presentation-layer[data-presentation-effect="glow"] .nb-presentation-glow,
+.nb-presentation-layer[data-presentation-effect="note"] .nb-presentation-note,
+.nb-presentation-layer[data-presentation-effect="dream"] .nb-presentation-dream,
+.nb-presentation-layer[data-presentation-effect="travel"] .nb-presentation-travel,
+.nb-presentation-layer[data-presentation-effect="sigh"] .nb-presentation-sigh {
+  opacity: 1;
+  animation: nb-presentation-pop 560ms cubic-bezier(.2, .8, .2, 1) both;
+}
+@keyframes nb-presentation-settle {
+  from { scale: .72; translate: 0 12px; }
+  to { scale: 1; translate: 0 0; }
+}
+@keyframes nb-presentation-pop {
+  0% { opacity: 0; scale: .55; translate: 0 9px; }
+  32% { opacity: 1; scale: 1.08; }
+  100% { opacity: .88; scale: 1; translate: 0 -5px; }
+}
+.nb-frame-player.is-reduced .nb-presentation-prop,
+.nb-frame-player.is-reduced .nb-presentation-effect {
+  animation: none !important;
+  transition: none !important;
+}
 .nb-frame-fallback,
 .nb-frame-canvas {
   object-fit: contain;
@@ -106,10 +175,28 @@
 }
 .nb-frame-player.is-ready .nb-frame-canvas { opacity: 1; }
 .nb-frame-player.is-ready .nb-frame-fallback { visibility: hidden; }
-.nb-frame-player.is-reduced .nb-frame-canvas { display: none; }
-.nb-frame-player.is-reduced .nb-frame-fallback { visibility: visible; }
+.nb-frame-player.nb-frame-approved-still .nb-frame-fallback { visibility: visible; }
+.nb-frame-player.is-error .nb-frame-canvas { display: none; }
+.nb-frame-player.is-error .nb-frame-fallback { visibility: visible; }
+.nb-frame-player.is-reduced.is-ready .nb-frame-canvas { display: block; opacity: 1; }
+.nb-frame-player.is-reduced.is-ready .nb-frame-fallback { visibility: hidden; }
+.nb-frame-anchor {
+  position: absolute;
+  z-index: 5;
+  width: 18px;
+  height: 18px;
+  translate: -50% -50%;
+  border: 2px solid #ff4da4;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px white, 0 0 14px rgb(255 77 164 / 70%);
+  pointer-events: none;
+}
+.nb-frame-anchor::before,
+.nb-frame-anchor::after { content: ""; position: absolute; left: 50%; top: 50%; background: #ff4da4; translate: -50% -50%; }
+.nb-frame-anchor::before { width: 28px; height: 2px; }
+.nb-frame-anchor::after { width: 2px; height: 28px; }
 .nb-frame-care { pointer-events: none; overflow: visible; }
-.uses-blender-animation .rig-leaf-touch {
+.uses-sprite-animation .rig-leaf-touch {
   left: 14%;
   top: 0;
   width: 72%;
@@ -117,9 +204,9 @@
   translate: 0 0;
   border-radius: 48% 48% 38% 38%;
 }
-.uses-blender-animation .nb-frame-art,
-.uses-blender-animation .nb-frame-player,
-.uses-blender-animation .nb-frame-canvas { animation: none !important; }
+.uses-sprite-animation .nb-frame-art,
+.uses-sprite-animation .nb-frame-player,
+.uses-sprite-animation .nb-frame-canvas { animation: none !important; }
 
 .nb-cloud-reference {
   opacity: calc(.07 + var(--diet-strength, 0) * .06);
@@ -702,8 +789,8 @@
 .rig-root.is-reduced .layer-aura,
 .rig-root.is-reduced .sleep-wisp,
 .rig-root.is-reduced .layer-particles i { animation: none !important; }
-.rig-root.is-reduced .nb-frame-canvas { display: none; }
-.rig-root.is-reduced .nb-frame-fallback { visibility: visible; }
+.rig-root.is-reduced .nb-frame-player.is-ready .nb-frame-canvas { display: block; opacity: 1; }
+.rig-root.is-reduced .nb-frame-player.is-ready .nb-frame-fallback { visibility: hidden; }
 .rig-root.is-reduced .nb { transition: none; }
 .rig-root.is-reduced .nb-gaze { transition: none; }
 

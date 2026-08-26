@@ -8,11 +8,15 @@ import {
   legacyAnimationForBehavior,
   semanticBehaviorForLegacy,
 } from "./legacyBehaviorAdapter.ts";
+import {
+  NIUMPI_SPRITE_CLOCK_RESUME_EVENT,
+  type SpriteClockResumeDetail,
+} from "./NiumpiSpriteRuntime.ts";
 
 /** Compatibility vocabulary used by game rules and scenes. */
 export type AnimState =
   | "idle" | "wander" | "float" | "spin" | "curious" | "happy" | "sleepy" | "asleep"
-  | "peek" | "sway" | "shimmy" | "stretch" | "ponder"
+  | "peek" | "sway" | "cozy-rest" | "shimmy" | "stretch" | "ponder"
   | "book" | "window" | "lamp" | "roll" | "singing"
   | "eating" | "eating-favorite" | "hugging" | "petting" | "tickle" | "brushing" | "dancing"
   | "waking" | "hatching" | "evolving" | "gift" | "cooking" | "gardening" | "playing" | "returning";
@@ -48,6 +52,17 @@ export class NiumpiAnimationController {
 
   private target = { x: 0, y: 0, gazeX: 0, gazeY: 0 };
   private value = { x: 0, y: 0, vx: 0, vy: 0, gazeX: 0, gazeY: 0, vgx: 0, vgy: 0 };
+  private restPosition = { x: 0, y: 0 };
+
+  private readonly handleSpriteClockResume = (event: Event) => {
+    if (!(event instanceof CustomEvent) || !this.machine) return;
+    const detail = (event as CustomEvent<SpriteClockResumeDetail>).detail;
+    const current = this.machine.getSnapshot();
+    if (!detail || detail.motionToken !== String(current.token) || current.state === "idle") return;
+    const shiftMs = Number(detail.shiftMs);
+    const snapshot = this.machine.shiftClock(Number.isFinite(shiftMs) ? Math.max(0, shiftMs) : 0);
+    if (snapshot) this.applySnapshot(snapshot, true);
+  };
 
   constructor(options: Options = {}) {
     this.options = options;
@@ -56,6 +71,7 @@ export class NiumpiAnimationController {
   attach(root: HTMLElement) {
     if (this.root === root) return;
     this.root = root;
+    root.addEventListener(NIUMPI_SPRITE_CLOCK_RESUME_EVENT, this.handleSpriteClockResume);
     this.reduced = prefersReducedMotion();
     const now = this.now();
     this.machine = new NiumpiBehaviorMachine({
@@ -87,6 +103,7 @@ export class NiumpiAnimationController {
     window.clearTimeout(this.blinkTimer);
     this.unsubscribeMotion?.();
     this.unsubscribeMotion = null;
+    this.root?.removeEventListener(NIUMPI_SPRITE_CLOCK_RESUME_EVENT, this.handleSpriteClockResume);
     this.frame = 0;
     this.root = null;
     this.machine = null;
@@ -140,9 +157,51 @@ export class NiumpiAnimationController {
     if (this.reduced) this.snap();
   }
 
+  /** Scene-owned anchor used when an authored reaction settles back to idle. */
+  setRestPosition(x: number, y: number, moveNow = false) {
+    this.restPosition = { x, y };
+    if (moveNow) this.setPosition(x, y);
+  }
+
+  returnToRestPosition() {
+    this.setPosition(this.restPosition.x, this.restPosition.y);
+    this.setGaze(0, 0);
+  }
+
+  /**
+   * Scene-owned locomotion target. The behavior machine still owns the travel
+   * phases; these data markers make the selected destination and actual spring
+   * translation inspectable without leaking room state into animation state.
+   */
+  setTravelDestination(destination: string, x: number, y: number) {
+    if (this.root) {
+      this.root.dataset.travelDestination = destination;
+      this.root.dataset.travelOriginX = this.value.x.toFixed(2);
+      this.root.dataset.travelOriginY = this.value.y.toFixed(2);
+      this.root.dataset.travelDestinationX = String(x);
+      this.root.dataset.travelDestinationY = String(y);
+      this.root.dataset.travelTranslationSuppressed = String(this.reduced);
+    }
+    if (this.reduced) {
+      // The room still changes and the semantic travel pose still plays, but
+      // reduced motion never translates the whole creature across the scene.
+      this.restPosition = { x: 0, y: 0 };
+      this.setPosition(0, 0);
+      this.setGaze(0, 0);
+    } else {
+      this.restPosition = { x, y };
+      this.setPosition(x, y);
+      this.setGaze(Math.sign(x - this.value.x) * 10, y < this.value.y ? -3 : 0);
+    }
+  }
+
   setGaze(x: number, y: number) {
     this.target.gazeX = x;
     this.target.gazeY = y;
+    if (this.root) {
+      this.root.dataset.gazeTargetX = String(x);
+      this.root.dataset.gazeTargetY = String(y);
+    }
     if (this.reduced) this.snap();
   }
 
@@ -195,6 +254,9 @@ export class NiumpiAnimationController {
     root.dataset.anim = snapshot.state;
     root.dataset.phase = snapshot.phase;
     root.dataset.motionToken = String(snapshot.token);
+    root.dataset.motionEnteredAt = snapshot.enteredAt.toFixed(3);
+    root.dataset.phaseStartedAt = snapshot.phaseStartedAt.toFixed(3);
+    root.dataset.phaseEndsAt = snapshot.phaseEndsAt === null ? "none" : snapshot.phaseEndsAt.toFixed(3);
     root.className = root.className
       .replace(/\bbehavior-[\w-]+/g, "")
       .replace(/\bphase-[\w-]+/g, "")

@@ -28,6 +28,12 @@ const roomArt: Record<RoomId, string> = {
   "play-nook": "playful",
 };
 
+const roomTravelTargets: Record<RoomId, { x: number; y: number }> = {
+  "living-room": { x: -46, y: 1 },
+  bedroom: { x: 48, y: -5 },
+  "play-nook": { x: 8, y: -14 },
+};
+
 const activityCopy: Record<RoomActivityId, { label: string; art: string }> = {
   read: { label: "Story time", art: "book" },
   window: { label: "Watch the clouds", art: "window" },
@@ -75,13 +81,14 @@ export function RoomScene() {
     return item?.reaction ? [{ entry, item }] : [];
   });
 
-  /* The controller is shared between scenes. A room must always begin from
-     its own safe floor anchor rather than inheriting a window/look offset from
-     Home or another room. Room interactions can move it again afterwards. */
+  /* The controller is shared between scenes. Entering Room starts at its safe
+     floor anchor; later room switches deliberately keep their own travel
+     destination instead of being reset by the active-room state update. */
   useEffect(() => {
-    controller.setPosition(0, 0);
+    controller.setRestPosition(0, 0, true);
     controller.setGaze(0, 0);
-  }, [controller, state.room.activeRoomId]);
+    return () => { controller.setRestPosition(0, 0, true); };
+  }, [controller]);
 
   /** Grid coordinates from a pointer position, clamped inside the room. */
   function cellAt(uid: string, clientX: number, clientY: number) {
@@ -140,8 +147,14 @@ export function RoomScene() {
 
   function enterRoom(roomId: RoomId) {
     if (roomId === state.room.activeRoomId || (mode === "edit" && dirty)) return;
-    const result = run(switchRoom(state, roomId, clock()));
-    if (result.refused) return;
+    const result = switchRoom(state, roomId, clock());
+    if (result.refused) {
+      run(result);
+      return;
+    }
+    const destination = roomTravelTargets[roomId];
+    controller.setTravelDestination(roomId, destination.x, destination.y);
+    run(result);
     setTheme(result.state.room.theme);
     setPlaced(result.state.room.placed);
     setSelected(null);

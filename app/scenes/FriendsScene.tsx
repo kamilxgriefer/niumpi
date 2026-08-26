@@ -7,6 +7,7 @@ import { useGame } from "../ui/GameProvider";
 import { SOCIAL_BACKEND, canGift, markVisited, sendGift } from "../game/friends";
 import { routeMap } from "../game/config/routes";
 import { NiumpiBody } from "../ui/niumpi/NiumpiBody";
+import { friendAvatarIsAnimated } from "../ui/niumpi/NiumpiAvatarBudget";
 import { profileFor } from "../game/config/growth";
 import { recordCare } from "../game/care";
 import { progressMissions } from "../game/missions";
@@ -62,7 +63,7 @@ export function FriendsScene() {
       )}
 
       <ul className="friend-list">
-        {state.friends.map((entry) => {
+        {state.friends.map((entry, index) => {
           const route = routeMap[entry.route];
           const giftable = canGift(entry, now) && state.inventory.currencies.dewdrops >= 5;
           return (
@@ -72,7 +73,11 @@ export function FriendsScene() {
                   the same creature — the thing that makes a world feel
                   inhabited is that the others are recognisably different. */}
               <span className={`friend-avatar body-${entry.route} morph-${entry.route}`} aria-hidden="true">
-                <NiumpiBody profile={profileFor(friendStage(entry.id))} morphology={entry.route} />
+                <NiumpiBody
+                  profile={profileFor(friendStage(entry.id))}
+                  morphology={entry.route}
+                  animated={friendAvatarIsAnimated(index, visiting !== null)}
+                />
               </span>
               <div className="friend-copy">
                 <strong>{entry.name}</strong>

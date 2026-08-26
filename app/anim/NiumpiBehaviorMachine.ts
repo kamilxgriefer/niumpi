@@ -3,7 +3,7 @@ import { hashSeed, makeRng } from "../game/rng.ts";
 /** Semantic behavior vocabulary. Rendering engines translate this, never own it. */
 export type NiumpiBehavior =
   | "idle" | "walk" | "hover" | "land" | "look" | "pet" | "happy" | "sad"
-  | "eat" | "eat-favorite" | "sleep" | "dance" | "sing" | "read" | "lamp" | "roll";
+  | "eat" | "eat-favorite" | "sleep" | "dance" | "sing" | "read" | "lamp" | "roll" | "cozy";
 
 export type BehaviorPhase = "anticipation" | "action" | "recovery";
 export type BehaviorSource = "autonomous" | "user" | "system";
@@ -26,23 +26,25 @@ type BehaviorDefinition = {
 
 const DEFINITIONS: Record<NiumpiBehavior, BehaviorDefinition> = {
   idle: { priority: 0, phases: { anticipation: 0, action: null, recovery: 0 } },
-  walk: { priority: 1, phases: { anticipation: 160, action: 1_100, recovery: 240 } },
-  hover: { priority: 1, phases: { anticipation: 200, action: 1_300, recovery: 300 }, next: "land" },
-  land: { priority: 2, phases: { anticipation: 140, action: 350, recovery: 240 } },
+  // Walk/hover/land are scene meanings for one complete authored travel clip.
+  walk: { priority: 1, phases: { anticipation: 1_000 / 3, action: 2_000, recovery: 2_000 / 3 } },
+  hover: { priority: 1, phases: { anticipation: 1_000 / 3, action: 2_000, recovery: 2_000 / 3 } },
+  land: { priority: 1, phases: { anticipation: 1_000 / 3, action: 2_000, recovery: 2_000 / 3 } },
   // A curious glance is a small performance: eyes lead, the body follows,
   // then the pose settles. The authored 12-frame clip needs room to breathe.
   look: { priority: 1, phases: { anticipation: 180, action: 1800, recovery: 320 } },
   pet: { priority: 4, phases: { anticipation: 150, action: 1_400, recovery: 300 } },
   happy: { priority: 2, phases: { anticipation: 100, action: 1_000, recovery: 300 } },
-  sad: { priority: 3, phases: { anticipation: 160, action: 1_200, recovery: 350 } },
+  sad: { priority: 3, phases: { anticipation: 250, action: 1_250, recovery: 500 } },
   eat: { priority: 4, phases: { anticipation: 450, action: 2_150, recovery: 400 } },
   "eat-favorite": { priority: 4, phases: { anticipation: 450, action: 3_050, recovery: 500 } },
-  sleep: { priority: 5, phases: { anticipation: 500, action: null, recovery: 320 } },
-  dance: { priority: 2, phases: { anticipation: 180, action: 1_800, recovery: 350 } },
-  sing: { priority: 2, phases: { anticipation: 160, action: 2_200, recovery: 350 } },
-  read: { priority: 2, phases: { anticipation: 180, action: 2_600, recovery: 400 } },
-  lamp: { priority: 2, phases: { anticipation: 140, action: 1_600, recovery: 300 } },
-  roll: { priority: 2, phases: { anticipation: 180, action: 1_200, recovery: 320 } },
+  sleep: { priority: 5, phases: { anticipation: 2_000 / 3, action: null, recovery: 2_000 / 3 } },
+  dance: { priority: 2, phases: { anticipation: 1_000 / 3, action: 13_000 / 6, recovery: 500 } },
+  sing: { priority: 2, phases: { anticipation: 1_000 / 3, action: 3_000, recovery: 2_000 / 3 } },
+  read: { priority: 2, phases: { anticipation: 500, action: 7_000 / 3, recovery: 2_000 / 3 } },
+  lamp: { priority: 2, phases: { anticipation: 1_000 / 3, action: 1_000, recovery: 2_000 / 3 } },
+  roll: { priority: 2, phases: { anticipation: 1_000 / 3, action: 1_500, recovery: 2_000 / 3 } },
+  cozy: { priority: 3, phases: { anticipation: 500, action: 5_500 / 3, recovery: 2_000 / 3 } },
 };
 
 export const behaviorDefinitions: Readonly<Record<NiumpiBehavior, BehaviorDefinition>> = DEFINITIONS;
@@ -94,6 +96,7 @@ export function idleWeightsFor(
     read: 0.55 + context.curiosity * 0.9,
     lamp: 0.45,
     roll: 0.12 + context.playfulness * context.energy * 1.2,
+    cozy: 0,
   };
 
   if (context.mood === "excited") {
@@ -271,6 +274,23 @@ export class NiumpiBehaviorMachine {
       const remaining = Math.max(0, this.active.phaseEndsAt - at);
       this.active.phaseEndsAt = at + Math.min(remaining, this.durationFor(this.active.state, this.active.phase));
     }
+    return this.getSnapshot();
+  }
+
+  /**
+   * Retimes an active behavior whose presentation atlas resumed before that
+   * behavior ended. The sampling cursor (`lastNow`) remains wall-clock based;
+   * only the authored phase boundaries move forward with the sprite clock.
+   */
+  shiftClock(deltaMs: number): BehaviorSnapshot {
+    if (!Number.isFinite(deltaMs) || deltaMs <= 0) return this.getSnapshot();
+    this.active = {
+      ...this.active,
+      enteredAt: this.active.enteredAt + deltaMs,
+      phaseStartedAt: this.active.phaseStartedAt + deltaMs,
+      phaseEndsAt: this.active.phaseEndsAt === null ? null : this.active.phaseEndsAt + deltaMs,
+    };
+    if (this.nextIdleAt !== null) this.nextIdleAt += deltaMs;
     return this.getSnapshot();
   }
 

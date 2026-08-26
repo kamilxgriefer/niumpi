@@ -108,8 +108,7 @@ export function CompanionStage({ targeting = false, onDropFood, children, compac
     const unsubscribe = controller.subscribeState((next) => {
       setRoomMoment(next);
       if (next === "idle") {
-        controller.setPosition(0, 0);
-        controller.setGaze(0, 0);
+        controller.returnToRestPosition();
       }
     });
     // subscribeState hands back Set.delete, which returns a boolean — an effect

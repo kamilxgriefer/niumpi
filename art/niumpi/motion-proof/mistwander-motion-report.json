@@ -1,0 +1,818 @@
+{
+  "schemaVersion": 2,
+  "gate": "B+C",
+  "variant": "mistwander",
+  "manifestVariant": "mistwander",
+  "approvedVariant": "mistwander",
+  "requiredClips": [
+    "idle",
+    "blink",
+    "look_left",
+    "look_right",
+    "tap_reaction",
+    "happy",
+    "eat"
+  ],
+  "fps": 24,
+  "canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "anchor": {
+    "x": 256,
+    "y": 478
+  },
+  "manifest": "public/assets/niumpi/v2/mistwander/manifest.json",
+  "approvedCanvas": {
+    "width": 640,
+    "height": 665
+  },
+  "semanticRegions": {
+    "head": [
+      0.182812,
+      0.318797,
+      0.69375,
+      0.687218
+    ],
+    "body": [
+      0.167187,
+      0.606015,
+      0.709375,
+      0.906767
+    ],
+    "tail": [
+      0.5,
+      0.601504,
+      0.88125,
+      0.983459
+    ],
+    "arm.L": [
+      0.15,
+      0.577444,
+      0.329688,
+      0.75188
+    ],
+    "arm.R": [
+      0.546875,
+      0.577444,
+      0.870312,
+      0.75188
+    ],
+    "eyes": [
+      0.325,
+      0.482707,
+      0.557813,
+      0.583458
+    ],
+    "feet": [
+      0.373437,
+      0.866165,
+      0.701563,
+      0.983458
+    ],
+    "leaf": [
+      0.207813,
+      0.010526,
+      0.840626,
+      0.451128
+    ]
+  },
+  "thresholds": {
+    "appearanceAlphaIoU": 0.82,
+    "appearanceColourMAE": 22.0,
+    "appearanceEdgePrecision": 0.9,
+    "appearanceEdgeRecall": 0.76,
+    "appearanceEdgeF1": 0.82,
+    "appearanceEdgeTolerancePx": 2,
+    "uniqueFrameRatio": 0.72,
+    "rootAlignedDifference": 1.35,
+    "regionalDifference": 1.6,
+    "maxAffineExplainedWhenResidualLow": 0.9,
+    "atlasAlphaMAE": 0.0,
+    "atlasForegroundRGBMAE": 2.5,
+    "atlasForegroundRGBPSNR": 38.0,
+    "maxCentralAlphaTearRatio": 0.22
+  },
+  "appearanceFidelity": {
+    "approvedReference": "public/assets/niumpi/forms/mistwander.webp",
+    "renderedReferencePose": "art/niumpi/rendered-source/mistwander/idle/0000.png",
+    "alphaIoU": 0.973,
+    "normalisedColourMAE": 12.965,
+    "edgeIoU": 0.9245,
+    "rawEdgeIoU": 0.1918,
+    "edgePrecision": 0.9843,
+    "edgeRecall": 0.8714,
+    "edgeTolerancePx": 2,
+    "result": "PASS",
+    "reasons": []
+  },
+  "clips": {
+    "idle": {
+      "frameCount": 72,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/mistwander/idle",
+      "characterExtentPx": {
+        "width": 299,
+        "height": 414
+      },
+      "approvedCharacterHeightPx": 498.141,
+      "uniqueFrameRatio": 0.9861,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.location[1]",
+        "body_squash.rotation_euler[2]",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.location[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "rootDisplacementPx": 4.064,
+      "rootAlignedDifference": 10.934,
+      "globalAffineExplainedRatio": 0.191,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0205,
+        "maxRunPx": 3,
+        "row": 216,
+        "scanY0": 216,
+        "scanY1": 320
+      },
+      "regionalMovement": {
+        "head": 13.676,
+        "body": 9.424,
+        "tail": 8.187,
+        "arm.L": 15.293,
+        "arm.R": 6.94,
+        "eyes": 9.304,
+        "feet": 14.111,
+        "leaf": 13.856
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "tail",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "feet",
+        "leaf"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/mistwander/atlases/idle-0-70bc432faf6a.webp",
+          "public/assets/niumpi/v2/mistwander/atlases/idle-1-fa0e68e08232.webp"
+        ],
+        "sampledFrames": [
+          0,
+          18,
+          36,
+          54,
+          71
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 2.15396,
+        "foregroundRGBPSNR": 38.3305,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "blink": {
+      "frameCount": 12,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/mistwander/blink",
+      "characterExtentPx": {
+        "width": 299,
+        "height": 414
+      },
+      "approvedCharacterHeightPx": 498.141,
+      "uniqueFrameRatio": 1.0,
+      "animatedControls": [
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "cheek.L.location[1]",
+        "cheek.R.location[1]",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 0.021,
+      "rootAlignedDifference": 1.728,
+      "globalAffineExplainedRatio": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0,
+        "maxRunPx": 0,
+        "row": -1,
+        "scanY0": 216,
+        "scanY1": 320
+      },
+      "regionalMovement": {
+        "head": 4.975,
+        "body": 1.663,
+        "tail": 1.905,
+        "arm.L": 2.37,
+        "arm.R": 2.681,
+        "eyes": 10.243,
+        "feet": 1.192,
+        "leaf": 1.578
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "tail",
+        "arm.L",
+        "arm.R",
+        "eyes"
+      ],
+      "blinkClosure": 1.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/mistwander/atlases/blink-0-1a7ae9b78e9a.webp"
+        ],
+        "sampledFrames": [
+          0,
+          3,
+          6,
+          9,
+          11
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 2.088387,
+        "foregroundRGBPSNR": 38.5304,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "look_left": {
+      "frameCount": 24,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/mistwander/look_left",
+      "characterExtentPx": {
+        "width": 299,
+        "height": 414
+      },
+      "approvedCharacterHeightPx": 498.141,
+      "uniqueFrameRatio": 0.9583,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.rotation_euler[2]",
+        "head.location[0]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "rootDisplacementPx": 1.44,
+      "rootAlignedDifference": 10.366,
+      "globalAffineExplainedRatio": 0.2433,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0337,
+        "maxRunPx": 6,
+        "row": 247,
+        "scanY0": 216,
+        "scanY1": 320
+      },
+      "regionalMovement": {
+        "head": 15.148,
+        "body": 14.774,
+        "tail": 15.897,
+        "arm.L": 16.956,
+        "arm.R": 17.309,
+        "eyes": 13.396,
+        "feet": 25.171,
+        "leaf": 10.458
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "tail",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "feet",
+        "leaf"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/mistwander/atlases/look_left-0-c4a56eaa7062.webp"
+        ],
+        "sampledFrames": [
+          0,
+          6,
+          12,
+          18,
+          23
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 2.136769,
+        "foregroundRGBPSNR": 38.2522,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "look_right": {
+      "frameCount": 24,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/mistwander/look_right",
+      "characterExtentPx": {
+        "width": 299,
+        "height": 414
+      },
+      "approvedCharacterHeightPx": 498.141,
+      "uniqueFrameRatio": 0.9583,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.rotation_euler[2]",
+        "head.location[0]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "rootDisplacementPx": 1.596,
+      "rootAlignedDifference": 10.54,
+      "globalAffineExplainedRatio": 0.2302,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0488,
+        "maxRunPx": 8,
+        "row": 225,
+        "scanY0": 216,
+        "scanY1": 320
+      },
+      "regionalMovement": {
+        "head": 14.823,
+        "body": 13.578,
+        "tail": 15.324,
+        "arm.L": 14.847,
+        "arm.R": 19.125,
+        "eyes": 12.218,
+        "feet": 20.805,
+        "leaf": 11.507
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "tail",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "feet",
+        "leaf"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/mistwander/atlases/look_right-0-707434798421.webp"
+        ],
+        "sampledFrames": [
+          0,
+          6,
+          12,
+          18,
+          23
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 2.128963,
+        "foregroundRGBPSNR": 38.433,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "tap_reaction": {
+      "frameCount": 40,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/mistwander/tap_reaction",
+      "characterExtentPx": {
+        "width": 299,
+        "height": 414
+      },
+      "approvedCharacterHeightPx": 498.141,
+      "uniqueFrameRatio": 0.975,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "body_squash",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "body_squash.rotation_euler[2]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 38.823,
+      "rootAlignedDifference": 26.039,
+      "globalAffineExplainedRatio": 0.4736,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0388,
+        "maxRunPx": 8,
+        "row": 292,
+        "scanY0": 216,
+        "scanY1": 320
+      },
+      "regionalMovement": {
+        "head": 47.894,
+        "body": 47.525,
+        "tail": 52.211,
+        "arm.L": 42.785,
+        "arm.R": 46.85,
+        "eyes": 48.149,
+        "feet": 61.828,
+        "leaf": 51.081
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "tail",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "feet",
+        "leaf"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/mistwander/atlases/tap_reaction-0-ed6f75bc51d9.webp"
+        ],
+        "sampledFrames": [
+          0,
+          10,
+          20,
+          30,
+          39
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 2.14586,
+        "foregroundRGBPSNR": 38.2509,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "happy": {
+      "frameCount": 56,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/mistwander/happy",
+      "characterExtentPx": {
+        "width": 299,
+        "height": 414
+      },
+      "approvedCharacterHeightPx": 498.141,
+      "uniqueFrameRatio": 0.9821,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "body_squash",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "body_squash.rotation_euler[2]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 43.256,
+      "rootAlignedDifference": 37.083,
+      "globalAffineExplainedRatio": 0.4715,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.1049,
+        "maxRunPx": 15,
+        "row": 218,
+        "scanY0": 216,
+        "scanY1": 320
+      },
+      "regionalMovement": {
+        "head": 46.475,
+        "body": 50.396,
+        "tail": 53.981,
+        "arm.L": 59.808,
+        "arm.R": 48.553,
+        "eyes": 48.519,
+        "feet": 63.509,
+        "leaf": 54.803
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "tail",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "feet",
+        "leaf"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/mistwander/atlases/happy-0-dab9486342ba.webp"
+        ],
+        "sampledFrames": [
+          0,
+          14,
+          28,
+          42,
+          55
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 2.148235,
+        "foregroundRGBPSNR": 38.263,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "eat": {
+      "frameCount": 84,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/mistwander/eat",
+      "characterExtentPx": {
+        "width": 299,
+        "height": 414
+      },
+      "approvedCharacterHeightPx": 498.141,
+      "uniqueFrameRatio": 1.0,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.location[1]",
+        "arm.L.rotation_euler[2]",
+        "arm.R.location[1]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.scale[0]",
+        "mouth.scale[1]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 11.116,
+      "rootAlignedDifference": 12.225,
+      "globalAffineExplainedRatio": 0.5195,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0132,
+        "maxRunPx": 2,
+        "row": 223,
+        "scanY0": 216,
+        "scanY1": 320
+      },
+      "regionalMovement": {
+        "head": 10.719,
+        "body": 13.382,
+        "tail": 16.807,
+        "arm.L": 28.299,
+        "arm.R": 36.888,
+        "eyes": 6.788,
+        "feet": 7.609,
+        "leaf": 8.889
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "tail",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "feet",
+        "leaf"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/mistwander/atlases/eat-0-c5aa60fc0ab7.webp",
+          "public/assets/niumpi/v2/mistwander/atlases/eat-1-94fa6160a69e.webp"
+        ],
+        "sampledFrames": [
+          0,
+          21,
+          42,
+          63,
+          83
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 2.165098,
+        "foregroundRGBPSNR": 38.3141,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    }
+  },
+  "missing": [],
+  "failed": [],
+  "result": "PASS"
+}

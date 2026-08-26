@@ -1,0 +1,6830 @@
+{
+  "schemaVersion": 1,
+  "coordinateSystem": {
+    "origin": "top-left",
+    "pixelUnits": "source canvas pixels",
+    "normalizedUnits": "x / canvas.width, y / canvas.height",
+    "bboxFormat": "x,y,width,height"
+  },
+  "method": {
+    "alphaThreshold": 8,
+    "notes": [
+      "All dimensions are decoded from each approved WebP; no 640x640 assumption.",
+      "Eye and pupil landmarks come from connected dark/chromatic facial components.",
+      "Pearl limbs use alpha, luminance and saturation constrained semantic bands.",
+      "Primary leaf tips are radial maxima of upper coloured alpha components."
+    ]
+  },
+  "variants": {
+    "stage-1": {
+      "source": "public/assets/niumpi/stages/stage-1.webp",
+      "sourceBytes": 42426,
+      "sha256": "de368021d456a17d5951923bc6e23c572effe4a529d52abf3dbc02d301c23e9a",
+      "topology": {
+        "canonicalPrimaryLeaves": 1,
+        "detectedPrimaryLeaves": 1,
+        "armsPresent": false,
+        "notes": [
+          "No visible arms; do not synthesize arm regions from side body lobes."
+        ]
+      },
+      "canvas": {
+        "width": 640,
+        "height": 640
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 142,
+          "y": 45,
+          "width": 374,
+          "height": 519
+        },
+        "bboxNormalized": {
+          "x": 0.221875,
+          "y": 0.070313,
+          "width": 0.584375,
+          "height": 0.810937
+        },
+        "coverage": 0.285935
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 230.81,
+            "y": 361.32
+          },
+          "normalized": {
+            "x": 0.360641,
+            "y": 0.564556
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 363.11,
+            "y": 353.18
+          },
+          "normalized": {
+            "x": 0.567352,
+            "y": 0.551848
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 231.09,
+            "y": 354.29
+          },
+          "normalized": {
+            "x": 0.361084,
+            "y": 0.553585
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 363.21,
+            "y": 346.89
+          },
+          "normalized": {
+            "x": 0.56752,
+            "y": 0.542011
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 294.7,
+            "y": 395.97
+          },
+          "normalized": {
+            "x": 0.460474,
+            "y": 0.618697
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 204.76,
+            "y": 409.21
+          },
+          "normalized": {
+            "x": 0.319941,
+            "y": 0.639391
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 383.4,
+            "y": 397.66
+          },
+          "normalized": {
+            "x": 0.599056,
+            "y": 0.621342
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 273.25,
+            "y": 527.1
+          },
+          "normalized": {
+            "x": 0.42695,
+            "y": 0.823588
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 374.42,
+            "y": 524.85
+          },
+          "normalized": {
+            "x": 0.58503,
+            "y": 0.820076
+          }
+        },
+        "head": {
+          "px": {
+            "x": 317.78,
+            "y": 356.74
+          },
+          "normalized": {
+            "x": 0.496537,
+            "y": 0.557411
+          }
+        },
+        "body": {
+          "px": {
+            "x": 325.15,
+            "y": 462.55
+          },
+          "normalized": {
+            "x": 0.508052,
+            "y": 0.722727
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 379.82,
+            "y": 205
+          },
+          "normalized": {
+            "x": 0.593461,
+            "y": 0.320313
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 449,
+            "y": 45
+          },
+          "normalized": {
+            "x": 0.701562,
+            "y": 0.070313
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 142,
+            "y": 243,
+            "width": 333,
+            "height": 224
+          },
+          "bboxNormalized": {
+            "x": 0.221875,
+            "y": 0.379688,
+            "width": 0.520312,
+            "height": 0.35
+          },
+          "center": {
+            "px": {
+              "x": 317.78,
+              "y": 356.74
+            },
+            "normalized": {
+              "x": 0.496537,
+              "y": 0.557411
+            }
+          },
+          "alphaCoverage": 0.9298
+        },
+        "body": {
+          "bboxPx": {
+            "x": 144,
+            "y": 413,
+            "width": 341,
+            "height": 115
+          },
+          "bboxNormalized": {
+            "x": 0.225,
+            "y": 0.645312,
+            "width": 0.532813,
+            "height": 0.179688
+          },
+          "center": {
+            "px": {
+              "x": 325.15,
+              "y": 462.55
+            },
+            "normalized": {
+              "x": 0.508052,
+              "y": 0.722727
+            }
+          },
+          "alphaCoverage": 0.7838
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 203,
+            "y": 326,
+            "width": 55,
+            "height": 70
+          },
+          "bboxNormalized": {
+            "x": 0.317188,
+            "y": 0.509375,
+            "width": 0.085938,
+            "height": 0.109375
+          },
+          "center": {
+            "px": {
+              "x": 230.81,
+              "y": 361.32
+            },
+            "normalized": {
+              "x": 0.360641,
+              "y": 0.564556
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 330,
+            "y": 319,
+            "width": 68,
+            "height": 71
+          },
+          "bboxNormalized": {
+            "x": 0.515625,
+            "y": 0.498437,
+            "width": 0.10625,
+            "height": 0.110937
+          },
+          "center": {
+            "px": {
+              "x": 363.11,
+              "y": 353.18
+            },
+            "normalized": {
+              "x": 0.567352,
+              "y": 0.551848
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 203,
+            "y": 326,
+            "width": 55,
+            "height": 59
+          },
+          "bboxNormalized": {
+            "x": 0.317188,
+            "y": 0.509375,
+            "width": 0.085938,
+            "height": 0.092188
+          },
+          "center": {
+            "px": {
+              "x": 231.09,
+              "y": 354.29
+            },
+            "normalized": {
+              "x": 0.361084,
+              "y": 0.553585
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 331,
+            "y": 319,
+            "width": 67,
+            "height": 63
+          },
+          "bboxNormalized": {
+            "x": 0.517188,
+            "y": 0.498437,
+            "width": 0.104688,
+            "height": 0.098437
+          },
+          "center": {
+            "px": {
+              "x": 363.21,
+              "y": 346.89
+            },
+            "normalized": {
+              "x": 0.56752,
+              "y": 0.542011
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 270,
+            "y": 377,
+            "width": 46,
+            "height": 39
+          },
+          "bboxNormalized": {
+            "x": 0.421875,
+            "y": 0.589063,
+            "width": 0.071875,
+            "height": 0.060937
+          },
+          "center": {
+            "px": {
+              "x": 294.7,
+              "y": 395.97
+            },
+            "normalized": {
+              "x": 0.460474,
+              "y": 0.618697
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 150,
+            "y": 372,
+            "width": 136,
+            "height": 80
+          },
+          "bboxNormalized": {
+            "x": 0.234375,
+            "y": 0.58125,
+            "width": 0.2125,
+            "height": 0.125
+          },
+          "center": {
+            "px": {
+              "x": 204.76,
+              "y": 409.21
+            },
+            "normalized": {
+              "x": 0.319941,
+              "y": 0.639391
+            }
+          },
+          "alphaCoverage": 0.9781
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 304,
+            "y": 372,
+            "width": 119,
+            "height": 79
+          },
+          "bboxNormalized": {
+            "x": 0.475,
+            "y": 0.58125,
+            "width": 0.185938,
+            "height": 0.123438
+          },
+          "center": {
+            "px": {
+              "x": 383.4,
+              "y": 397.66
+            },
+            "normalized": {
+              "x": 0.599056,
+              "y": 0.621342
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 222,
+            "y": 501,
+            "width": 75,
+            "height": 63
+          },
+          "bboxNormalized": {
+            "x": 0.346875,
+            "y": 0.782813,
+            "width": 0.117188,
+            "height": 0.098437
+          },
+          "center": {
+            "px": {
+              "x": 273.25,
+              "y": 527.1
+            },
+            "normalized": {
+              "x": 0.42695,
+              "y": 0.823588
+            }
+          },
+          "alphaCoverage": 0.567
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 501,
+            "width": 118,
+            "height": 63
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.782813,
+            "width": 0.184375,
+            "height": 0.098437
+          },
+          "center": {
+            "px": {
+              "x": 374.42,
+              "y": 524.85
+            },
+            "normalized": {
+              "x": 0.58503,
+              "y": 0.820076
+            }
+          },
+          "alphaCoverage": 0.5936
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 232,
+            "y": 45,
+            "width": 219,
+            "height": 160
+          },
+          "bboxNormalized": {
+            "x": 0.3625,
+            "y": 0.070313,
+            "width": 0.342187,
+            "height": 0.25
+          },
+          "center": {
+            "px": {
+              "x": 379.82,
+              "y": 113.25
+            },
+            "normalized": {
+              "x": 0.593461,
+              "y": 0.176948
+            }
+          },
+          "alphaCoverage": 0.5042
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 2633,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 3278,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "stage-2": {
+      "source": "public/assets/niumpi/stages/stage-2.webp",
+      "sourceBytes": 54860,
+      "sha256": "f01a5c4df57e6f97039d5ba89ed0fdc175a515e5d32480ede5018ea73ce20b2f",
+      "topology": {
+        "canonicalPrimaryLeaves": 2,
+        "detectedPrimaryLeaves": 2,
+        "armsPresent": true,
+        "notes": [
+          "Small arms overlap the body silhouette and need reconstructed shoulder overlap for rotation."
+        ]
+      },
+      "canvas": {
+        "width": 640,
+        "height": 640
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 128,
+          "y": 17,
+          "width": 422,
+          "height": 579
+        },
+        "bboxNormalized": {
+          "x": 0.2,
+          "y": 0.026562,
+          "width": 0.659375,
+          "height": 0.904687
+        },
+        "coverage": 0.354402
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 234.99,
+            "y": 358.08
+          },
+          "normalized": {
+            "x": 0.367179,
+            "y": 0.559496
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 359.45,
+            "y": 338.41
+          },
+          "normalized": {
+            "x": 0.561639,
+            "y": 0.528765
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 235.17,
+            "y": 353.07
+          },
+          "normalized": {
+            "x": 0.367448,
+            "y": 0.551677
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 358.04,
+            "y": 332.79
+          },
+          "normalized": {
+            "x": 0.559442,
+            "y": 0.519981
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 295.98,
+            "y": 385.42
+          },
+          "normalized": {
+            "x": 0.46247,
+            "y": 0.602224
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 206.45,
+            "y": 402.23
+          },
+          "normalized": {
+            "x": 0.322582,
+            "y": 0.628492
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 386.43,
+            "y": 395.42
+          },
+          "normalized": {
+            "x": 0.603792,
+            "y": 0.617849
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 272.26,
+            "y": 556.08
+          },
+          "normalized": {
+            "x": 0.425408,
+            "y": 0.868879
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 377.31,
+            "y": 550.12
+          },
+          "normalized": {
+            "x": 0.589542,
+            "y": 0.859561
+          }
+        },
+        "head": {
+          "px": {
+            "x": 312.24,
+            "y": 343.49
+          },
+          "normalized": {
+            "x": 0.48787,
+            "y": 0.536697
+          }
+        },
+        "body": {
+          "px": {
+            "x": 317.59,
+            "y": 468.96
+          },
+          "normalized": {
+            "x": 0.49624,
+            "y": 0.732743
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 374.17,
+            "y": 294
+          },
+          "normalized": {
+            "x": 0.584638,
+            "y": 0.459375
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 174.81,
+            "y": 418.13
+          },
+          "normalized": {
+            "x": 0.273133,
+            "y": 0.653323
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 460.06,
+            "y": 417.03
+          },
+          "normalized": {
+            "x": 0.71884,
+            "y": 0.651616
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 260,
+            "y": 82
+          },
+          "normalized": {
+            "x": 0.40625,
+            "y": 0.128125
+          }
+        },
+        {
+          "px": {
+            "x": 481,
+            "y": 17
+          },
+          "normalized": {
+            "x": 0.751563,
+            "y": 0.026562
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 128,
+            "y": 220,
+            "width": 343,
+            "height": 237
+          },
+          "bboxNormalized": {
+            "x": 0.2,
+            "y": 0.34375,
+            "width": 0.535937,
+            "height": 0.370312
+          },
+          "center": {
+            "px": {
+              "x": 312.24,
+              "y": 343.49
+            },
+            "normalized": {
+              "x": 0.48787,
+              "y": 0.536697
+            }
+          },
+          "alphaCoverage": 0.9125
+        },
+        "body": {
+          "bboxPx": {
+            "x": 128,
+            "y": 403,
+            "width": 353,
+            "height": 150
+          },
+          "bboxNormalized": {
+            "x": 0.2,
+            "y": 0.629687,
+            "width": 0.551562,
+            "height": 0.234375
+          },
+          "center": {
+            "px": {
+              "x": 317.59,
+              "y": 468.96
+            },
+            "normalized": {
+              "x": 0.49624,
+              "y": 0.732743
+            }
+          },
+          "alphaCoverage": 0.8317
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 211,
+            "y": 327,
+            "width": 48,
+            "height": 62
+          },
+          "bboxNormalized": {
+            "x": 0.329688,
+            "y": 0.510938,
+            "width": 0.075,
+            "height": 0.096875
+          },
+          "center": {
+            "px": {
+              "x": 234.99,
+              "y": 358.08
+            },
+            "normalized": {
+              "x": 0.367179,
+              "y": 0.559496
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 328,
+            "y": 305,
+            "width": 66,
+            "height": 69
+          },
+          "bboxNormalized": {
+            "x": 0.5125,
+            "y": 0.476563,
+            "width": 0.103125,
+            "height": 0.107813
+          },
+          "center": {
+            "px": {
+              "x": 359.45,
+              "y": 338.41
+            },
+            "normalized": {
+              "x": 0.561639,
+              "y": 0.528765
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 212,
+            "y": 327,
+            "width": 47,
+            "height": 59
+          },
+          "bboxNormalized": {
+            "x": 0.33125,
+            "y": 0.510938,
+            "width": 0.073438,
+            "height": 0.092188
+          },
+          "center": {
+            "px": {
+              "x": 235.17,
+              "y": 353.07
+            },
+            "normalized": {
+              "x": 0.367448,
+              "y": 0.551677
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 328,
+            "y": 306,
+            "width": 66,
+            "height": 66
+          },
+          "bboxNormalized": {
+            "x": 0.5125,
+            "y": 0.478125,
+            "width": 0.103125,
+            "height": 0.103125
+          },
+          "center": {
+            "px": {
+              "x": 358.04,
+              "y": 332.79
+            },
+            "normalized": {
+              "x": 0.559442,
+              "y": 0.519981
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 269,
+            "y": 366,
+            "width": 48,
+            "height": 38
+          },
+          "bboxNormalized": {
+            "x": 0.420312,
+            "y": 0.571875,
+            "width": 0.075,
+            "height": 0.059375
+          },
+          "center": {
+            "px": {
+              "x": 295.98,
+              "y": 385.42
+            },
+            "normalized": {
+              "x": 0.46247,
+              "y": 0.602224
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 154,
+            "y": 363,
+            "width": 133,
+            "height": 79
+          },
+          "bboxNormalized": {
+            "x": 0.240625,
+            "y": 0.567187,
+            "width": 0.207813,
+            "height": 0.123438
+          },
+          "center": {
+            "px": {
+              "x": 206.45,
+              "y": 402.23
+            },
+            "normalized": {
+              "x": 0.322582,
+              "y": 0.628492
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 305,
+            "y": 363,
+            "width": 141,
+            "height": 79
+          },
+          "bboxNormalized": {
+            "x": 0.476563,
+            "y": 0.567187,
+            "width": 0.220312,
+            "height": 0.123438
+          },
+          "center": {
+            "px": {
+              "x": 386.43,
+              "y": 395.42
+            },
+            "normalized": {
+              "x": 0.603792,
+              "y": 0.617849
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 228,
+            "y": 526,
+            "width": 70,
+            "height": 70
+          },
+          "bboxNormalized": {
+            "x": 0.35625,
+            "y": 0.821875,
+            "width": 0.109375,
+            "height": 0.109375
+          },
+          "center": {
+            "px": {
+              "x": 272.26,
+              "y": 556.08
+            },
+            "normalized": {
+              "x": 0.425408,
+              "y": 0.868879
+            }
+          },
+          "alphaCoverage": 0.6588
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 526,
+            "width": 125,
+            "height": 66
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.821875,
+            "width": 0.195313,
+            "height": 0.103125
+          },
+          "center": {
+            "px": {
+              "x": 377.31,
+              "y": 550.12
+            },
+            "normalized": {
+              "x": 0.589542,
+              "y": 0.859561
+            }
+          },
+          "alphaCoverage": 0.5755
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 159,
+            "y": 17,
+            "width": 345,
+            "height": 277
+          },
+          "bboxNormalized": {
+            "x": 0.248438,
+            "y": 0.026562,
+            "width": 0.539063,
+            "height": 0.432812
+          },
+          "center": {
+            "px": {
+              "x": 374.17,
+              "y": 114.93
+            },
+            "normalized": {
+              "x": 0.584638,
+              "y": 0.179576
+            }
+          },
+          "alphaCoverage": 0.5251
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 128,
+            "y": 378,
+            "width": 90,
+            "height": 81
+          },
+          "bboxNormalized": {
+            "x": 0.2,
+            "y": 0.590625,
+            "width": 0.140625,
+            "height": 0.126562
+          },
+          "center": {
+            "px": {
+              "x": 174.81,
+              "y": 418.13
+            },
+            "normalized": {
+              "x": 0.273133,
+              "y": 0.653323
+            }
+          },
+          "alphaCoverage": 0.9464
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 377,
+            "y": 378,
+            "width": 173,
+            "height": 81
+          },
+          "bboxNormalized": {
+            "x": 0.589063,
+            "y": 0.590625,
+            "width": 0.270313,
+            "height": 0.126562
+          },
+          "center": {
+            "px": {
+              "x": 460.06,
+              "y": 417.03
+            },
+            "normalized": {
+              "x": 0.71884,
+              "y": 0.651616
+            }
+          },
+          "alphaCoverage": 0.9635
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 2058,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 3203,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "stage-3": {
+      "source": "public/assets/niumpi/stages/stage-3.webp",
+      "sourceBytes": 62232,
+      "sha256": "c2fb455c4439b5070dc9282283e0696a1f171d7ccc42e5df29b4246965901174",
+      "topology": {
+        "canonicalPrimaryLeaves": 3,
+        "detectedPrimaryLeaves": 3,
+        "armsPresent": true,
+        "notes": [
+          "Raised hands and three separated crown leaves change the side/top silhouette."
+        ]
+      },
+      "accessories": [],
+      "canvas": {
+        "width": 640,
+        "height": 665
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 106,
+          "y": 9,
+          "width": 427,
+          "height": 616
+        },
+        "bboxNormalized": {
+          "x": 0.165625,
+          "y": 0.013534,
+          "width": 0.667188,
+          "height": 0.926316
+        },
+        "coverage": 0.354431
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 241.52,
+            "y": 374.56
+          },
+          "normalized": {
+            "x": 0.377368,
+            "y": 0.563245
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 355.42,
+            "y": 357.31
+          },
+          "normalized": {
+            "x": 0.555338,
+            "y": 0.537314
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 242.14,
+            "y": 369.84
+          },
+          "normalized": {
+            "x": 0.37834,
+            "y": 0.556152
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 354.9,
+            "y": 351.69
+          },
+          "normalized": {
+            "x": 0.554524,
+            "y": 0.528852
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 296.42,
+            "y": 401.92
+          },
+          "normalized": {
+            "x": 0.463164,
+            "y": 0.604386
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 209.31,
+            "y": 416.67
+          },
+          "normalized": {
+            "x": 0.327047,
+            "y": 0.626565
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 378.11,
+            "y": 400.01
+          },
+          "normalized": {
+            "x": 0.590801,
+            "y": 0.601514
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 273.18,
+            "y": 577.44
+          },
+          "normalized": {
+            "x": 0.426846,
+            "y": 0.868336
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 383.12,
+            "y": 579.82
+          },
+          "normalized": {
+            "x": 0.59863,
+            "y": 0.871903
+          }
+        },
+        "head": {
+          "px": {
+            "x": 314.09,
+            "y": 357.95
+          },
+          "normalized": {
+            "x": 0.490761,
+            "y": 0.538264
+          }
+        },
+        "body": {
+          "px": {
+            "x": 323.06,
+            "y": 488.87
+          },
+          "normalized": {
+            "x": 0.504785,
+            "y": 0.73514
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 393.2,
+            "y": 311
+          },
+          "normalized": {
+            "x": 0.614378,
+            "y": 0.467669
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 176.35,
+            "y": 429.22
+          },
+          "normalized": {
+            "x": 0.275541,
+            "y": 0.645441
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 449.05,
+            "y": 435.99
+          },
+          "normalized": {
+            "x": 0.701644,
+            "y": 0.655623
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 224,
+            "y": 116
+          },
+          "normalized": {
+            "x": 0.35,
+            "y": 0.174436
+          }
+        },
+        {
+          "px": {
+            "x": 474,
+            "y": 9
+          },
+          "normalized": {
+            "x": 0.740625,
+            "y": 0.013534
+          }
+        },
+        {
+          "px": {
+            "x": 524,
+            "y": 156
+          },
+          "normalized": {
+            "x": 0.81875,
+            "y": 0.234586
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 131,
+            "y": 230,
+            "width": 336,
+            "height": 243
+          },
+          "bboxNormalized": {
+            "x": 0.204687,
+            "y": 0.345865,
+            "width": 0.525,
+            "height": 0.365414
+          },
+          "center": {
+            "px": {
+              "x": 314.09,
+              "y": 357.95
+            },
+            "normalized": {
+              "x": 0.490761,
+              "y": 0.538264
+            }
+          },
+          "alphaCoverage": 0.8856
+        },
+        "body": {
+          "bboxPx": {
+            "x": 121,
+            "y": 419,
+            "width": 356,
+            "height": 159
+          },
+          "bboxNormalized": {
+            "x": 0.189062,
+            "y": 0.630075,
+            "width": 0.55625,
+            "height": 0.239098
+          },
+          "center": {
+            "px": {
+              "x": 323.06,
+              "y": 488.87
+            },
+            "normalized": {
+              "x": 0.504785,
+              "y": 0.73514
+            }
+          },
+          "alphaCoverage": 0.7785
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 220,
+            "y": 346,
+            "width": 43,
+            "height": 58
+          },
+          "bboxNormalized": {
+            "x": 0.34375,
+            "y": 0.520301,
+            "width": 0.067187,
+            "height": 0.087218
+          },
+          "center": {
+            "px": {
+              "x": 241.52,
+              "y": 374.56
+            },
+            "normalized": {
+              "x": 0.377368,
+              "y": 0.563245
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 328,
+            "y": 327,
+            "width": 57,
+            "height": 63
+          },
+          "bboxNormalized": {
+            "x": 0.5125,
+            "y": 0.491729,
+            "width": 0.089063,
+            "height": 0.094737
+          },
+          "center": {
+            "px": {
+              "x": 355.42,
+              "y": 357.31
+            },
+            "normalized": {
+              "x": 0.555338,
+              "y": 0.537314
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 221,
+            "y": 346,
+            "width": 42,
+            "height": 51
+          },
+          "bboxNormalized": {
+            "x": 0.345313,
+            "y": 0.520301,
+            "width": 0.065625,
+            "height": 0.076692
+          },
+          "center": {
+            "px": {
+              "x": 242.14,
+              "y": 369.84
+            },
+            "normalized": {
+              "x": 0.37834,
+              "y": 0.556152
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 328,
+            "y": 327,
+            "width": 57,
+            "height": 51
+          },
+          "bboxNormalized": {
+            "x": 0.5125,
+            "y": 0.491729,
+            "width": 0.089063,
+            "height": 0.076692
+          },
+          "center": {
+            "px": {
+              "x": 354.9,
+              "y": 351.69
+            },
+            "normalized": {
+              "x": 0.554524,
+              "y": 0.528852
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 272,
+            "y": 382,
+            "width": 44,
+            "height": 39
+          },
+          "bboxNormalized": {
+            "x": 0.425,
+            "y": 0.574436,
+            "width": 0.06875,
+            "height": 0.058647
+          },
+          "center": {
+            "px": {
+              "x": 296.42,
+              "y": 401.92
+            },
+            "normalized": {
+              "x": 0.463164,
+              "y": 0.604386
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 161,
+            "y": 380,
+            "width": 127,
+            "height": 78
+          },
+          "bboxNormalized": {
+            "x": 0.251563,
+            "y": 0.571429,
+            "width": 0.198437,
+            "height": 0.117293
+          },
+          "center": {
+            "px": {
+              "x": 209.31,
+              "y": 416.67
+            },
+            "normalized": {
+              "x": 0.327047,
+              "y": 0.626565
+            }
+          },
+          "alphaCoverage": 0.9998
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 306,
+            "y": 380,
+            "width": 126,
+            "height": 45
+          },
+          "bboxNormalized": {
+            "x": 0.478125,
+            "y": 0.571429,
+            "width": 0.196875,
+            "height": 0.067669
+          },
+          "center": {
+            "px": {
+              "x": 378.11,
+              "y": 400.01
+            },
+            "normalized": {
+              "x": 0.590801,
+              "y": 0.601514
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 231,
+            "y": 551,
+            "width": 68,
+            "height": 58
+          },
+          "bboxNormalized": {
+            "x": 0.360938,
+            "y": 0.828571,
+            "width": 0.10625,
+            "height": 0.087218
+          },
+          "center": {
+            "px": {
+              "x": 273.18,
+              "y": 577.44
+            },
+            "normalized": {
+              "x": 0.426846,
+              "y": 0.868336
+            }
+          },
+          "alphaCoverage": 0.7033
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 551,
+            "width": 123,
+            "height": 74
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.828571,
+            "width": 0.192188,
+            "height": 0.111278
+          },
+          "center": {
+            "px": {
+              "x": 383.12,
+              "y": 579.82
+            },
+            "normalized": {
+              "x": 0.59863,
+              "y": 0.871903
+            }
+          },
+          "alphaCoverage": 0.5744
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 208,
+            "y": 9,
+            "width": 319,
+            "height": 302
+          },
+          "bboxNormalized": {
+            "x": 0.325,
+            "y": 0.013534,
+            "width": 0.498437,
+            "height": 0.454135
+          },
+          "center": {
+            "px": {
+              "x": 393.2,
+              "y": 145.02
+            },
+            "normalized": {
+              "x": 0.614378,
+              "y": 0.218082
+            }
+          },
+          "alphaCoverage": 0.5802
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 106,
+            "y": 395,
+            "width": 119,
+            "height": 84
+          },
+          "bboxNormalized": {
+            "x": 0.165625,
+            "y": 0.593985,
+            "width": 0.185938,
+            "height": 0.126316
+          },
+          "center": {
+            "px": {
+              "x": 176.35,
+              "y": 429.22
+            },
+            "normalized": {
+              "x": 0.275541,
+              "y": 0.645441
+            }
+          },
+          "alphaCoverage": 0.7378
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 373,
+            "y": 395,
+            "width": 160,
+            "height": 84
+          },
+          "bboxNormalized": {
+            "x": 0.582812,
+            "y": 0.593985,
+            "width": 0.25,
+            "height": 0.126316
+          },
+          "center": {
+            "px": {
+              "x": 449.05,
+              "y": 435.99
+            },
+            "normalized": {
+              "x": 0.701644,
+              "y": 0.655623
+            }
+          },
+          "alphaCoverage": 0.964
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 1707,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 2518,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "stage-4": {
+      "source": "public/assets/niumpi/stages/stage-4.webp",
+      "sourceBytes": 72294,
+      "sha256": "6455782690cd01e7897e9a5ff6b89336d628df12818e75362b0a7120426e3981",
+      "topology": {
+        "canonicalPrimaryLeaves": 5,
+        "detectedPrimaryLeaves": 5,
+        "armsPresent": true,
+        "notes": [
+          "Five-leaf fan spans nearly the complete alpha width above the head."
+        ]
+      },
+      "accessories": [],
+      "canvas": {
+        "width": 640,
+        "height": 672
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 92,
+          "y": 13,
+          "width": 457,
+          "height": 608
+        },
+        "bboxNormalized": {
+          "x": 0.14375,
+          "y": 0.019345,
+          "width": 0.714063,
+          "height": 0.904762
+        },
+        "coverage": 0.377067
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 244.78,
+            "y": 356.47
+          },
+          "normalized": {
+            "x": 0.382471,
+            "y": 0.530468
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 354.48,
+            "y": 338.65
+          },
+          "normalized": {
+            "x": 0.553879,
+            "y": 0.503946
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 245.36,
+            "y": 351.71
+          },
+          "normalized": {
+            "x": 0.383374,
+            "y": 0.52338
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 353.53,
+            "y": 334.47
+          },
+          "normalized": {
+            "x": 0.552395,
+            "y": 0.497719
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 298.1,
+            "y": 382.07
+          },
+          "normalized": {
+            "x": 0.465781,
+            "y": 0.568558
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 232,
+            "y": 390.75
+          },
+          "normalized": {
+            "x": 0.362506,
+            "y": 0.581478
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 368.31,
+            "y": 376.08
+          },
+          "normalized": {
+            "x": 0.575483,
+            "y": 0.559648
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 271.14,
+            "y": 579.91
+          },
+          "normalized": {
+            "x": 0.423659,
+            "y": 0.862954
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 378.86,
+            "y": 576.57
+          },
+          "normalized": {
+            "x": 0.591962,
+            "y": 0.857987
+          }
+        },
+        "head": {
+          "px": {
+            "x": 310.4,
+            "y": 340.15
+          },
+          "normalized": {
+            "x": 0.485003,
+            "y": 0.50617
+          }
+        },
+        "body": {
+          "px": {
+            "x": 313.91,
+            "y": 476.49
+          },
+          "normalized": {
+            "x": 0.490487,
+            "y": 0.709062
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 349.08,
+            "y": 293
+          },
+          "normalized": {
+            "x": 0.545442,
+            "y": 0.436012
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 168.13,
+            "y": 423.67
+          },
+          "normalized": {
+            "x": 0.262704,
+            "y": 0.630468
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 456.14,
+            "y": 424.98
+          },
+          "normalized": {
+            "x": 0.712721,
+            "y": 0.632413
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 157,
+            "y": 158
+          },
+          "normalized": {
+            "x": 0.245312,
+            "y": 0.235119
+          }
+        },
+        {
+          "px": {
+            "x": 225,
+            "y": 74
+          },
+          "normalized": {
+            "x": 0.351563,
+            "y": 0.110119
+          }
+        },
+        {
+          "px": {
+            "x": 443,
+            "y": 13
+          },
+          "normalized": {
+            "x": 0.692187,
+            "y": 0.019345
+          }
+        },
+        {
+          "px": {
+            "x": 516,
+            "y": 135
+          },
+          "normalized": {
+            "x": 0.80625,
+            "y": 0.200893
+          }
+        },
+        {
+          "px": {
+            "x": 516,
+            "y": 241
+          },
+          "normalized": {
+            "x": 0.80625,
+            "y": 0.358631
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 134,
+            "y": 213,
+            "width": 332,
+            "height": 241
+          },
+          "bboxNormalized": {
+            "x": 0.209375,
+            "y": 0.316964,
+            "width": 0.51875,
+            "height": 0.358631
+          },
+          "center": {
+            "px": {
+              "x": 310.4,
+              "y": 340.15
+            },
+            "normalized": {
+              "x": 0.485003,
+              "y": 0.50617
+            }
+          },
+          "alphaCoverage": 0.9057
+        },
+        "body": {
+          "bboxPx": {
+            "x": 124,
+            "y": 400,
+            "width": 352,
+            "height": 175
+          },
+          "bboxNormalized": {
+            "x": 0.19375,
+            "y": 0.595238,
+            "width": 0.55,
+            "height": 0.260417
+          },
+          "center": {
+            "px": {
+              "x": 313.91,
+              "y": 476.49
+            },
+            "normalized": {
+              "x": 0.490487,
+              "y": 0.709062
+            }
+          },
+          "alphaCoverage": 0.8326
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 224,
+            "y": 329,
+            "width": 43,
+            "height": 55
+          },
+          "bboxNormalized": {
+            "x": 0.35,
+            "y": 0.489583,
+            "width": 0.067187,
+            "height": 0.081845
+          },
+          "center": {
+            "px": {
+              "x": 244.78,
+              "y": 356.47
+            },
+            "normalized": {
+              "x": 0.382471,
+              "y": 0.530468
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 328,
+            "y": 310,
+            "width": 56,
+            "height": 59
+          },
+          "bboxNormalized": {
+            "x": 0.5125,
+            "y": 0.46131,
+            "width": 0.0875,
+            "height": 0.087798
+          },
+          "center": {
+            "px": {
+              "x": 354.48,
+              "y": 338.65
+            },
+            "normalized": {
+              "x": 0.553879,
+              "y": 0.503946
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 224,
+            "y": 329,
+            "width": 42,
+            "height": 49
+          },
+          "bboxNormalized": {
+            "x": 0.35,
+            "y": 0.489583,
+            "width": 0.065625,
+            "height": 0.072917
+          },
+          "center": {
+            "px": {
+              "x": 245.36,
+              "y": 351.71
+            },
+            "normalized": {
+              "x": 0.383374,
+              "y": 0.52338
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 328,
+            "y": 311,
+            "width": 56,
+            "height": 50
+          },
+          "bboxNormalized": {
+            "x": 0.5125,
+            "y": 0.462798,
+            "width": 0.0875,
+            "height": 0.074405
+          },
+          "center": {
+            "px": {
+              "x": 353.53,
+              "y": 334.47
+            },
+            "normalized": {
+              "x": 0.552395,
+              "y": 0.497719
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 275,
+            "y": 364,
+            "width": 42,
+            "height": 36
+          },
+          "bboxNormalized": {
+            "x": 0.429688,
+            "y": 0.541667,
+            "width": 0.065625,
+            "height": 0.053571
+          },
+          "center": {
+            "px": {
+              "x": 298.1,
+              "y": 382.07
+            },
+            "normalized": {
+              "x": 0.465781,
+              "y": 0.568558
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 206,
+            "y": 362,
+            "width": 84,
+            "height": 48
+          },
+          "bboxNormalized": {
+            "x": 0.321875,
+            "y": 0.53869,
+            "width": 0.13125,
+            "height": 0.071429
+          },
+          "center": {
+            "px": {
+              "x": 232,
+              "y": 390.75
+            },
+            "normalized": {
+              "x": 0.362506,
+              "y": 0.581478
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 308,
+            "y": 362,
+            "width": 94,
+            "height": 34
+          },
+          "bboxNormalized": {
+            "x": 0.48125,
+            "y": 0.53869,
+            "width": 0.146875,
+            "height": 0.050595
+          },
+          "center": {
+            "px": {
+              "x": 368.31,
+              "y": 376.08
+            },
+            "normalized": {
+              "x": 0.575483,
+              "y": 0.559648
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 233,
+            "y": 548,
+            "width": 67,
+            "height": 70
+          },
+          "bboxNormalized": {
+            "x": 0.364063,
+            "y": 0.815476,
+            "width": 0.104688,
+            "height": 0.104167
+          },
+          "center": {
+            "px": {
+              "x": 271.14,
+              "y": 579.91
+            },
+            "normalized": {
+              "x": 0.423659,
+              "y": 0.862954
+            }
+          },
+          "alphaCoverage": 0.7712
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 548,
+            "width": 125,
+            "height": 73
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.815476,
+            "width": 0.195313,
+            "height": 0.108631
+          },
+          "center": {
+            "px": {
+              "x": 378.86,
+              "y": 576.57
+            },
+            "normalized": {
+              "x": 0.591962,
+              "y": 0.857987
+            }
+          },
+          "alphaCoverage": 0.5367
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 150,
+            "y": 13,
+            "width": 377,
+            "height": 280
+          },
+          "bboxNormalized": {
+            "x": 0.234375,
+            "y": 0.019345,
+            "width": 0.589063,
+            "height": 0.416667
+          },
+          "center": {
+            "px": {
+              "x": 349.08,
+              "y": 140.68
+            },
+            "normalized": {
+              "x": 0.545442,
+              "y": 0.209348
+            }
+          },
+          "alphaCoverage": 0.5478
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 92,
+            "y": 377,
+            "width": 136,
+            "height": 100
+          },
+          "bboxNormalized": {
+            "x": 0.14375,
+            "y": 0.561012,
+            "width": 0.2125,
+            "height": 0.14881
+          },
+          "center": {
+            "px": {
+              "x": 168.13,
+              "y": 423.67
+            },
+            "normalized": {
+              "x": 0.262704,
+              "y": 0.630468
+            }
+          },
+          "alphaCoverage": 0.8467
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 372,
+            "y": 377,
+            "width": 177,
+            "height": 100
+          },
+          "bboxNormalized": {
+            "x": 0.58125,
+            "y": 0.561012,
+            "width": 0.276562,
+            "height": 0.14881
+          },
+          "center": {
+            "px": {
+              "x": 456.14,
+              "y": 424.98
+            },
+            "normalized": {
+              "x": 0.712721,
+              "y": 0.632413
+            }
+          },
+          "alphaCoverage": 0.9562
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 3,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 4,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 1685,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 2293,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "stage-5": {
+      "source": "public/assets/niumpi/stages/stage-5.webp",
+      "sourceBytes": 69302,
+      "sha256": "a6fb26abaf743b49c61520d91a0103ef538ea6588e2d407f45053946bbea5e2a",
+      "topology": {
+        "canonicalPrimaryLeaves": 5,
+        "detectedPrimaryLeaves": 5,
+        "armsPresent": true,
+        "notes": [
+          "Mature arms are broad; the fifth low-right leaf sits close to the head silhouette."
+        ]
+      },
+      "canvas": {
+        "width": 640,
+        "height": 640
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 87,
+          "y": 17,
+          "width": 465,
+          "height": 586
+        },
+        "bboxNormalized": {
+          "x": 0.135937,
+          "y": 0.026562,
+          "width": 0.726563,
+          "height": 0.915625
+        },
+        "coverage": 0.379319
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 241.18,
+            "y": 347
+          },
+          "normalized": {
+            "x": 0.376849,
+            "y": 0.542184
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 363.52,
+            "y": 333
+          },
+          "normalized": {
+            "x": 0.568001,
+            "y": 0.52032
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 241.06,
+            "y": 341.24
+          },
+          "normalized": {
+            "x": 0.376649,
+            "y": 0.533182
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 362.91,
+            "y": 327.55
+          },
+          "normalized": {
+            "x": 0.567042,
+            "y": 0.511794
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 300.41,
+            "y": 376.38
+          },
+          "normalized": {
+            "x": 0.469388,
+            "y": 0.588092
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 215.83,
+            "y": 381.12
+          },
+          "normalized": {
+            "x": 0.337228,
+            "y": 0.595498
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 383.64,
+            "y": 373.54
+          },
+          "normalized": {
+            "x": 0.59944,
+            "y": 0.583661
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 271.67,
+            "y": 560.66
+          },
+          "normalized": {
+            "x": 0.424489,
+            "y": 0.876032
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 382.5,
+            "y": 554.62
+          },
+          "normalized": {
+            "x": 0.59765,
+            "y": 0.866601
+          }
+        },
+        "head": {
+          "px": {
+            "x": 313.09,
+            "y": 334.48
+          },
+          "normalized": {
+            "x": 0.489205,
+            "y": 0.52262
+          }
+        },
+        "body": {
+          "px": {
+            "x": 320.59,
+            "y": 467.9
+          },
+          "normalized": {
+            "x": 0.500926,
+            "y": 0.73109
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 349.28,
+            "y": 286
+          },
+          "normalized": {
+            "x": 0.545748,
+            "y": 0.446875
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 168.8,
+            "y": 409.34
+          },
+          "normalized": {
+            "x": 0.263743,
+            "y": 0.639588
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 457.91,
+            "y": 413.86
+          },
+          "normalized": {
+            "x": 0.715487,
+            "y": 0.646654
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 144,
+            "y": 158
+          },
+          "normalized": {
+            "x": 0.225,
+            "y": 0.246875
+          }
+        },
+        {
+          "px": {
+            "x": 227,
+            "y": 93
+          },
+          "normalized": {
+            "x": 0.354687,
+            "y": 0.145313
+          }
+        },
+        {
+          "px": {
+            "x": 439,
+            "y": 17
+          },
+          "normalized": {
+            "x": 0.685937,
+            "y": 0.026562
+          }
+        },
+        {
+          "px": {
+            "x": 498,
+            "y": 141
+          },
+          "normalized": {
+            "x": 0.778125,
+            "y": 0.220312
+          }
+        },
+        {
+          "px": {
+            "x": 515,
+            "y": 220
+          },
+          "normalized": {
+            "x": 0.804688,
+            "y": 0.34375
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 131,
+            "y": 211,
+            "width": 344,
+            "height": 237
+          },
+          "bboxNormalized": {
+            "x": 0.204687,
+            "y": 0.329688,
+            "width": 0.5375,
+            "height": 0.370312
+          },
+          "center": {
+            "px": {
+              "x": 313.09,
+              "y": 334.48
+            },
+            "normalized": {
+              "x": 0.489205,
+              "y": 0.52262
+            }
+          },
+          "alphaCoverage": 0.9186
+        },
+        "body": {
+          "bboxPx": {
+            "x": 121,
+            "y": 394,
+            "width": 364,
+            "height": 165
+          },
+          "bboxNormalized": {
+            "x": 0.189062,
+            "y": 0.615625,
+            "width": 0.56875,
+            "height": 0.257813
+          },
+          "center": {
+            "px": {
+              "x": 320.59,
+              "y": 467.9
+            },
+            "normalized": {
+              "x": 0.500926,
+              "y": 0.73109
+            }
+          },
+          "alphaCoverage": 0.8317
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 217,
+            "y": 317,
+            "width": 48,
+            "height": 61
+          },
+          "bboxNormalized": {
+            "x": 0.339062,
+            "y": 0.495312,
+            "width": 0.075,
+            "height": 0.095312
+          },
+          "center": {
+            "px": {
+              "x": 241.18,
+              "y": 347
+            },
+            "normalized": {
+              "x": 0.376849,
+              "y": 0.542184
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 334,
+            "y": 302,
+            "width": 63,
+            "height": 64
+          },
+          "bboxNormalized": {
+            "x": 0.521875,
+            "y": 0.471875,
+            "width": 0.098437,
+            "height": 0.1
+          },
+          "center": {
+            "px": {
+              "x": 363.52,
+              "y": 333
+            },
+            "normalized": {
+              "x": 0.568001,
+              "y": 0.52032
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 217,
+            "y": 317,
+            "width": 48,
+            "height": 57
+          },
+          "bboxNormalized": {
+            "x": 0.339062,
+            "y": 0.495312,
+            "width": 0.075,
+            "height": 0.089063
+          },
+          "center": {
+            "px": {
+              "x": 241.06,
+              "y": 341.24
+            },
+            "normalized": {
+              "x": 0.376649,
+              "y": 0.533182
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 334,
+            "y": 302,
+            "width": 62,
+            "height": 60
+          },
+          "bboxNormalized": {
+            "x": 0.521875,
+            "y": 0.471875,
+            "width": 0.096875,
+            "height": 0.09375
+          },
+          "center": {
+            "px": {
+              "x": 362.91,
+              "y": 327.55
+            },
+            "normalized": {
+              "x": 0.567042,
+              "y": 0.511794
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 275,
+            "y": 359,
+            "width": 46,
+            "height": 35
+          },
+          "bboxNormalized": {
+            "x": 0.429688,
+            "y": 0.560937,
+            "width": 0.071875,
+            "height": 0.054688
+          },
+          "center": {
+            "px": {
+              "x": 300.41,
+              "y": 376.38
+            },
+            "normalized": {
+              "x": 0.469388,
+              "y": 0.588092
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 161,
+            "y": 355,
+            "width": 131,
+            "height": 68
+          },
+          "bboxNormalized": {
+            "x": 0.251563,
+            "y": 0.554688,
+            "width": 0.204687,
+            "height": 0.10625
+          },
+          "center": {
+            "px": {
+              "x": 215.83,
+              "y": 381.12
+            },
+            "normalized": {
+              "x": 0.337228,
+              "y": 0.595498
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 310,
+            "y": 355,
+            "width": 122,
+            "height": 75
+          },
+          "bboxNormalized": {
+            "x": 0.484375,
+            "y": 0.554688,
+            "width": 0.190625,
+            "height": 0.117188
+          },
+          "center": {
+            "px": {
+              "x": 383.64,
+              "y": 373.54
+            },
+            "normalized": {
+              "x": 0.59944,
+              "y": 0.583661
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 210,
+            "y": 532,
+            "width": 93,
+            "height": 71
+          },
+          "bboxNormalized": {
+            "x": 0.328125,
+            "y": 0.83125,
+            "width": 0.145313,
+            "height": 0.110937
+          },
+          "center": {
+            "px": {
+              "x": 271.67,
+              "y": 560.66
+            },
+            "normalized": {
+              "x": 0.424489,
+              "y": 0.876032
+            }
+          },
+          "alphaCoverage": 0.5763
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 532,
+            "width": 129,
+            "height": 62
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.83125,
+            "width": 0.201563,
+            "height": 0.096875
+          },
+          "center": {
+            "px": {
+              "x": 382.5,
+              "y": 554.62
+            },
+            "normalized": {
+              "x": 0.59765,
+              "y": 0.866601
+            }
+          },
+          "alphaCoverage": 0.6032
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 144,
+            "y": 17,
+            "width": 369,
+            "height": 269
+          },
+          "bboxNormalized": {
+            "x": 0.225,
+            "y": 0.026562,
+            "width": 0.576562,
+            "height": 0.420312
+          },
+          "center": {
+            "px": {
+              "x": 349.28,
+              "y": 141.83
+            },
+            "normalized": {
+              "x": 0.545748,
+              "y": 0.221604
+            }
+          },
+          "alphaCoverage": 0.5444
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 88,
+            "y": 370,
+            "width": 137,
+            "height": 94
+          },
+          "bboxNormalized": {
+            "x": 0.1375,
+            "y": 0.578125,
+            "width": 0.214062,
+            "height": 0.146875
+          },
+          "center": {
+            "px": {
+              "x": 168.8,
+              "y": 409.34
+            },
+            "normalized": {
+              "x": 0.263743,
+              "y": 0.639588
+            }
+          },
+          "alphaCoverage": 0.7553
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 381,
+            "y": 370,
+            "width": 171,
+            "height": 94
+          },
+          "bboxNormalized": {
+            "x": 0.595313,
+            "y": 0.578125,
+            "width": 0.267188,
+            "height": 0.146875
+          },
+          "center": {
+            "px": {
+              "x": 457.91,
+              "y": 413.86
+            },
+            "normalized": {
+              "x": 0.715487,
+              "y": 0.646654
+            }
+          },
+          "alphaCoverage": 0.902
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 3,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 4,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 2080,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 2832,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "moonveil": {
+      "source": "public/assets/niumpi/forms/moonveil.webp",
+      "sourceBytes": 99828,
+      "sha256": "513635e437c51f80ac87453c77ed37202958c5cf215fb9d03c1a471738b95ab3",
+      "topology": {
+        "canonicalPrimaryLeaves": 5,
+        "detectedPrimaryLeaves": 5,
+        "armsPresent": true,
+        "notes": [
+          "Lateral moon crescents are route ornaments, not arms or crown leaves."
+        ]
+      },
+      "accessories": [
+        {
+          "id": "moon.L",
+          "semantic": "moon-crescent-left",
+          "maskPolygonPx": [[66, 244], [69, 205], [88, 170], [118, 151], [153, 149], [176, 151], [159, 174], [150, 205], [153, 238], [172, 269], [183, 303], [179, 333], [158, 357], [126, 361], [96, 343], [76, 311]],
+          "attachmentPx": [158, 303],
+          "tipPx": [88, 170],
+          "parent": "head",
+          "outsideCore": true,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "moon.R",
+          "semantic": "moon-crescent-right",
+          "maskPolygonPx": [[493, 136], [526, 133], [557, 148], [582, 177], [598, 215], [602, 259], [594, 303], [574, 336], [547, 359], [516, 363], [488, 346], [474, 319], [478, 281], [496, 245], [507, 211], [508, 177]],
+          "attachmentPx": [488, 319],
+          "tipPx": [557, 148],
+          "parent": "head",
+          "outsideCore": true,
+          "motionFactor": 0.0
+        }
+      ],
+      "canvas": {
+        "width": 640,
+        "height": 665
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 66,
+          "y": 5,
+          "width": 537,
+          "height": 640
+        },
+        "bboxNormalized": {
+          "x": 0.103125,
+          "y": 0.007519,
+          "width": 0.839063,
+          "height": 0.962406
+        },
+        "coverage": 0.479904
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 247.66,
+            "y": 348.1
+          },
+          "normalized": {
+            "x": 0.386965,
+            "y": 0.523465
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 363.88,
+            "y": 335.12
+          },
+          "normalized": {
+            "x": 0.568556,
+            "y": 0.503945
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 247.33,
+            "y": 342.8
+          },
+          "normalized": {
+            "x": 0.386454,
+            "y": 0.515496
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 363.48,
+            "y": 329.97
+          },
+          "normalized": {
+            "x": 0.567942,
+            "y": 0.496201
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 304.02,
+            "y": 374.94
+          },
+          "normalized": {
+            "x": 0.475038,
+            "y": 0.563818
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 227.77,
+            "y": 381.6
+          },
+          "normalized": {
+            "x": 0.355889,
+            "y": 0.573833
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 386.47,
+            "y": 371.14
+          },
+          "normalized": {
+            "x": 0.603857,
+            "y": 0.558101
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 275.63,
+            "y": 605.21
+          },
+          "normalized": {
+            "x": 0.43067,
+            "y": 0.910089
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 387.38,
+            "y": 596.87
+          },
+          "normalized": {
+            "x": 0.605277,
+            "y": 0.897548
+          }
+        },
+        "head": {
+          "px": {
+            "x": 306.71,
+            "y": 325.23
+          },
+          "normalized": {
+            "x": 0.479232,
+            "y": 0.489063
+          }
+        },
+        "body": {
+          "px": {
+            "x": 317.7,
+            "y": 481.86
+          },
+          "normalized": {
+            "x": 0.49641,
+            "y": 0.724595
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 360.63,
+            "y": 287
+          },
+          "normalized": {
+            "x": 0.56348,
+            "y": 0.431579
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 169.59,
+            "y": 418.87
+          },
+          "normalized": {
+            "x": 0.26498,
+            "y": 0.629874
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 458.13,
+            "y": 420.26
+          },
+          "normalized": {
+            "x": 0.715829,
+            "y": 0.63197
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 171,
+            "y": 184
+          },
+          "normalized": {
+            "x": 0.267188,
+            "y": 0.276692
+          }
+        },
+        {
+          "px": {
+            "x": 221,
+            "y": 80
+          },
+          "normalized": {
+            "x": 0.345313,
+            "y": 0.120301
+          }
+        },
+        {
+          "px": {
+            "x": 442,
+            "y": 5
+          },
+          "normalized": {
+            "x": 0.690625,
+            "y": 0.007519
+          }
+        },
+        {
+          "px": {
+            "x": 468,
+            "y": 190
+          },
+          "normalized": {
+            "x": 0.73125,
+            "y": 0.285714
+          }
+        },
+        {
+          "px": {
+            "x": 493,
+            "y": 140
+          },
+          "normalized": {
+            "x": 0.770312,
+            "y": 0.210526
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 137,
+            "y": 200,
+            "width": 338,
+            "height": 246
+          },
+          "bboxNormalized": {
+            "x": 0.214062,
+            "y": 0.300752,
+            "width": 0.528125,
+            "height": 0.369925
+          },
+          "center": {
+            "px": {
+              "x": 306.71,
+              "y": 325.23
+            },
+            "normalized": {
+              "x": 0.479232,
+              "y": 0.489063
+            }
+          },
+          "alphaCoverage": 0.9736
+        },
+        "body": {
+          "bboxPx": {
+            "x": 127,
+            "y": 392,
+            "width": 358,
+            "height": 203
+          },
+          "bboxNormalized": {
+            "x": 0.198437,
+            "y": 0.589474,
+            "width": 0.559375,
+            "height": 0.305263
+          },
+          "center": {
+            "px": {
+              "x": 317.7,
+              "y": 481.86
+            },
+            "normalized": {
+              "x": 0.49641,
+              "y": 0.724595
+            }
+          },
+          "alphaCoverage": 0.8403
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 224,
+            "y": 320,
+            "width": 47,
+            "height": 56
+          },
+          "bboxNormalized": {
+            "x": 0.35,
+            "y": 0.481203,
+            "width": 0.073438,
+            "height": 0.084211
+          },
+          "center": {
+            "px": {
+              "x": 247.66,
+              "y": 348.1
+            },
+            "normalized": {
+              "x": 0.386965,
+              "y": 0.523465
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 336,
+            "y": 306,
+            "width": 59,
+            "height": 60
+          },
+          "bboxNormalized": {
+            "x": 0.525,
+            "y": 0.46015,
+            "width": 0.092188,
+            "height": 0.090226
+          },
+          "center": {
+            "px": {
+              "x": 363.88,
+              "y": 335.12
+            },
+            "normalized": {
+              "x": 0.568556,
+              "y": 0.503945
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 224,
+            "y": 320,
+            "width": 47,
+            "height": 54
+          },
+          "bboxNormalized": {
+            "x": 0.35,
+            "y": 0.481203,
+            "width": 0.073438,
+            "height": 0.081203
+          },
+          "center": {
+            "px": {
+              "x": 247.33,
+              "y": 342.8
+            },
+            "normalized": {
+              "x": 0.386454,
+              "y": 0.515496
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 336,
+            "y": 307,
+            "width": 58,
+            "height": 56
+          },
+          "bboxNormalized": {
+            "x": 0.525,
+            "y": 0.461654,
+            "width": 0.090625,
+            "height": 0.084211
+          },
+          "center": {
+            "px": {
+              "x": 363.48,
+              "y": 329.97
+            },
+            "normalized": {
+              "x": 0.567942,
+              "y": 0.496201
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 281,
+            "y": 359,
+            "width": 43,
+            "height": 33
+          },
+          "bboxNormalized": {
+            "x": 0.439063,
+            "y": 0.53985,
+            "width": 0.067187,
+            "height": 0.049624
+          },
+          "center": {
+            "px": {
+              "x": 304.02,
+              "y": 374.94
+            },
+            "normalized": {
+              "x": 0.475038,
+              "y": 0.563818
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 206,
+            "y": 356,
+            "width": 90,
+            "height": 44
+          },
+          "bboxNormalized": {
+            "x": 0.321875,
+            "y": 0.535338,
+            "width": 0.140625,
+            "height": 0.066165
+          },
+          "center": {
+            "px": {
+              "x": 227.77,
+              "y": 381.6
+            },
+            "normalized": {
+              "x": 0.355889,
+              "y": 0.573833
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 314,
+            "y": 356,
+            "width": 101,
+            "height": 34
+          },
+          "bboxNormalized": {
+            "x": 0.490625,
+            "y": 0.535338,
+            "width": 0.157812,
+            "height": 0.051128
+          },
+          "center": {
+            "px": {
+              "x": 386.47,
+              "y": 371.14
+            },
+            "normalized": {
+              "x": 0.603857,
+              "y": 0.558101
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 225,
+            "y": 568,
+            "width": 81,
+            "height": 77
+          },
+          "bboxNormalized": {
+            "x": 0.351563,
+            "y": 0.854135,
+            "width": 0.126562,
+            "height": 0.115789
+          },
+          "center": {
+            "px": {
+              "x": 275.63,
+              "y": 605.21
+            },
+            "normalized": {
+              "x": 0.43067,
+              "y": 0.910089
+            }
+          },
+          "alphaCoverage": 0.6465
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 568,
+            "width": 106,
+            "height": 62
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.854135,
+            "width": 0.165625,
+            "height": 0.093233
+          },
+          "center": {
+            "px": {
+              "x": 387.38,
+              "y": 596.87
+            },
+            "normalized": {
+              "x": 0.605277,
+              "y": 0.897548
+            }
+          },
+          "alphaCoverage": 0.6181
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 66,
+            "y": 5,
+            "width": 537,
+            "height": 282
+          },
+          "bboxNormalized": {
+            "x": 0.103125,
+            "y": 0.007519,
+            "width": 0.839063,
+            "height": 0.42406
+          },
+          "center": {
+            "px": {
+              "x": 360.63,
+              "y": 175.63
+            },
+            "normalized": {
+              "x": 0.56348,
+              "y": 0.264108
+            }
+          },
+          "alphaCoverage": 0.552
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 95,
+            "y": 371,
+            "width": 136,
+            "height": 122
+          },
+          "bboxNormalized": {
+            "x": 0.148438,
+            "y": 0.557895,
+            "width": 0.2125,
+            "height": 0.183459
+          },
+          "center": {
+            "px": {
+              "x": 169.59,
+              "y": 418.87
+            },
+            "normalized": {
+              "x": 0.26498,
+              "y": 0.629874
+            }
+          },
+          "alphaCoverage": 0.7772
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 381,
+            "y": 371,
+            "width": 165,
+            "height": 122
+          },
+          "bboxNormalized": {
+            "x": 0.595313,
+            "y": 0.557895,
+            "width": 0.257813,
+            "height": 0.183459
+          },
+          "center": {
+            "px": {
+              "x": 458.13,
+              "y": 420.26
+            },
+            "normalized": {
+              "x": 0.715829,
+              "y": 0.63197
+            }
+          },
+          "alphaCoverage": 0.8776
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 3,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 4,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 1898,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 2486,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "bloomheart": {
+      "source": "public/assets/niumpi/forms/bloomheart.webp",
+      "sourceBytes": 97460,
+      "sha256": "82ccf8adb0d1746bc6e5d7dbf81294b5b7a33297d26113c88a5ae602e09612c4",
+      "topology": {
+        "canonicalPrimaryLeaves": 5,
+        "detectedPrimaryLeaves": 5,
+        "armsPresent": true,
+        "notes": [
+          "Heart/petal ornaments surround the body and must not be classified as limbs or crown leaves."
+        ]
+      },
+      "accessories": [
+        {
+          "id": "petal.L.upper",
+          "semantic": "petal-mantle-left-upper",
+          "maskPolygonPx": [[112, 268], [127, 237], [153, 218], [181, 222], [205, 246], [212, 279], [203, 320], [186, 350], [165, 371], [137, 365], [116, 340], [107, 307]],
+          "attachmentPx": [186, 350],
+          "tipPx": [127, 237],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "petal.L.lower",
+          "semantic": "petal-mantle-left-lower",
+          "maskPolygonPx": [[106, 454], [128, 442], [161, 449], [191, 469], [220, 493], [239, 517], [232, 548], [204, 570], [164, 578], [128, 566], [104, 540], [98, 504]],
+          "attachmentPx": [204, 520],
+          "tipPx": [106, 500],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "petal.R.upper",
+          "semantic": "petal-mantle-right-upper",
+          "maskPolygonPx": [[500, 253], [529, 261], [553, 283], [570, 316], [581, 350], [579, 389], [561, 417], [534, 429], [507, 414], [490, 386], [493, 351], [509, 318]],
+          "attachmentPx": [507, 390],
+          "tipPx": [570, 316],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "petal.R.lower",
+          "semantic": "petal-mantle-right-lower",
+          "maskPolygonPx": [[503, 432], [535, 433], [560, 452], [576, 484], [579, 520], [565, 552], [536, 574], [501, 581], [469, 568], [449, 541], [454, 509], [476, 479]],
+          "attachmentPx": [476, 520],
+          "tipPx": [565, 520],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        }
+      ],
+      "canvas": {
+        "width": 640,
+        "height": 665
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 70,
+          "y": 4,
+          "width": 515,
+          "height": 633
+        },
+        "bboxNormalized": {
+          "x": 0.109375,
+          "y": 0.006015,
+          "width": 0.804688,
+          "height": 0.95188
+        },
+        "coverage": 0.482998
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 243.95,
+            "y": 334.15
+          },
+          "normalized": {
+            "x": 0.381165,
+            "y": 0.502487
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 364.46,
+            "y": 319.64
+          },
+          "normalized": {
+            "x": 0.569473,
+            "y": 0.480666
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 243.89,
+            "y": 329.67
+          },
+          "normalized": {
+            "x": 0.38108,
+            "y": 0.495748
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 363.96,
+            "y": 315.23
+          },
+          "normalized": {
+            "x": 0.568689,
+            "y": 0.474028
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 302.52,
+            "y": 363.2
+          },
+          "normalized": {
+            "x": 0.47269,
+            "y": 0.546166
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 210.49,
+            "y": 381.83
+          },
+          "normalized": {
+            "x": 0.328891,
+            "y": 0.574178
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 387.83,
+            "y": 384.35
+          },
+          "normalized": {
+            "x": 0.605989,
+            "y": 0.577974
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 263.06,
+            "y": 589.17
+          },
+          "normalized": {
+            "x": 0.411026,
+            "y": 0.885965
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 371.88,
+            "y": 591.08
+          },
+          "normalized": {
+            "x": 0.581063,
+            "y": 0.888835
+          }
+        },
+        "head": {
+          "px": {
+            "x": 309.99,
+            "y": 315.13
+          },
+          "normalized": {
+            "x": 0.484359,
+            "y": 0.47388
+          }
+        },
+        "body": {
+          "px": {
+            "x": 313.45,
+            "y": 476.65
+          },
+          "normalized": {
+            "x": 0.489767,
+            "y": 0.716767
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 353.1,
+            "y": 272
+          },
+          "normalized": {
+            "x": 0.551721,
+            "y": 0.409023
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 159.48,
+            "y": 403.03
+          },
+          "normalized": {
+            "x": 0.249194,
+            "y": 0.606053
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 466.61,
+            "y": 406.83
+          },
+          "normalized": {
+            "x": 0.729073,
+            "y": 0.611769
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 171,
+            "y": 123
+          },
+          "normalized": {
+            "x": 0.267188,
+            "y": 0.184962
+          }
+        },
+        {
+          "px": {
+            "x": 252,
+            "y": 55
+          },
+          "normalized": {
+            "x": 0.39375,
+            "y": 0.082707
+          }
+        },
+        {
+          "px": {
+            "x": 460,
+            "y": 10
+          },
+          "normalized": {
+            "x": 0.71875,
+            "y": 0.015038
+          }
+        },
+        {
+          "px": {
+            "x": 494,
+            "y": 121
+          },
+          "normalized": {
+            "x": 0.771875,
+            "y": 0.181955
+          }
+        },
+        {
+          "px": {
+            "x": 538,
+            "y": 215
+          },
+          "normalized": {
+            "x": 0.840625,
+            "y": 0.323308
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 133,
+            "y": 187,
+            "width": 343,
+            "height": 248
+          },
+          "bboxNormalized": {
+            "x": 0.207813,
+            "y": 0.281203,
+            "width": 0.535937,
+            "height": 0.372932
+          },
+          "center": {
+            "px": {
+              "x": 309.99,
+              "y": 315.13
+            },
+            "normalized": {
+              "x": 0.484359,
+              "y": 0.47388
+            }
+          },
+          "alphaCoverage": 0.9499
+        },
+        "body": {
+          "bboxPx": {
+            "x": 123,
+            "y": 381,
+            "width": 363,
+            "height": 207
+          },
+          "bboxNormalized": {
+            "x": 0.192188,
+            "y": 0.572932,
+            "width": 0.567187,
+            "height": 0.311278
+          },
+          "center": {
+            "px": {
+              "x": 313.45,
+              "y": 476.65
+            },
+            "normalized": {
+              "x": 0.489767,
+              "y": 0.716767
+            }
+          },
+          "alphaCoverage": 0.9119
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 220,
+            "y": 305,
+            "width": 49,
+            "height": 59
+          },
+          "bboxNormalized": {
+            "x": 0.34375,
+            "y": 0.458647,
+            "width": 0.076563,
+            "height": 0.088722
+          },
+          "center": {
+            "px": {
+              "x": 243.95,
+              "y": 334.15
+            },
+            "normalized": {
+              "x": 0.381165,
+              "y": 0.502487
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 335,
+            "y": 290,
+            "width": 62,
+            "height": 62
+          },
+          "bboxNormalized": {
+            "x": 0.523438,
+            "y": 0.43609,
+            "width": 0.096875,
+            "height": 0.093233
+          },
+          "center": {
+            "px": {
+              "x": 364.46,
+              "y": 319.64
+            },
+            "normalized": {
+              "x": 0.569473,
+              "y": 0.480666
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 220,
+            "y": 305,
+            "width": 48,
+            "height": 59
+          },
+          "bboxNormalized": {
+            "x": 0.34375,
+            "y": 0.458647,
+            "width": 0.075,
+            "height": 0.088722
+          },
+          "center": {
+            "px": {
+              "x": 243.89,
+              "y": 329.67
+            },
+            "normalized": {
+              "x": 0.38108,
+              "y": 0.495748
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 335,
+            "y": 290,
+            "width": 62,
+            "height": 61
+          },
+          "bboxNormalized": {
+            "x": 0.523438,
+            "y": 0.43609,
+            "width": 0.096875,
+            "height": 0.091729
+          },
+          "center": {
+            "px": {
+              "x": 363.96,
+              "y": 315.23
+            },
+            "normalized": {
+              "x": 0.568689,
+              "y": 0.474028
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 277,
+            "y": 345,
+            "width": 46,
+            "height": 36
+          },
+          "bboxNormalized": {
+            "x": 0.432812,
+            "y": 0.518797,
+            "width": 0.071875,
+            "height": 0.054135
+          },
+          "center": {
+            "px": {
+              "x": 302.52,
+              "y": 363.2
+            },
+            "normalized": {
+              "x": 0.47269,
+              "y": 0.546166
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 163,
+            "y": 341,
+            "width": 131,
+            "height": 79
+          },
+          "bboxNormalized": {
+            "x": 0.254688,
+            "y": 0.512782,
+            "width": 0.204687,
+            "height": 0.118797
+          },
+          "center": {
+            "px": {
+              "x": 210.49,
+              "y": 381.83
+            },
+            "normalized": {
+              "x": 0.328891,
+              "y": 0.574178
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 312,
+            "y": 341,
+            "width": 139,
+            "height": 79
+          },
+          "bboxNormalized": {
+            "x": 0.4875,
+            "y": 0.512782,
+            "width": 0.217188,
+            "height": 0.118797
+          },
+          "center": {
+            "px": {
+              "x": 387.83,
+              "y": 384.35
+            },
+            "normalized": {
+              "x": 0.605989,
+              "y": 0.577974
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 207,
+            "y": 561,
+            "width": 98,
+            "height": 68
+          },
+          "bboxNormalized": {
+            "x": 0.323437,
+            "y": 0.843609,
+            "width": 0.153125,
+            "height": 0.102256
+          },
+          "center": {
+            "px": {
+              "x": 263.06,
+              "y": 589.17
+            },
+            "normalized": {
+              "x": 0.411026,
+              "y": 0.885965
+            }
+          },
+          "alphaCoverage": 0.6294
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 561,
+            "width": 129,
+            "height": 76
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.843609,
+            "width": 0.201563,
+            "height": 0.114286
+          },
+          "center": {
+            "px": {
+              "x": 371.88,
+              "y": 591.08
+            },
+            "normalized": {
+              "x": 0.581063,
+              "y": 0.888835
+            }
+          },
+          "alphaCoverage": 0.5845
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 121,
+            "y": 4,
+            "width": 428,
+            "height": 268
+          },
+          "bboxNormalized": {
+            "x": 0.189062,
+            "y": 0.006015,
+            "width": 0.66875,
+            "height": 0.403008
+          },
+          "center": {
+            "px": {
+              "x": 353.1,
+              "y": 139.93
+            },
+            "normalized": {
+              "x": 0.551721,
+              "y": 0.210421
+            }
+          },
+          "alphaCoverage": 0.5911
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 70,
+            "y": 356,
+            "width": 157,
+            "height": 131
+          },
+          "bboxNormalized": {
+            "x": 0.109375,
+            "y": 0.535338,
+            "width": 0.245312,
+            "height": 0.196992
+          },
+          "center": {
+            "px": {
+              "x": 159.48,
+              "y": 403.03
+            },
+            "normalized": {
+              "x": 0.249194,
+              "y": 0.606053
+            }
+          },
+          "alphaCoverage": 0.8331
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 382,
+            "y": 356,
+            "width": 200,
+            "height": 131
+          },
+          "bboxNormalized": {
+            "x": 0.596875,
+            "y": 0.535338,
+            "width": 0.3125,
+            "height": 0.196992
+          },
+          "center": {
+            "px": {
+              "x": 466.61,
+              "y": 406.83
+            },
+            "normalized": {
+              "x": 0.729073,
+              "y": 0.611769
+            }
+          },
+          "alphaCoverage": 0.9477
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 3,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 4,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 2071,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 2732,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "sparkleap": {
+      "source": "public/assets/niumpi/forms/sparkleap.webp",
+      "sourceBytes": 129744,
+      "sha256": "08aac5976637910fd2bbaaada9b68b25f9b488410d24314fbeb64e6895d3ffcc",
+      "topology": {
+        "canonicalPrimaryLeaves": 5,
+        "detectedPrimaryLeaves": 5,
+        "armsPresent": true,
+        "notes": [
+          "Golden wisps and stars enlarge the alpha hull; retarget against semantic regions, not alpha extrema."
+        ]
+      },
+      "accessories": [
+        {
+          "id": "wing.L",
+          "semantic": "sparkle-wing-left",
+          "maskPolygonPx": [[62, 146], [81, 134], [111, 148], [140, 177], [166, 213], [186, 249], [205, 289], [214, 326], [202, 355], [179, 376], [149, 370], [119, 346], [91, 310], [72, 268], [62, 220]],
+          "attachmentPx": [179, 340],
+          "tipPx": [81, 150],
+          "parent": "body_squash",
+          "outsideCore": true,
+          "motionFactor": 0.04
+        },
+        {
+          "id": "wing.R",
+          "semantic": "sparkle-wing-right",
+          "maskPolygonPx": [[474, 228], [500, 205], [532, 198], [565, 211], [594, 235], [614, 266], [620, 300], [611, 337], [592, 372], [566, 404], [532, 423], [501, 419], [478, 397], [469, 365], [478, 331], [498, 299]],
+          "attachmentPx": [501, 390],
+          "tipPx": [594, 235],
+          "parent": "body_squash",
+          "outsideCore": true,
+          "motionFactor": 0.04
+        },
+        {
+          "id": "halo.L",
+          "semantic": "sparkle-halo-left",
+          "maskPolygonPx": [[123, 196], [133, 165], [157, 141], [184, 117], [208, 117], [208, 145], [187, 168], [171, 198], [166, 228], [153, 242], [138, 232]],
+          "attachmentPx": [171, 198],
+          "tipPx": [184, 117],
+          "parent": "head",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "halo.R",
+          "semantic": "sparkle-halo-right",
+          "maskPolygonPx": [[427, 141], [440, 108], [470, 108], [482, 137], [473, 151], [485, 185], [505, 196], [523, 219], [526, 276], [514, 276], [501, 259], [469, 259], [459, 226], [442, 195]],
+          "attachmentPx": [469, 226],
+          "tipPx": [470, 108],
+          "parent": "head",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "wisp.L",
+          "semantic": "sparkle-wisp-left",
+          "maskPolygonPx": [[77, 460], [99, 446], [126, 447], [149, 463], [160, 489], [153, 519], [135, 543], [173, 572], [158, 579], [131, 566], [111, 548], [88, 543], [73, 522], [79, 500], [101, 488], [124, 493], [116, 473], [94, 468]],
+          "attachmentPx": [149, 489],
+          "tipPx": [88, 543],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "wisp.R",
+          "semantic": "sparkle-wisp-right",
+          "maskPolygonPx": [[486, 395], [520, 383], [554, 393], [582, 416], [598, 448], [592, 480], [574, 503], [551, 509], [531, 494], [536, 470], [559, 459], [545, 437], [520, 430], [503, 448], [494, 480], [479, 506], [462, 531], [450, 558], [457, 584], [481, 603], [500, 628], [497, 655], [476, 662], [451, 650], [435, 623], [427, 592], [434, 560], [449, 530], [465, 501], [474, 469]],
+          "attachmentPx": [503, 448],
+          "tipPx": [476, 650],
+          "parent": "body_squash",
+          "outsideCore": true,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "stars",
+          "semantic": "sparkle-star-field",
+          "maskPolygonsPx": [
+            [[38, 315], [90, 315], [90, 367], [38, 367]],
+            [[187, 568], [202, 568], [202, 582], [187, 582]],
+            [[484, 265], [526, 265], [526, 300], [484, 300]],
+            [[556, 373], [596, 373], [596, 415], [556, 415]],
+            [[450, 551], [470, 551], [470, 580], [450, 580]],
+            [[484, 606], [497, 606], [497, 619], [484, 619]]
+          ],
+          "attachmentPx": [320, 430],
+          "tipPx": [580, 395],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        }
+      ],
+      "canvas": {
+        "width": 640,
+        "height": 683
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 38,
+          "y": 7,
+          "width": 583,
+          "height": 656
+        },
+        "bboxNormalized": {
+          "x": 0.059375,
+          "y": 0.010249,
+          "width": 0.910937,
+          "height": 0.960469
+        },
+        "coverage": 0.486992
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 220.92,
+            "y": 360.13
+          },
+          "normalized": {
+            "x": 0.345191,
+            "y": 0.527276
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 343.47,
+            "y": 354.26
+          },
+          "normalized": {
+            "x": 0.536673,
+            "y": 0.518675
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 220.85,
+            "y": 354.11
+          },
+          "normalized": {
+            "x": 0.345079,
+            "y": 0.518468
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 343.35,
+            "y": 348.98
+          },
+          "normalized": {
+            "x": 0.53649,
+            "y": 0.510949
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 277.35,
+            "y": 394.53
+          },
+          "normalized": {
+            "x": 0.433354,
+            "y": 0.577645
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 194.41,
+            "y": 413.22
+          },
+          "normalized": {
+            "x": 0.303766,
+            "y": 0.60501
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 366.86,
+            "y": 412.22
+          },
+          "normalized": {
+            "x": 0.573218,
+            "y": 0.603541
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 261.61,
+            "y": 600.51
+          },
+          "normalized": {
+            "x": 0.408772,
+            "y": 0.879231
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 387.02,
+            "y": 604.61
+          },
+          "normalized": {
+            "x": 0.604719,
+            "y": 0.885234
+          }
+        },
+        "head": {
+          "px": {
+            "x": 286.89,
+            "y": 342.23
+          },
+          "normalized": {
+            "x": 0.448264,
+            "y": 0.501064
+          }
+        },
+        "body": {
+          "px": {
+            "x": 304.06,
+            "y": 499.33
+          },
+          "normalized": {
+            "x": 0.475092,
+            "y": 0.731088
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 322.99,
+            "y": 303
+          },
+          "normalized": {
+            "x": 0.504666,
+            "y": 0.443631
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 146.63,
+            "y": 428.59
+          },
+          "normalized": {
+            "x": 0.229108,
+            "y": 0.627504
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 455.67,
+            "y": 445.94
+          },
+          "normalized": {
+            "x": 0.71199,
+            "y": 0.652913
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 190,
+            "y": 130
+          },
+          "normalized": {
+            "x": 0.296875,
+            "y": 0.190337
+          }
+        },
+        {
+          "px": {
+            "x": 245,
+            "y": 72
+          },
+          "normalized": {
+            "x": 0.382813,
+            "y": 0.105417
+          }
+        },
+        {
+          "px": {
+            "x": 437,
+            "y": 7
+          },
+          "normalized": {
+            "x": 0.682813,
+            "y": 0.010249
+          }
+        },
+        {
+          "px": {
+            "x": 460,
+            "y": 113
+          },
+          "normalized": {
+            "x": 0.71875,
+            "y": 0.165447
+          }
+        },
+        {
+          "px": {
+            "x": 502,
+            "y": 154
+          },
+          "normalized": {
+            "x": 0.784375,
+            "y": 0.225476
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 110,
+            "y": 212,
+            "width": 345,
+            "height": 254
+          },
+          "bboxNormalized": {
+            "x": 0.171875,
+            "y": 0.310395,
+            "width": 0.539063,
+            "height": 0.371889
+          },
+          "center": {
+            "px": {
+              "x": 286.89,
+              "y": 342.23
+            },
+            "normalized": {
+              "x": 0.448264,
+              "y": 0.501064
+            }
+          },
+          "alphaCoverage": 0.9537
+        },
+        "body": {
+          "bboxPx": {
+            "x": 100,
+            "y": 412,
+            "width": 365,
+            "height": 199
+          },
+          "bboxNormalized": {
+            "x": 0.15625,
+            "y": 0.603221,
+            "width": 0.570313,
+            "height": 0.291362
+          },
+          "center": {
+            "px": {
+              "x": 304.06,
+              "y": 499.33
+            },
+            "normalized": {
+              "x": 0.475092,
+              "y": 0.731088
+            }
+          },
+          "alphaCoverage": 0.8088
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 196,
+            "y": 330,
+            "width": 49,
+            "height": 61
+          },
+          "bboxNormalized": {
+            "x": 0.30625,
+            "y": 0.483163,
+            "width": 0.076563,
+            "height": 0.089312
+          },
+          "center": {
+            "px": {
+              "x": 220.92,
+              "y": 360.13
+            },
+            "normalized": {
+              "x": 0.345191,
+              "y": 0.527276
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 313,
+            "y": 323,
+            "width": 65,
+            "height": 65
+          },
+          "bboxNormalized": {
+            "x": 0.489063,
+            "y": 0.472914,
+            "width": 0.101563,
+            "height": 0.095168
+          },
+          "center": {
+            "px": {
+              "x": 343.47,
+              "y": 354.26
+            },
+            "normalized": {
+              "x": 0.536673,
+              "y": 0.518675
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 196,
+            "y": 330,
+            "width": 49,
+            "height": 59
+          },
+          "bboxNormalized": {
+            "x": 0.30625,
+            "y": 0.483163,
+            "width": 0.076563,
+            "height": 0.086384
+          },
+          "center": {
+            "px": {
+              "x": 220.85,
+              "y": 354.11
+            },
+            "normalized": {
+              "x": 0.345079,
+              "y": 0.518468
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 313,
+            "y": 323,
+            "width": 63,
+            "height": 64
+          },
+          "bboxNormalized": {
+            "x": 0.489063,
+            "y": 0.472914,
+            "width": 0.098437,
+            "height": 0.093704
+          },
+          "center": {
+            "px": {
+              "x": 343.35,
+              "y": 348.98
+            },
+            "normalized": {
+              "x": 0.53649,
+              "y": 0.510949
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 252,
+            "y": 377,
+            "width": 48,
+            "height": 37
+          },
+          "bboxNormalized": {
+            "x": 0.39375,
+            "y": 0.551977,
+            "width": 0.075,
+            "height": 0.054173
+          },
+          "center": {
+            "px": {
+              "x": 277.35,
+              "y": 394.53
+            },
+            "normalized": {
+              "x": 0.433354,
+              "y": 0.577645
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 140,
+            "y": 372,
+            "width": 129,
+            "height": 79
+          },
+          "bboxNormalized": {
+            "x": 0.21875,
+            "y": 0.544656,
+            "width": 0.201563,
+            "height": 0.115666
+          },
+          "center": {
+            "px": {
+              "x": 194.41,
+              "y": 413.22
+            },
+            "normalized": {
+              "x": 0.303766,
+              "y": 0.60501
+            }
+          },
+          "alphaCoverage": 0.9994
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 287,
+            "y": 372,
+            "width": 143,
+            "height": 79
+          },
+          "bboxNormalized": {
+            "x": 0.448437,
+            "y": 0.544656,
+            "width": 0.223438,
+            "height": 0.115666
+          },
+          "center": {
+            "px": {
+              "x": 366.86,
+              "y": 412.22
+            },
+            "normalized": {
+              "x": 0.573218,
+              "y": 0.603541
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 238,
+            "y": 584,
+            "width": 45,
+            "height": 41
+          },
+          "bboxNormalized": {
+            "x": 0.371875,
+            "y": 0.855051,
+            "width": 0.070313,
+            "height": 0.060029
+          },
+          "center": {
+            "px": {
+              "x": 261.61,
+              "y": 600.51
+            },
+            "normalized": {
+              "x": 0.408772,
+              "y": 0.879231
+            }
+          },
+          "alphaCoverage": 0.8927
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 584,
+            "width": 129,
+            "height": 70
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.855051,
+            "width": 0.201563,
+            "height": 0.102489
+          },
+          "center": {
+            "px": {
+              "x": 387.02,
+              "y": 604.61
+            },
+            "normalized": {
+              "x": 0.604719,
+              "y": 0.885234
+            }
+          },
+          "alphaCoverage": 0.7112
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 62,
+            "y": 7,
+            "width": 559,
+            "height": 296
+          },
+          "bboxNormalized": {
+            "x": 0.096875,
+            "y": 0.010249,
+            "width": 0.873437,
+            "height": 0.433382
+          },
+          "center": {
+            "px": {
+              "x": 322.99,
+              "y": 192.71
+            },
+            "normalized": {
+              "x": 0.504666,
+              "y": 0.282148
+            }
+          },
+          "alphaCoverage": 0.4697
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 63,
+            "y": 387,
+            "width": 141,
+            "height": 120
+          },
+          "bboxNormalized": {
+            "x": 0.098437,
+            "y": 0.566618,
+            "width": 0.220312,
+            "height": 0.175695
+          },
+          "center": {
+            "px": {
+              "x": 146.63,
+              "y": 428.59
+            },
+            "normalized": {
+              "x": 0.229108,
+              "y": 0.627504
+            }
+          },
+          "alphaCoverage": 0.7612
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 361,
+            "y": 387,
+            "width": 229,
+            "height": 120
+          },
+          "bboxNormalized": {
+            "x": 0.564063,
+            "y": 0.566618,
+            "width": 0.357812,
+            "height": 0.175695
+          },
+          "center": {
+            "px": {
+              "x": 455.67,
+              "y": 445.94
+            },
+            "normalized": {
+              "x": 0.71199,
+              "y": 0.652913
+            }
+          },
+          "alphaCoverage": 0.8977
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 3,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 4,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 2109,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 2894,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    },
+    "mistwander": {
+      "source": "public/assets/niumpi/forms/mistwander.webp",
+      "sourceBytes": 108490,
+      "sha256": "1440006a885684477d6705181352b10ed491ff778ed4d82a4bcd7ab25c26bdb7",
+      "topology": {
+        "canonicalPrimaryLeaves": 5,
+        "detectedPrimaryLeaves": 3,
+        "armsPresent": true,
+        "notes": [
+          "Water tail and bubbles enlarge the lower/right hull.",
+          "Approved artwork exposes three primary crown leaves although the canonical mature count is five."
+        ]
+      },
+      "canvas": {
+        "width": 640,
+        "height": 665
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 96,
+          "y": 7,
+          "width": 468,
+          "height": 647
+        },
+        "bboxNormalized": {
+          "x": 0.15,
+          "y": 0.010526,
+          "width": 0.73125,
+          "height": 0.972932
+        },
+        "coverage": 0.405108
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 227.61,
+            "y": 361.66
+          },
+          "normalized": {
+            "x": 0.355637,
+            "y": 0.543845
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 332.33,
+            "y": 347.12
+          },
+          "normalized": {
+            "x": 0.519271,
+            "y": 0.521981
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 227.42,
+            "y": 357.07
+          },
+          "normalized": {
+            "x": 0.355339,
+            "y": 0.536941
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 332.56,
+            "y": 341.93
+          },
+          "normalized": {
+            "x": 0.519631,
+            "y": 0.514187
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 276.28,
+            "y": 385.34
+          },
+          "normalized": {
+            "x": 0.431684,
+            "y": 0.579455
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 211.54,
+            "y": 391.25
+          },
+          "normalized": {
+            "x": 0.330527,
+            "y": 0.58835
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 347.97,
+            "y": 380.63
+          },
+          "normalized": {
+            "x": 0.543704,
+            "y": 0.572373
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 261.24,
+            "y": 582.08
+          },
+          "normalized": {
+            "x": 0.408187,
+            "y": 0.875312
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 384.35,
+            "y": 613.21
+          },
+          "normalized": {
+            "x": 0.60055,
+            "y": 0.922123
+          }
+        },
+        "head": {
+          "px": {
+            "x": 293.49,
+            "y": 340.15
+          },
+          "normalized": {
+            "x": 0.458574,
+            "y": 0.511505
+          }
+        },
+        "body": {
+          "px": {
+            "x": 308.67,
+            "y": 487.04
+          },
+          "normalized": {
+            "x": 0.482302,
+            "y": 0.732392
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 357.59,
+            "y": 300
+          },
+          "normalized": {
+            "x": 0.558735,
+            "y": 0.451128
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 164.25,
+            "y": 430.95
+          },
+          "normalized": {
+            "x": 0.256646,
+            "y": 0.648044
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 441.25,
+            "y": 431.29
+          },
+          "normalized": {
+            "x": 0.689455,
+            "y": 0.64856
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 209,
+            "y": 115
+          },
+          "normalized": {
+            "x": 0.326562,
+            "y": 0.172932
+          }
+        },
+        {
+          "px": {
+            "x": 438,
+            "y": 7
+          },
+          "normalized": {
+            "x": 0.684375,
+            "y": 0.010526
+          }
+        },
+        {
+          "px": {
+            "x": 535,
+            "y": 130
+          },
+          "normalized": {
+            "x": 0.835938,
+            "y": 0.195489
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 117,
+            "y": 212,
+            "width": 327,
+            "height": 245
+          },
+          "bboxNormalized": {
+            "x": 0.182812,
+            "y": 0.318797,
+            "width": 0.510938,
+            "height": 0.368421
+          },
+          "center": {
+            "px": {
+              "x": 293.49,
+              "y": 340.15
+            },
+            "normalized": {
+              "x": 0.458574,
+              "y": 0.511505
+            }
+          },
+          "alphaCoverage": 0.9009
+        },
+        "body": {
+          "bboxPx": {
+            "x": 107,
+            "y": 403,
+            "width": 347,
+            "height": 200
+          },
+          "bboxNormalized": {
+            "x": 0.167187,
+            "y": 0.606015,
+            "width": 0.542188,
+            "height": 0.300752
+          },
+          "center": {
+            "px": {
+              "x": 308.67,
+              "y": 487.04
+            },
+            "normalized": {
+              "x": 0.482302,
+              "y": 0.732392
+            }
+          },
+          "alphaCoverage": 0.7328
+        },
+        "tail": {
+          "bboxPx": {
+            "x": 320,
+            "y": 400,
+            "width": 244,
+            "height": 254
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.601504,
+            "width": 0.38125,
+            "height": 0.381955
+          },
+          "center": {
+            "px": {
+              "x": 426.82,
+              "y": 507.13
+            },
+            "normalized": {
+              "x": 0.666906,
+              "y": 0.762602
+            }
+          },
+          "maskPolygonPx": [
+            [390, 400],
+            [564, 430],
+            [564, 585],
+            [490, 654],
+            [338, 654],
+            [320, 545]
+          ],
+          "alphaCoverage": 0.7262,
+          "notes": "Explicit approved-art water-tail region; do not infer from alpha extrema."
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 208,
+            "y": 336,
+            "width": 40,
+            "height": 52
+          },
+          "bboxNormalized": {
+            "x": 0.325,
+            "y": 0.505263,
+            "width": 0.0625,
+            "height": 0.078195
+          },
+          "center": {
+            "px": {
+              "x": 227.61,
+              "y": 361.66
+            },
+            "normalized": {
+              "x": 0.355637,
+              "y": 0.543845
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 313,
+            "y": 321,
+            "width": 44,
+            "height": 55
+          },
+          "bboxNormalized": {
+            "x": 0.489063,
+            "y": 0.482707,
+            "width": 0.06875,
+            "height": 0.082707
+          },
+          "center": {
+            "px": {
+              "x": 332.33,
+              "y": 347.12
+            },
+            "normalized": {
+              "x": 0.519271,
+              "y": 0.521981
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 208,
+            "y": 336,
+            "width": 40,
+            "height": 49
+          },
+          "bboxNormalized": {
+            "x": 0.325,
+            "y": 0.505263,
+            "width": 0.0625,
+            "height": 0.073684
+          },
+          "center": {
+            "px": {
+              "x": 227.42,
+              "y": 357.07
+            },
+            "normalized": {
+              "x": 0.355339,
+              "y": 0.536941
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 313,
+            "y": 321,
+            "width": 44,
+            "height": 52
+          },
+          "bboxNormalized": {
+            "x": 0.489063,
+            "y": 0.482707,
+            "width": 0.06875,
+            "height": 0.078195
+          },
+          "center": {
+            "px": {
+              "x": 332.56,
+              "y": 341.93
+            },
+            "normalized": {
+              "x": 0.519631,
+              "y": 0.514187
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 256,
+            "y": 371,
+            "width": 37,
+            "height": 29
+          },
+          "bboxNormalized": {
+            "x": 0.4,
+            "y": 0.557895,
+            "width": 0.057813,
+            "height": 0.043609
+          },
+          "center": {
+            "px": {
+              "x": 276.28,
+              "y": 385.34
+            },
+            "normalized": {
+              "x": 0.431684,
+              "y": 0.579455
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 195,
+            "y": 369,
+            "width": 39,
+            "height": 38
+          },
+          "bboxNormalized": {
+            "x": 0.304688,
+            "y": 0.554887,
+            "width": 0.060937,
+            "height": 0.057143
+          },
+          "center": {
+            "px": {
+              "x": 211.54,
+              "y": 391.25
+            },
+            "normalized": {
+              "x": 0.330527,
+              "y": 0.58835
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 286,
+            "y": 369,
+            "width": 86,
+            "height": 27
+          },
+          "bboxNormalized": {
+            "x": 0.446875,
+            "y": 0.554887,
+            "width": 0.134375,
+            "height": 0.040602
+          },
+          "center": {
+            "px": {
+              "x": 347.97,
+              "y": 380.63
+            },
+            "normalized": {
+              "x": 0.543704,
+              "y": 0.572373
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 239,
+            "y": 576,
+            "width": 41,
+            "height": 15
+          },
+          "bboxNormalized": {
+            "x": 0.373437,
+            "y": 0.866165,
+            "width": 0.064062,
+            "height": 0.022556
+          },
+          "center": {
+            "px": {
+              "x": 261.24,
+              "y": 582.08
+            },
+            "normalized": {
+              "x": 0.408187,
+              "y": 0.875312
+            }
+          },
+          "alphaCoverage": 0.8081
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 576,
+            "width": 129,
+            "height": 78
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.866165,
+            "width": 0.201563,
+            "height": 0.117293
+          },
+          "center": {
+            "px": {
+              "x": 384.35,
+              "y": 613.21
+            },
+            "normalized": {
+              "x": 0.60055,
+              "y": 0.922123
+            }
+          },
+          "alphaCoverage": 0.7348
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 133,
+            "y": 7,
+            "width": 405,
+            "height": 293
+          },
+          "bboxNormalized": {
+            "x": 0.207813,
+            "y": 0.010526,
+            "width": 0.632813,
+            "height": 0.440602
+          },
+          "center": {
+            "px": {
+              "x": 357.59,
+              "y": 164.87
+            },
+            "normalized": {
+              "x": 0.558735,
+              "y": 0.247928
+            }
+          },
+          "alphaCoverage": 0.5165
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 96,
+            "y": 384,
+            "width": 115,
+            "height": 116
+          },
+          "bboxNormalized": {
+            "x": 0.15,
+            "y": 0.577444,
+            "width": 0.179688,
+            "height": 0.174436
+          },
+          "center": {
+            "px": {
+              "x": 164.25,
+              "y": 430.95
+            },
+            "normalized": {
+              "x": 0.256646,
+              "y": 0.648044
+            }
+          },
+          "alphaCoverage": 0.7192
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 350,
+            "y": 384,
+            "width": 207,
+            "height": 116
+          },
+          "bboxNormalized": {
+            "x": 0.546875,
+            "y": 0.577444,
+            "width": 0.323437,
+            "height": 0.174436
+          },
+          "center": {
+            "px": {
+              "x": 441.25,
+              "y": 431.29
+            },
+            "normalized": {
+              "x": 0.689455,
+              "y": 0.64856
+            }
+          },
+          "alphaCoverage": 0.9201
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 1477,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 1798,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "REVIEW",
+        "warnings": [
+          "approved art exposes 3/5 primary crown leaves"
+        ]
+      }
+    },
+    "prismatic": {
+      "source": "public/assets/niumpi/forms/prismatic.webp",
+      "sourceBytes": 134018,
+      "sha256": "f16782368e39fec353222d21cf33dbda143f644d9ce475086f5545689e61c333",
+      "topology": {
+        "canonicalPrimaryLeaves": 5,
+        "detectedPrimaryLeaves": 5,
+        "armsPresent": true,
+        "notes": [
+          "Detached crystals and aurora wisps enlarge the hull; crystals are not crown leaf controls."
+        ]
+      },
+      "accessories": [
+        {
+          "id": "aurora.L.upper",
+          "semantic": "aurora-wisp-left-upper",
+          "maskPolygonPx": [[68, 305], [75, 277], [95, 257], [121, 252], [150, 264], [175, 287], [195, 319], [205, 352], [193, 382], [168, 397], [139, 394], [112, 378], [88, 356]],
+          "attachmentPx": [175, 352],
+          "tipPx": [88, 277],
+          "parent": "body_squash",
+          "outsideCore": true,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "aurora.L.lower",
+          "semantic": "aurora-wisp-left-lower",
+          "maskPolygonPx": [[78, 454], [99, 438], [128, 440], [158, 457], [183, 481], [202, 511], [225, 540], [245, 563], [230, 589], [197, 600], [164, 591], [140, 571], [123, 549], [105, 544], [91, 557], [80, 548]],
+          "attachmentPx": [183, 511],
+          "tipPx": [91, 557],
+          "parent": "body_squash",
+          "outsideCore": true,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "aurora.R.upper",
+          "semantic": "aurora-wisp-right-upper",
+          "maskPolygonPx": [[510, 319], [544, 316], [573, 333], [593, 362], [596, 399], [585, 432], [566, 455], [540, 464], [514, 449], [499, 421], [500, 386], [515, 359], [535, 345]],
+          "attachmentPx": [514, 421],
+          "tipPx": [585, 362],
+          "parent": "body_squash",
+          "outsideCore": true,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "aurora.R.lower",
+          "semantic": "aurora-wisp-right-lower",
+          "maskPolygonPx": [[455, 469], [488, 466], [521, 481], [548, 506], [568, 535], [574, 567], [560, 594], [531, 610], [499, 607], [474, 590], [457, 567], [441, 547], [426, 535], [431, 507]],
+          "attachmentPx": [474, 535],
+          "tipPx": [560, 567],
+          "parent": "body_squash",
+          "outsideCore": true,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "aurora.bottom",
+          "semantic": "aurora-wisp-bottom",
+          "maskPolygonPx": [[385, 563], [420, 555], [454, 564], [487, 585], [517, 611], [530, 632], [519, 651], [486, 654], [455, 644], [430, 628], [403, 624], [385, 639], [365, 650], [347, 639], [351, 616], [369, 590]],
+          "attachmentPx": [430, 590],
+          "tipPx": [486, 650],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        },
+        {
+          "id": "crystals",
+          "semantic": "prismatic-crystal-halo",
+          "maskPolygonsPx": [
+            [[276, 47], [290, 67], [285, 92], [274, 104], [262, 80]],
+            [[481, 103], [497, 121], [491, 151], [475, 161], [465, 135]],
+            [[157, 202], [174, 226], [170, 260], [154, 272], [140, 243]],
+            [[557, 264], [583, 289], [575, 318], [552, 330], [530, 304], [537, 278]],
+            [[129, 451], [141, 462], [131, 474], [117, 465]],
+            [[557, 451], [574, 475], [566, 503], [549, 512], [540, 485]],
+            [[221, 563], [233, 575], [225, 589], [210, 580]],
+            [[326, 585], [343, 611], [336, 637], [323, 647], [310, 620]]
+          ],
+          "attachmentPx": [320, 440],
+          "tipPx": [326, 625],
+          "parent": "body_squash",
+          "outsideCore": false,
+          "motionFactor": 0.0
+        }
+      ],
+      "canvas": {
+        "width": 640,
+        "height": 675
+      },
+      "alpha": {
+        "threshold": 8,
+        "bboxPx": {
+          "x": 68,
+          "y": 9,
+          "width": 529,
+          "height": 646
+        },
+        "bboxNormalized": {
+          "x": 0.10625,
+          "y": 0.013333,
+          "width": 0.826562,
+          "height": 0.957037
+        },
+        "coverage": 0.459762
+      },
+      "landmarks": {
+        "eye.L": {
+          "px": {
+            "x": 256.89,
+            "y": 352.76
+          },
+          "normalized": {
+            "x": 0.40139,
+            "y": 0.5226
+          }
+        },
+        "eye.R": {
+          "px": {
+            "x": 372,
+            "y": 343.93
+          },
+          "normalized": {
+            "x": 0.581249,
+            "y": 0.509524
+          }
+        },
+        "pupil.L": {
+          "px": {
+            "x": 256.52,
+            "y": 347.15
+          },
+          "normalized": {
+            "x": 0.400811,
+            "y": 0.514295
+          }
+        },
+        "pupil.R": {
+          "px": {
+            "x": 371.8,
+            "y": 337.68
+          },
+          "normalized": {
+            "x": 0.580936,
+            "y": 0.500264
+          }
+        },
+        "mouth": {
+          "px": {
+            "x": 310.69,
+            "y": 380.85
+          },
+          "normalized": {
+            "x": 0.48545,
+            "y": 0.56422
+          }
+        },
+        "cheek.L": {
+          "px": {
+            "x": 232.65,
+            "y": 387.2
+          },
+          "normalized": {
+            "x": 0.36352,
+            "y": 0.573627
+          }
+        },
+        "cheek.R": {
+          "px": {
+            "x": 393.59,
+            "y": 384.19
+          },
+          "normalized": {
+            "x": 0.614977,
+            "y": 0.569174
+          }
+        },
+        "foot.L": {
+          "px": {
+            "x": 273.7,
+            "y": 593.71
+          },
+          "normalized": {
+            "x": 0.427657,
+            "y": 0.879571
+          }
+        },
+        "foot.R": {
+          "px": {
+            "x": 392.88,
+            "y": 611.83
+          },
+          "normalized": {
+            "x": 0.613868,
+            "y": 0.906419
+          }
+        },
+        "head": {
+          "px": {
+            "x": 319.92,
+            "y": 331.69
+          },
+          "normalized": {
+            "x": 0.499868,
+            "y": 0.491386
+          }
+        },
+        "body": {
+          "px": {
+            "x": 322.03,
+            "y": 491.27
+          },
+          "normalized": {
+            "x": 0.503169,
+            "y": 0.727813
+          }
+        },
+        "leafRoot": {
+          "px": {
+            "x": 374.35,
+            "y": 294
+          },
+          "normalized": {
+            "x": 0.584916,
+            "y": 0.435556
+          }
+        },
+        "arm.L": {
+          "px": {
+            "x": 166.94,
+            "y": 435.79
+          },
+          "normalized": {
+            "x": 0.260848,
+            "y": 0.64562
+          }
+        },
+        "arm.R": {
+          "px": {
+            "x": 476.37,
+            "y": 432.94
+          },
+          "normalized": {
+            "x": 0.744336,
+            "y": 0.641386
+          }
+        }
+      },
+      "leafTips": [
+        {
+          "px": {
+            "x": 155,
+            "y": 160
+          },
+          "normalized": {
+            "x": 0.242188,
+            "y": 0.237037
+          }
+        },
+        {
+          "px": {
+            "x": 236,
+            "y": 91
+          },
+          "normalized": {
+            "x": 0.36875,
+            "y": 0.134815
+          }
+        },
+        {
+          "px": {
+            "x": 473,
+            "y": 9
+          },
+          "normalized": {
+            "x": 0.739062,
+            "y": 0.013333
+          }
+        },
+        {
+          "px": {
+            "x": 517,
+            "y": 113
+          },
+          "normalized": {
+            "x": 0.807813,
+            "y": 0.167407
+          }
+        },
+        {
+          "px": {
+            "x": 529,
+            "y": 204
+          },
+          "normalized": {
+            "x": 0.826562,
+            "y": 0.302222
+          }
+        }
+      ],
+      "regions": {
+        "head": {
+          "bboxPx": {
+            "x": 146,
+            "y": 206,
+            "width": 337,
+            "height": 246
+          },
+          "bboxNormalized": {
+            "x": 0.228125,
+            "y": 0.305185,
+            "width": 0.526563,
+            "height": 0.364444
+          },
+          "center": {
+            "px": {
+              "x": 319.92,
+              "y": 331.69
+            },
+            "normalized": {
+              "x": 0.499868,
+              "y": 0.491386
+            }
+          },
+          "alphaCoverage": 0.9518
+        },
+        "body": {
+          "bboxPx": {
+            "x": 136,
+            "y": 398,
+            "width": 357,
+            "height": 206
+          },
+          "bboxNormalized": {
+            "x": 0.2125,
+            "y": 0.58963,
+            "width": 0.557813,
+            "height": 0.305185
+          },
+          "center": {
+            "px": {
+              "x": 322.03,
+              "y": 491.27
+            },
+            "normalized": {
+              "x": 0.503169,
+              "y": 0.727813
+            }
+          },
+          "alphaCoverage": 0.8698
+        },
+        "eye.L": {
+          "bboxPx": {
+            "x": 234,
+            "y": 325,
+            "width": 46,
+            "height": 57
+          },
+          "bboxNormalized": {
+            "x": 0.365625,
+            "y": 0.481481,
+            "width": 0.071875,
+            "height": 0.084444
+          },
+          "center": {
+            "px": {
+              "x": 256.89,
+              "y": 352.76
+            },
+            "normalized": {
+              "x": 0.40139,
+              "y": 0.5226
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "eye.R": {
+          "bboxPx": {
+            "x": 343,
+            "y": 314,
+            "width": 61,
+            "height": 62
+          },
+          "bboxNormalized": {
+            "x": 0.535937,
+            "y": 0.465185,
+            "width": 0.095312,
+            "height": 0.091852
+          },
+          "center": {
+            "px": {
+              "x": 372,
+              "y": 343.93
+            },
+            "normalized": {
+              "x": 0.581249,
+              "y": 0.509524
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.L": {
+          "bboxPx": {
+            "x": 234,
+            "y": 325,
+            "width": 46,
+            "height": 53
+          },
+          "bboxNormalized": {
+            "x": 0.365625,
+            "y": 0.481481,
+            "width": 0.071875,
+            "height": 0.078519
+          },
+          "center": {
+            "px": {
+              "x": 256.52,
+              "y": 347.15
+            },
+            "normalized": {
+              "x": 0.400811,
+              "y": 0.514295
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "pupil.R": {
+          "bboxPx": {
+            "x": 343,
+            "y": 315,
+            "width": 60,
+            "height": 56
+          },
+          "bboxNormalized": {
+            "x": 0.535937,
+            "y": 0.466667,
+            "width": 0.09375,
+            "height": 0.082963
+          },
+          "center": {
+            "px": {
+              "x": 371.8,
+              "y": 337.68
+            },
+            "normalized": {
+              "x": 0.580936,
+              "y": 0.500264
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "mouth": {
+          "bboxPx": {
+            "x": 288,
+            "y": 364,
+            "width": 42,
+            "height": 34
+          },
+          "bboxNormalized": {
+            "x": 0.45,
+            "y": 0.539259,
+            "width": 0.065625,
+            "height": 0.05037
+          },
+          "center": {
+            "px": {
+              "x": 310.69,
+              "y": 380.85
+            },
+            "normalized": {
+              "x": 0.48545,
+              "y": 0.56422
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.L": {
+          "bboxPx": {
+            "x": 176,
+            "y": 363,
+            "width": 126,
+            "height": 53
+          },
+          "bboxNormalized": {
+            "x": 0.275,
+            "y": 0.537778,
+            "width": 0.196875,
+            "height": 0.078519
+          },
+          "center": {
+            "px": {
+              "x": 232.65,
+              "y": 387.2
+            },
+            "normalized": {
+              "x": 0.36352,
+              "y": 0.573627
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "cheek.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 363,
+            "width": 116,
+            "height": 55
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.537778,
+            "width": 0.18125,
+            "height": 0.081481
+          },
+          "center": {
+            "px": {
+              "x": 393.59,
+              "y": 384.19
+            },
+            "normalized": {
+              "x": 0.614977,
+              "y": 0.569174
+            }
+          },
+          "alphaCoverage": 1
+        },
+        "foot.L": {
+          "bboxPx": {
+            "x": 211,
+            "y": 577,
+            "width": 104,
+            "height": 55
+          },
+          "bboxNormalized": {
+            "x": 0.329688,
+            "y": 0.854815,
+            "width": 0.1625,
+            "height": 0.081481
+          },
+          "center": {
+            "px": {
+              "x": 273.7,
+              "y": 593.71
+            },
+            "normalized": {
+              "x": 0.427657,
+              "y": 0.879571
+            }
+          },
+          "alphaCoverage": 0.3841
+        },
+        "foot.R": {
+          "bboxPx": {
+            "x": 320,
+            "y": 577,
+            "width": 129,
+            "height": 78
+          },
+          "bboxNormalized": {
+            "x": 0.5,
+            "y": 0.854815,
+            "width": 0.201563,
+            "height": 0.115556
+          },
+          "center": {
+            "px": {
+              "x": 392.88,
+              "y": 611.83
+            },
+            "normalized": {
+              "x": 0.613868,
+              "y": 0.906419
+            }
+          },
+          "alphaCoverage": 0.5406
+        },
+        "leaves": {
+          "bboxPx": {
+            "x": 94,
+            "y": 9,
+            "width": 489,
+            "height": 285
+          },
+          "bboxNormalized": {
+            "x": 0.146875,
+            "y": 0.013333,
+            "width": 0.764062,
+            "height": 0.422222
+          },
+          "center": {
+            "px": {
+              "x": 374.35,
+              "y": 163.66
+            },
+            "normalized": {
+              "x": 0.584916,
+              "y": 0.242463
+            }
+          },
+          "alphaCoverage": 0.4994
+        },
+        "arm.L": {
+          "bboxPx": {
+            "x": 68,
+            "y": 378,
+            "width": 172,
+            "height": 123
+          },
+          "bboxNormalized": {
+            "x": 0.10625,
+            "y": 0.56,
+            "width": 0.26875,
+            "height": 0.182222
+          },
+          "center": {
+            "px": {
+              "x": 166.94,
+              "y": 435.79
+            },
+            "normalized": {
+              "x": 0.260848,
+              "y": 0.64562
+            }
+          },
+          "alphaCoverage": 0.7735
+        },
+        "arm.R": {
+          "bboxPx": {
+            "x": 389,
+            "y": 378,
+            "width": 208,
+            "height": 123
+          },
+          "bboxNormalized": {
+            "x": 0.607812,
+            "y": 0.56,
+            "width": 0.325,
+            "height": 0.182222
+          },
+          "center": {
+            "px": {
+              "x": 476.37,
+              "y": 432.94
+            },
+            "normalized": {
+              "x": 0.744336,
+              "y": 0.641386
+            }
+          },
+          "alphaCoverage": 0.827
+        }
+      },
+      "validation": {
+        "landmarksInsideAlpha": {
+          "eye.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "eye.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "pupil.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "mouth": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "cheek.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "foot.R": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "head": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "body": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "leafRoot": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.L": {
+            "inside": true,
+            "distancePx": 0
+          },
+          "arm.R": {
+            "inside": true,
+            "distancePx": 0
+          }
+        },
+        "leafTipsInsideAlpha": [
+          {
+            "index": 0,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 1,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 2,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 3,
+            "inside": true,
+            "distancePx": 0
+          },
+          {
+            "index": 4,
+            "inside": true,
+            "distancePx": 0
+          }
+        ],
+        "eyeColourComponents": {
+          "L": {
+            "componentArea": 1875,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          },
+          "R": {
+            "componentArea": 2657,
+            "eyeCenterInsideColourComponent": true,
+            "pupilInsideEyeBBox": true
+          }
+        },
+        "result": "PASS",
+        "warnings": []
+      }
+    }
+  }
+}

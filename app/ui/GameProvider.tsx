@@ -22,6 +22,7 @@ import type { CueName } from "./audio";
 import { NiumpiAnimationController } from "../anim/NiumpiAnimationController";
 import type { AnimState } from "../anim/NiumpiAnimationController";
 import { setMotionPreference } from "../anim/motionPrefs";
+import { publishLiveGameState, runtimeHeartbeatEnabled, runtimeNow } from "../game/runtimeClock.ts";
 
 export type Toast = { id: number; text: string; icon: string };
 export type RewardCard = { id: number; title: string; rewards: Reward[]; source: string } | null;
@@ -73,7 +74,7 @@ function sceneFromUrl(): SceneId {
  * Fixed epoch for the very first render. The server and the client both build
  * the same placeholder state from it, so the shell server-renders as real
  * markup and hydrates without a mismatch. The saved game replaces it in an
- * effect, which is the only place `Date.now()` may be read.
+ * effect, which is the only place the injected/runtime wall clock is read.
  */
 const SSR_EPOCH = 0;
 
@@ -113,7 +114,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   // One controller for the whole session: scenes attach and detach, it persists.
   const [controller] = useState(() => new NiumpiAnimationController());
 
-  useEffect(() => { latest.current = state; }, [state]);
+  useEffect(() => {
+    latest.current = state;
+    publishLiveGameState(state);
+  }, [state]);
 
   const later = useCallback((run: () => void, delay: number) => {
     const timer = window.setTimeout(() => {
@@ -164,7 +168,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     if (dev) setTimeMultiplier(Number(params.get("speed")) || 1);
 
     async function boot() {
-      const at = Date.now();
+      const at = runtimeNow();
       setDevMode(dev);
       const loaded = await loadGame(adapter, at);
       if (cancelled) return;
@@ -201,8 +205,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         console.error("[niumpi] could not restore the save", error);
         if (cancelled) return;
         booted.current = true;
-        setState(createGameState(Date.now(), makeId(Date.now())));
-        setNow(Date.now());
+        const at = runtimeNow();
+        setState(createGameState(at, makeId(at)));
+        setNow(at);
         setMessage("…nium?");
         setScene("seed");
       })
@@ -217,12 +222,12 @@ export function GameProvider({ children }: { children: ReactNode }) {
   /* ---------------- clock ------------------------------------------------- */
   useEffect(() => {
     if (!ready) return;
-    const clock = window.setInterval(() => setNow(Date.now()), 1_000);
+    const clock = window.setInterval(() => setNow(runtimeNow()), 1_000);
     return () => window.clearInterval(clock);
   }, [ready]);
 
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !runtimeHeartbeatEnabled()) return;
     const heartbeat = window.setInterval(() => {
       setState((current) => tick(current, TICK_MS / 1000));
     }, TICK_MS);
@@ -233,7 +238,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     function onVisible() {
       if (document.visibilityState !== "visible" || !latest.current) return;
-      const at = Date.now();
+      const at = runtimeNow();
       const { state: caught } = applyElapsed(latest.current, at);
       setState(rollMissions(settleUnlocks(caught, at), at, (id) => caught.unlocks.includes(id)));
       setNow(at);
@@ -250,7 +255,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
     window.clearTimeout(saveTimer.current);
     saveTimer.current = window.setTimeout(() => {
       adapter
-        .save(pruneClaims({ ...state, profile: { ...state.profile, lastSeenAt: Date.now() } }))
+        .save(pruneClaims({ ...state, profile: { ...state.profile, lastSeenAt: runtimeNow() } }))
         .then(() => setSaveStatus("saved"))
         .catch(() => {
           setSaveStatus("error");
@@ -304,7 +309,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const update = useCallback((next: GameState) => setState(next), []);
   const patch = useCallback((change: (current: GameState) => GameState) => setState(change), []);
 
-  const clock = useCallback(() => Date.now(), []);
+  const clock = useCallback(() => runtimeNow(), []);
 
   const isOpen = useCallback(
     (target: SceneId) => (ready ? sceneUnlock(state, target, now) : { open: true, note: "" }),

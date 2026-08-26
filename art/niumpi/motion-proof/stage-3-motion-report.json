@@ -1,0 +1,996 @@
+{
+  "schemaVersion": 2,
+  "gate": "B+C",
+  "mode": "phase14-core",
+  "variant": "stage-3",
+  "manifestVariant": "stage-3",
+  "approvedVariant": "stage-3",
+  "requiredClips": [
+    "idle",
+    "blink",
+    "look_left",
+    "look_right",
+    "tap_reaction",
+    "happy",
+    "eat"
+  ],
+  "fps": 24,
+  "canvas": {
+    "width": 512,
+    "height": 512
+  },
+  "anchor": {
+    "x": 256,
+    "y": 466
+  },
+  "manifest": "public/assets/niumpi/v2/stage-3/manifest.json",
+  "approvedCanvas": {
+    "width": 640,
+    "height": 665
+  },
+  "semanticRegions": {
+    "head": [
+      0.204687,
+      0.345865,
+      0.729687,
+      0.711279
+    ],
+    "body": [
+      0.189062,
+      0.630075,
+      0.745312,
+      0.869173
+    ],
+    "arm.L": [
+      0.165625,
+      0.593985,
+      0.351563,
+      0.720301
+    ],
+    "arm.R": [
+      0.582812,
+      0.593985,
+      0.832812,
+      0.720301
+    ],
+    "eyes": [
+      0.34375,
+      0.491729,
+      0.601563,
+      0.607519
+    ],
+    "pupils": [
+      0.345313,
+      0.491729,
+      0.601563,
+      0.596993
+    ],
+    "mouth": [
+      0.425,
+      0.574436,
+      0.49375,
+      0.633083
+    ],
+    "cheeks": [
+      0.251563,
+      0.571429,
+      0.675,
+      0.688722
+    ],
+    "feet": [
+      0.360938,
+      0.828571,
+      0.692188,
+      0.939849
+    ],
+    "leaf": [
+      0.325,
+      0.013534,
+      0.823437,
+      0.467669
+    ],
+    "shadow": [
+      0.165625,
+      0.83985,
+      0.832813,
+      1.0
+    ]
+  },
+  "thresholds": {
+    "appearanceAlphaIoU": 0.82,
+    "appearanceColourMAE": 22.0,
+    "appearanceEdgePrecision": 0.9,
+    "appearanceEdgeRecall": 0.76,
+    "appearanceEdgeF1": 0.82,
+    "appearanceEdgeTolerancePx": 2,
+    "appearanceInternalEdgeTolerancePx": 3,
+    "appearanceEdgeBoundaryBandPx": 2,
+    "uniqueFrameRatio": 0.72,
+    "rootAlignedDifference": 1.35,
+    "regionalDifference": 1.6,
+    "eatPupilDisplacementPerDiameter": 0.06,
+    "eatPupilDirectionCosine": 0.7,
+    "maxAffineExplainedWhenResidualLow": 0.9,
+    "atlasAlphaMAE": 0.0,
+    "atlasForegroundRGBMAE": 2.5,
+    "atlasForegroundRGBPSNR": 38.0,
+    "maxCentralAlphaTearRatio": 0.22
+  },
+  "appearanceFidelity": {
+    "approvedReference": "public/assets/niumpi/stages/stage-3.webp",
+    "renderedReferencePose": "art/niumpi/rendered-source/stage-3/idle/0000.png",
+    "alphaIoU": 0.9845,
+    "normalisedColourMAE": 7.32,
+    "edgeIoU": 0.8825,
+    "rawEdgeIoU": 0.2259,
+    "edgePrecision": 0.9899,
+    "edgeRecall": 0.7962,
+    "edgeTolerancePx": 2,
+    "edgeSilhouetteTolerancePx": 2,
+    "edgeInternalTolerancePx": 3,
+    "edgeBoundaryBandPx": 2,
+    "result": "PASS",
+    "reasons": []
+  },
+  "clips": {
+    "idle": {
+      "frameCount": 72,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/stage-3/idle",
+      "characterExtentPx": {
+        "width": 273,
+        "height": 394
+      },
+      "approvedCharacterHeightPx": 474.274,
+      "uniqueFrameRatio": 0.9861,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.location[1]",
+        "body_squash.rotation_euler[2]",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.location[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "rootDisplacementPx": 4.356,
+      "rootDisplacementNormalized": 0.0,
+      "rootAlignedDifference": 9.348,
+      "regionalDisplacementNormalized": {},
+      "globalAffineExplainedRatio": 0.1729,
+      "phaseEvidence": {},
+      "motionFingerprint": null,
+      "subloopFingerprint": null,
+      "subloopMotionNormalized": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.014,
+        "maxRunPx": 3,
+        "row": 379,
+        "scanY0": 229,
+        "scanY1": 396
+      },
+      "regionalMovement": {
+        "head": 9.132,
+        "body": 8.7,
+        "arm.L": 13.185,
+        "arm.R": 5.893,
+        "eyes": 6.144,
+        "pupils": 4.968,
+        "mouth": 2.123,
+        "cheeks": 8.838,
+        "feet": 32.146,
+        "leaf": 10.464,
+        "shadow": 10.907
+      },
+      "regionalMovementUnit": "mean absolute RGBA difference (0..255) after root alignment",
+      "pupilGaze": null,
+      "movingRegions": [
+        "head",
+        "body",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "pupils",
+        "mouth",
+        "cheeks",
+        "feet",
+        "leaf",
+        "shadow"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/stage-3/atlases/idle-0-501d2dbcc177.webp",
+          "public/assets/niumpi/v2/stage-3/atlases/idle-1-9ec5821f036b.webp"
+        ],
+        "sampledFrames": [
+          0,
+          18,
+          36,
+          54,
+          71
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 1.971497,
+        "foregroundRGBPSNR": 38.9249,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "blink": {
+      "frameCount": 12,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/stage-3/blink",
+      "characterExtentPx": {
+        "width": 273,
+        "height": 394
+      },
+      "approvedCharacterHeightPx": 474.274,
+      "uniqueFrameRatio": 1.0,
+      "animatedControls": [
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "cheek.L.location[1]",
+        "cheek.R.location[1]",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 0.039,
+      "rootDisplacementNormalized": 0.0,
+      "rootAlignedDifference": 2.135,
+      "regionalDisplacementNormalized": {},
+      "globalAffineExplainedRatio": 0.0,
+      "phaseEvidence": {},
+      "motionFingerprint": null,
+      "subloopFingerprint": null,
+      "subloopMotionNormalized": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0,
+        "maxRunPx": 0,
+        "row": -1,
+        "scanY0": 229,
+        "scanY1": 396
+      },
+      "regionalMovement": {
+        "head": 5.271,
+        "body": 2.297,
+        "arm.L": 2.236,
+        "arm.R": 1.513,
+        "eyes": 9.799,
+        "pupils": 5.956,
+        "mouth": 0.255,
+        "cheeks": 14.743,
+        "feet": 1.917,
+        "leaf": 1.646,
+        "shadow": 0.683
+      },
+      "regionalMovementUnit": "mean absolute RGBA difference (0..255) after root alignment",
+      "pupilGaze": null,
+      "movingRegions": [
+        "head",
+        "body",
+        "arm.L",
+        "eyes",
+        "pupils",
+        "cheeks",
+        "feet",
+        "leaf"
+      ],
+      "blinkClosure": 1.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/stage-3/atlases/blink-0-f9546aca03cb.webp"
+        ],
+        "sampledFrames": [
+          0,
+          3,
+          6,
+          9,
+          11
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 1.942162,
+        "foregroundRGBPSNR": 39.0432,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "look_left": {
+      "frameCount": 24,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/stage-3/look_left",
+      "characterExtentPx": {
+        "width": 273,
+        "height": 394
+      },
+      "approvedCharacterHeightPx": 474.274,
+      "uniqueFrameRatio": 0.9583,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.rotation_euler[2]",
+        "head.location[0]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "rootDisplacementPx": 1.485,
+      "rootDisplacementNormalized": 0.0,
+      "rootAlignedDifference": 7.417,
+      "regionalDisplacementNormalized": {},
+      "globalAffineExplainedRatio": 0.3274,
+      "phaseEvidence": {},
+      "motionFingerprint": null,
+      "subloopFingerprint": null,
+      "subloopMotionNormalized": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0044,
+        "maxRunPx": 1,
+        "row": 308,
+        "scanY0": 229,
+        "scanY1": 396
+      },
+      "regionalMovement": {
+        "head": 7.31,
+        "body": 11.014,
+        "arm.L": 12.807,
+        "arm.R": 7.52,
+        "eyes": 8.031,
+        "pupils": 6.301,
+        "mouth": 9.963,
+        "cheeks": 12.427,
+        "feet": 41.277,
+        "leaf": 4.915,
+        "shadow": 14.143
+      },
+      "regionalMovementUnit": "mean absolute RGBA difference (0..255) after root alignment",
+      "pupilGaze": null,
+      "movingRegions": [
+        "head",
+        "body",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "pupils",
+        "mouth",
+        "cheeks",
+        "feet",
+        "leaf",
+        "shadow"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/stage-3/atlases/look_left-0-f1d5a85966d6.webp"
+        ],
+        "sampledFrames": [
+          0,
+          6,
+          12,
+          18,
+          23
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 1.974801,
+        "foregroundRGBPSNR": 38.9443,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "look_right": {
+      "frameCount": 24,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/stage-3/look_right",
+      "characterExtentPx": {
+        "width": 273,
+        "height": 394
+      },
+      "approvedCharacterHeightPx": 474.274,
+      "uniqueFrameRatio": 0.9583,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body_squash",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body_squash.rotation_euler[2]",
+        "head.location[0]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]"
+      ],
+      "rootDisplacementPx": 1.488,
+      "rootDisplacementNormalized": 0.0,
+      "rootAlignedDifference": 7.454,
+      "regionalDisplacementNormalized": {},
+      "globalAffineExplainedRatio": 0.3083,
+      "phaseEvidence": {},
+      "motionFingerprint": null,
+      "subloopFingerprint": null,
+      "subloopMotionNormalized": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0093,
+        "maxRunPx": 2,
+        "row": 379,
+        "scanY0": 229,
+        "scanY1": 396
+      },
+      "regionalMovement": {
+        "head": 6.901,
+        "body": 11.487,
+        "arm.L": 8.274,
+        "arm.R": 11.909,
+        "eyes": 7.533,
+        "pupils": 5.512,
+        "mouth": 0.44,
+        "cheeks": 10.368,
+        "feet": 43.914,
+        "leaf": 4.769,
+        "shadow": 14.894
+      },
+      "regionalMovementUnit": "mean absolute RGBA difference (0..255) after root alignment",
+      "pupilGaze": null,
+      "movingRegions": [
+        "head",
+        "body",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "pupils",
+        "cheeks",
+        "feet",
+        "leaf",
+        "shadow"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/stage-3/atlases/look_right-0-f4356be34942.webp"
+        ],
+        "sampledFrames": [
+          0,
+          6,
+          12,
+          18,
+          23
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 1.969012,
+        "foregroundRGBPSNR": 38.9288,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "tap_reaction": {
+      "frameCount": 40,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/stage-3/tap_reaction",
+      "characterExtentPx": {
+        "width": 273,
+        "height": 394
+      },
+      "approvedCharacterHeightPx": 474.274,
+      "uniqueFrameRatio": 0.975,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "body_squash",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "body_squash.rotation_euler[2]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 40.758,
+      "rootDisplacementNormalized": 0.0,
+      "rootAlignedDifference": 25.201,
+      "regionalDisplacementNormalized": {},
+      "globalAffineExplainedRatio": 0.4203,
+      "phaseEvidence": {},
+      "motionFingerprint": null,
+      "subloopFingerprint": null,
+      "subloopMotionNormalized": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0558,
+        "maxRunPx": 12,
+        "row": 354,
+        "scanY0": 229,
+        "scanY1": 396
+      },
+      "regionalMovement": {
+        "head": 47.688,
+        "body": 45.285,
+        "arm.L": 48.923,
+        "arm.R": 30.871,
+        "eyes": 42.397,
+        "pupils": 40.09,
+        "mouth": 51.132,
+        "cheeks": 41.397,
+        "feet": 78.664,
+        "leaf": 61.914,
+        "shadow": 24.625
+      },
+      "regionalMovementUnit": "mean absolute RGBA difference (0..255) after root alignment",
+      "pupilGaze": null,
+      "movingRegions": [
+        "head",
+        "body",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "pupils",
+        "mouth",
+        "cheeks",
+        "feet",
+        "leaf",
+        "shadow"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/stage-3/atlases/tap_reaction-0-a53e9b43954d.webp"
+        ],
+        "sampledFrames": [
+          0,
+          10,
+          20,
+          30,
+          39
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 1.980031,
+        "foregroundRGBPSNR": 38.8449,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "happy": {
+      "frameCount": 56,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/stage-3/happy",
+      "characterExtentPx": {
+        "width": 273,
+        "height": 394
+      },
+      "approvedCharacterHeightPx": 474.274,
+      "uniqueFrameRatio": 0.9821,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "body_squash",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "head",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.rotation_euler[2]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "body_squash.rotation_euler[2]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "head.rotation_euler[2]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 41.759,
+      "rootDisplacementNormalized": 0.0,
+      "rootAlignedDifference": 35.159,
+      "regionalDisplacementNormalized": {},
+      "globalAffineExplainedRatio": 0.4594,
+      "phaseEvidence": {},
+      "motionFingerprint": null,
+      "subloopFingerprint": null,
+      "subloopMotionNormalized": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0605,
+        "maxRunPx": 13,
+        "row": 350,
+        "scanY0": 229,
+        "scanY1": 396
+      },
+      "regionalMovement": {
+        "head": 49.728,
+        "body": 49.038,
+        "arm.L": 73.192,
+        "arm.R": 31.949,
+        "eyes": 42.185,
+        "pupils": 39.802,
+        "mouth": 51.717,
+        "cheeks": 48.821,
+        "feet": 83.808,
+        "leaf": 60.812,
+        "shadow": 26.122
+      },
+      "regionalMovementUnit": "mean absolute RGBA difference (0..255) after root alignment",
+      "pupilGaze": null,
+      "movingRegions": [
+        "head",
+        "body",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "pupils",
+        "mouth",
+        "cheeks",
+        "feet",
+        "leaf",
+        "shadow"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/stage-3/atlases/happy-0-972ecc2e4b78.webp"
+        ],
+        "sampledFrames": [
+          0,
+          14,
+          28,
+          42,
+          55
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 1.971171,
+        "foregroundRGBPSNR": 38.8724,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    },
+    "eat": {
+      "frameCount": 84,
+      "fps": 24,
+      "sourceRenderDirectory": "art/niumpi/rendered-source/stage-3/eat",
+      "characterExtentPx": {
+        "width": 273,
+        "height": 394
+      },
+      "approvedCharacterHeightPx": 474.274,
+      "uniqueFrameRatio": 1.0,
+      "animatedControls": [
+        "arm.L",
+        "arm.R",
+        "body",
+        "cheek.L",
+        "cheek.R",
+        "eye.L",
+        "eye.R",
+        "foot.L",
+        "foot.R",
+        "leaf.01.base",
+        "leaf.01.tip",
+        "leaf.03.base",
+        "leaf.03.tip",
+        "leaf_stem_01",
+        "leaf_stem_02",
+        "mouth",
+        "pupil.L",
+        "pupil.R"
+      ],
+      "animatedChannels": [
+        "arm.L.location[1]",
+        "arm.L.rotation_euler[2]",
+        "arm.R.location[1]",
+        "arm.R.rotation_euler[2]",
+        "body.scale[0]",
+        "body.scale[1]",
+        "cheek.L.shape_keys[\"puff\"].value",
+        "cheek.R.shape_keys[\"puff\"].value",
+        "eye.L.shape_keys[\"blink\"].value",
+        "eye.R.shape_keys[\"blink\"].value",
+        "foot.L.scale[0]",
+        "foot.L.scale[1]",
+        "foot.R.scale[0]",
+        "foot.R.scale[1]",
+        "leaf.01.base.rotation_euler[2]",
+        "leaf.01.tip.rotation_euler[2]",
+        "leaf.03.base.rotation_euler[2]",
+        "leaf.03.tip.rotation_euler[2]",
+        "leaf_stem_01.rotation_euler[2]",
+        "leaf_stem_02.rotation_euler[2]",
+        "mouth.scale[0]",
+        "mouth.scale[1]",
+        "mouth.shape_keys[\"mouth_open\"].value",
+        "pupil.L.location[0]",
+        "pupil.L.location[1]",
+        "pupil.L.shape_keys[\"blink\"].value",
+        "pupil.R.location[0]",
+        "pupil.R.location[1]",
+        "pupil.R.shape_keys[\"blink\"].value"
+      ],
+      "rootDisplacementPx": 11.828,
+      "rootDisplacementNormalized": 0.0,
+      "rootAlignedDifference": 7.934,
+      "regionalDisplacementNormalized": {},
+      "globalAffineExplainedRatio": 0.5129,
+      "phaseEvidence": {},
+      "motionFingerprint": null,
+      "subloopFingerprint": null,
+      "subloopMotionNormalized": 0.0,
+      "centralAlphaTear": {
+        "maxRunRatio": 0.0,
+        "maxRunPx": 0,
+        "row": -1,
+        "scanY0": 229,
+        "scanY1": 396
+      },
+      "regionalMovement": {
+        "head": 7.584,
+        "body": 10.196,
+        "arm.L": 9.598,
+        "arm.R": 17.66,
+        "eyes": 5.262,
+        "pupils": 4.029,
+        "mouth": 4.102,
+        "cheeks": 9.669,
+        "feet": 10.601,
+        "leaf": 7.575,
+        "shadow": 3.549
+      },
+      "regionalMovementUnit": "mean absolute RGBA difference (0..255) after root alignment",
+      "pupilGaze": {
+        "unit": "pupil optical-flow displacement / rendered semantic diameter",
+        "firstBiteFrameExclusive": 33,
+        "expectedDirection": [
+          0.976644,
+          0.214862
+        ],
+        "minimumDisplacementPerDiameter": 0.06,
+        "minimumDirectionCosine": 0.7,
+        "perEye": {
+          "pupil.L": {
+            "renderedDiameterPx": 29.5961,
+            "preBitePeakDisplacementPx": 4.2542,
+            "displacementPerDiameter": 0.143743,
+            "directionCosine": 0.970116,
+            "peakFrame": 32,
+            "vectorPx": [
+              3.8089,
+              1.8949
+            ],
+            "directionVectorPx": [
+              3.8089,
+              1.8949
+            ],
+            "renderedBoundsPx": [
+              190.525,
+              303.549,
+              26.852,
+              32.62
+            ]
+          },
+          "pupil.R": {
+            "renderedDiameterPx": 34.4784,
+            "preBitePeakDisplacementPx": 3.9832,
+            "displacementPerDiameter": 0.115526,
+            "directionCosine": 0.984219,
+            "peakFrame": 6,
+            "vectorPx": [
+              3.6773,
+              1.5307
+            ],
+            "directionVectorPx": [
+              3.6773,
+              1.5307
+            ],
+            "renderedBoundsPx": [
+              258.934,
+              291.396,
+              36.443,
+              32.62
+            ]
+          }
+        },
+        "result": "PASS",
+        "reasons": []
+      },
+      "movingRegions": [
+        "head",
+        "body",
+        "arm.L",
+        "arm.R",
+        "eyes",
+        "pupils",
+        "mouth",
+        "cheeks",
+        "feet",
+        "leaf",
+        "shadow"
+      ],
+      "blinkClosure": 0.0,
+      "atlas": {
+        "paths": [
+          "public/assets/niumpi/v2/stage-3/atlases/eat-0-a76a721855b7.webp",
+          "public/assets/niumpi/v2/stage-3/atlases/eat-1-b0a9337f264f.webp"
+        ],
+        "sampledFrames": [
+          0,
+          21,
+          42,
+          63,
+          83
+        ],
+        "alphaMAE": 0.0,
+        "foregroundRGBMAE": 1.955709,
+        "foregroundRGBPSNR": 38.993,
+        "result": "PASS",
+        "reasons": []
+      },
+      "result": "PASS",
+      "reasons": []
+    }
+  },
+  "missing": [],
+  "failed": [],
+  "semanticFingerprintReasons": [],
+  "result": "PASS"
+}

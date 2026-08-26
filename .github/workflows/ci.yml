@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      semantic_animation_gate:
+        description: Run the all-variant semantic animation release gate
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -67,14 +73,76 @@ jobs:
       - name: Install Chromium and system dependencies
         run: npx playwright install chromium --with-deps
 
-      - name: Run Playwright tests
-        run: npm run test:e2e
+      - name: Run core Playwright tests
+        run: npm run test:e2e:core
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report
-          path: playwright-report/
+          name: playwright-core
+          path: |
+            playwright-report/
+            test-results/
           retention-days: 14
           if-no-files-found: ignore
+
+  semantic-animation:
+    name: Semantic animation (${{ matrix.shard }}/10)
+    # TODO(semantic-atlas-landing): remove this manual-only condition in the
+    # same commit that removes the test-side NIUMPI_REQUIRE_SEMANTIC guard.
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.semantic_animation_gate == true }}
+    needs: quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22.13.0
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Chromium and system dependencies
+        run: npx playwright install chromium --with-deps
+
+      - name: Run semantic animation shard
+        run: npm run test:e2e:semantic -- --shard=${{ matrix.shard }}/10
+
+      - name: Upload semantic Playwright evidence
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-semantic-${{ matrix.shard }}-of-10
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          if-no-files-found: ignore
+
+  semantic-animation-gate:
+    name: Semantic animation gate
+    # TODO(semantic-atlas-landing): replace this with `if: ${{ always() }}`
+    # when the shard job becomes unconditional on pushes and pull requests.
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.semantic_animation_gate == true }}
+    needs: semantic-animation
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Require every semantic animation shard
+        env:
+          SHARD_RESULT: ${{ needs.semantic-animation.result }}
+        run: test "$SHARD_RESULT" = "success"
